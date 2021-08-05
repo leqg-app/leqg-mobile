@@ -1,12 +1,15 @@
 import React from 'react';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 import { StoreProvider } from './store/context';
-import Map from './Map';
+import Routes from './Routes';
 
 const App = () => {
   return (
     <StoreProvider>
-      <Map />
+      <PaperProvider>
+        <Routes />
+      </PaperProvider>
     </StoreProvider>
   );
 };

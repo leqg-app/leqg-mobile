@@ -1,5 +1,11 @@
+import { get, post } from './index';
+
 function getStores() {
-  return fetch('http://192.168.10.110:1337/stores').then(res => res.json());
+  return get('/stores');
 }
 
-export default { getStores };
+function addStore(data, { token }) {
+  return post('/stores', data, { Authorization: `bearer ${token}` });
+}
+
+export default { getStores, addStore };

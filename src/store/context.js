@@ -4,6 +4,8 @@ import { reducer } from './reducer';
 import { actionCreators } from './actions';
 
 export const initialState = {
+  token: undefined,
+  user: {},
   stores: [],
 };
 
