@@ -4,8 +4,8 @@ function getStores() {
   return get('/stores');
 }
 
-function addStore(data, { token }) {
-  return post('/stores', data, { Authorization: `bearer ${token}` });
+function addStore(data, { jwt }) {
+  return post('/stores', data, { Authorization: `bearer ${jwt}` });
 }
 
-export default { getStores, addStore };
+export { getStores, addStore };

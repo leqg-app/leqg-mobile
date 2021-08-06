@@ -1,28 +1,40 @@
-import api from '../api/stores';
+import { getStores, addStore } from '../api/stores';
+import { signIn, signUp } from '../api/users';
 
 export const actionCreators = (dispatch, state) => {
   return {
+    signUp: body => {
+      dispatch({ type: 'AUTH' });
+      return signUp(body)
+        .then(({ jwt, user }) => dispatch({ type: 'AUTH_SUCCESS', jwt, user }))
+        .catch(({ data }) =>
+          dispatch({ type: 'AUTH_FAIL', message: data[0].messages[0] }),
+        );
+    },
+    signIn: body => {
+      dispatch({ type: 'AUTH' });
+      return signIn(body)
+        .then(({ jwt, user }) => dispatch({ type: 'AUTH_SUCCESS', jwt, user }))
+        .catch(({ data }) =>
+          dispatch({ type: 'AUTH_FAIL', message: data[0].messages[0] }),
+        );
+    },
+
     getStores: () => {
       dispatch({ type: 'GET_STORES' });
-      api
-        .getStores()
+      getStores()
         .then(stores => dispatch({ type: 'GET_STORES_SUCCESS', stores }))
         .catch(err =>
           dispatch({ type: 'GET_STORES_FAIL', message: err.message }),
         );
     },
-
     addStore: details => {
       dispatch({ type: 'ADD_STORE' });
-      api
-        .addStore(details, { token: state.token })
+      addStore(details, { jwt: state.jwt })
         .then(store => dispatch({ type: 'ADD_STORE_SUCCESS', store }))
         .catch(err =>
           dispatch({ type: 'ADD_STORE_FAIL', message: err.message }),
         );
     },
-
-    setToken: token => dispatch({ type: 'SET_TOKEN', token }),
-    setCurrentUser: user => dispatch({ type: 'SET_USER', user }),
   };
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, SafeAreaView, View } from 'react-native';
 import {
   Appbar,
@@ -10,61 +10,42 @@ import {
   HelperText,
 } from 'react-native-paper';
 
-import api from './api/users';
 import { useStore } from './store/context';
 
 const Auth = ({ navigation }) => {
-  const [, actions] = useStore();
+  const [state, actions] = useStore();
+  const emailInput = useRef();
+  const passwordInput = useRef();
+
   const [mode, setMode] = React.useState('signup');
+
   const [username, onChangeUsername] = React.useState('');
   const [email, onChangeEmail] = React.useState('');
   const [password, onChangePassword] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(false);
 
   const signUp = async () => {
-    console.log('signUp');
-    setLoading(true);
-    setError(false);
     try {
-      const response = await api.signUp({
+      await actions.signUp({
         username,
         email,
         password,
       });
-      console.log(response);
-      if (response.error) {
-        console.log(response.data);
-        setError(response.data[0].messages[0]);
-      } else {
-        actions.setToken(response.jwt);
-      }
+      navigation.navigate('Map');
     } catch (e) {
       console.log(e);
     }
-    setLoading(false);
   };
 
   const signIn = async () => {
-    console.log('signIn');
-    setLoading(true);
-    setError(false);
     try {
-      const response = await api.signIn({
+      await actions.signIn({
         identifier: username,
         password,
       });
-      console.log(response);
-      if (response.error) {
-        setError(response.data[0].messages[0]);
-      } else {
-        actions.setToken(response.jwt);
-        actions.setCurrentUser(response.user);
-      }
+      navigation.navigate('Map');
     } catch (e) {
       console.log(e);
     }
-    setLoading(false);
   };
 
   const toggleMode = () => {
@@ -101,23 +82,29 @@ const Auth = ({ navigation }) => {
               textContentType="nickname"
               onChangeText={onChangeUsername}
               value={username}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordInput.current.focus()}
+              blurOnSubmit={false}
             />
             <TextInput
+              ref={passwordInput}
               style={{ marginTop: 15 }}
               label="Mot de passe"
               mode="outlined"
               textContentType="password"
               onChangeText={onChangePassword}
               value={password}
+              secureTextEntry
+              returnKeyType="done"
             />
-            <HelperText type="error" visible={error}>
-              {error.message}
+            <HelperText type="error" visible={state.error}>
+              {state.error}
             </HelperText>
             <Button
               style={{ marginTop: 15 }}
               mode="contained"
               onPress={signIn}
-              loading={loading}>
+              loading={state.loading}>
               Connexion
             </Button>
           </View>
@@ -132,33 +119,46 @@ const Auth = ({ navigation }) => {
               label="Pseudo"
               mode="outlined"
               textContentType="nickname"
+              returnKeyType="next"
               onChangeText={onChangeUsername}
               value={username}
+              onSubmitEditing={() => emailInput.current.focus()}
+              blurOnSubmit={false}
             />
             <TextInput
+              ref={emailInput}
               style={{ marginTop: 15 }}
               label="E-mail"
               mode="outlined"
+              returnKeyType="next"
+              autoCapitalize="none"
+              autoCompleteType="email"
               textContentType="emailAddress"
+              keyboardType="email-address"
               onChangeText={onChangeEmail}
               value={email}
+              onSubmitEditing={() => passwordInput.current.focus()}
+              blurOnSubmit={false}
             />
             <TextInput
+              ref={passwordInput}
               style={{ marginTop: 15 }}
               label="Mot de passe"
               mode="outlined"
               textContentType="password"
+              returnKeyType="done"
               onChangeText={onChangePassword}
               value={password}
+              secureTextEntry
             />
-            <HelperText type="error" visible={error}>
-              {error.message}
+            <HelperText type="error" visible={state.error}>
+              {state.error}
             </HelperText>
             <Button
               style={{ marginTop: 15 }}
               mode="contained"
               onPress={signUp}
-              loading={loading}>
+              loading={state.loading}>
               Inscription
             </Button>
           </View>

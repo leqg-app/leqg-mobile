@@ -1,10 +1,14 @@
 export const reducer = (state, action) => {
   switch (action.type) {
-    case 'SET_TOKEN': {
-      return { ...state, token: action.token };
+    case 'AUTH': {
+      return { ...state, loading: true, error: undefined };
     }
-    case 'SET_USER': {
-      return { ...state, user: action.user };
+    case 'AUTH_SUCCESS': {
+      const { jwt, user } = action;
+      return { ...state, jwt, user, loading: false };
+    }
+    case 'AUTH_FAIL': {
+      return { ...state, error: action.message };
     }
 
     case 'GET_STORES': {
