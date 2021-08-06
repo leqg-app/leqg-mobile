@@ -1,13 +1,22 @@
 import React from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 import { StoreProvider } from './store/context';
 import Routes from './Routes';
 
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: 'green',
+    accent: 'yellow',
+  },
+};
+
 const App = () => {
   return (
     <StoreProvider>
-      <PaperProvider>
+      <PaperProvider theme={theme}>
         <Routes />
       </PaperProvider>
     </StoreProvider>
