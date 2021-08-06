@@ -8,4 +8,4 @@ function signIn(data) {
   return post('/auth/local', data);
 }
 
-export default { signUp, signIn };
+export { signUp, signIn };
