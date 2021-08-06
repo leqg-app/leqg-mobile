@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {
@@ -14,6 +14,7 @@ import { useStore } from './store/context';
 
 const AddStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
+  const addressInput = useRef();
 
   const [name, onChangeName] = React.useState('');
   const [address, onChangeAddress] = React.useState('');
@@ -63,8 +64,13 @@ const AddStore = ({ route, navigation }) => {
           textContentType="name"
           onChangeText={onChangeName}
           value={name}
+          underlineColor="green"
+          returnKeyType="next"
+          onSubmitEditing={() => addressInput.current.focus()}
+          blurOnSubmit={false}
         />
         <GooglePlacesAutocomplete
+          ref={addressInput}
           debounce={100}
           onPress={(data, details) => {
             onChangeAddress(data.description);
@@ -106,7 +112,7 @@ const AddStore = ({ route, navigation }) => {
       </View>
       <Portal>
         <Dialog
-          visible={route.name === 'Add' && !state.token}
+          visible={route.name === 'Add' && !state.jwt}
           onDismiss={goToLogin}>
           <Dialog.Content>
             <Paragraph>Vous devez être connecté pour ajouter</Paragraph>
