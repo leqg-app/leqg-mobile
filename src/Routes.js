@@ -21,7 +21,7 @@ const Routes = () => {
           component={Map}
           options={{ title: 'Carte des bars' }}
         />
-        {!state.token && (
+        {!state.jwt && (
           <Drawer.Screen
             name="Auth"
             component={Auth}
@@ -33,7 +33,7 @@ const Routes = () => {
           component={AddStore}
           options={{ title: 'Ajouter un bar' }}
         />
-        {state.token && (
+        {state.jwt && (
           <>
             <Drawer.Screen
               name="Contributions"

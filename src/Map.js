@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Searchbar } from 'react-native-paper';
 
@@ -7,16 +7,16 @@ import { useStore } from './store/context';
 
 const Map = ({ navigation }) => {
   const [state, actions] = useStore();
-  const [text, onChangeText] = React.useState('Paris');
+  const [text, onChangeText] = React.useState('');
 
   useEffect(() => {
     actions.getStores();
   }, []);
 
   return (
-    <View style={styles.vv}>
+    <SafeAreaView style={styles.absolute}>
       <MapView
-        style={styles.map}
+        style={styles.absolute}
         initialRegion={{
           latitude: 48.860395,
           longitude: 2.341924,
@@ -34,27 +34,29 @@ const Map = ({ navigation }) => {
         ))}
       </MapView>
       <Searchbar
-        style={{
-          elevation: 0,
-          color: 'white',
-        }}
+        style={styles.searchbar}
         icon="menu"
         onIconPress={() => navigation.toggleDrawer()}
-        placeholder="Search"
+        placeholder="Rechercher"
         onChangeText={onChangeText}
         value={text}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  vv: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  map: {
+  absolute: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',
+  },
+  searchbar: {
+    elevation: 2,
+    color: 'white',
+    margin: 20,
+    borderRadius: 30,
+    height: 45,
+    paddingLeft: 10,
   },
 });
 
