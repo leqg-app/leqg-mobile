@@ -1421,24 +1421,24 @@
     query-string "^7.0.0"
     react-is "^16.13.0"
 
-"@react-navigation/drawer@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/drawer/-/drawer-6.0.1.tgz#e01482c23262428d17a462faaca0d68651b24616"
-  integrity sha512-EDvIdj5xi2y0/yFe1oyT4vYlYHD6XaSqVqRBdxfwSt8fleJP1k6yXI7G6LsSIlGWHn92+VWjR3vZ4TUdlck+UA==
+"@react-navigation/drawer@^6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@react-navigation/drawer/-/drawer-6.1.1.tgz#6e5b3de5327fae162a27761e7c842ab53794a200"
+  integrity sha512-c3poqkc2aQRPrHa8lZihPSqqlcmlF3LDOyaCyz7V12hAg6v0o/PrkSJqP4jgTSiTPNbRQ3Edpb+rZdpSXkO6vQ==
   dependencies:
-    "@react-navigation/elements" "^1.0.1"
+    "@react-navigation/elements" "^1.0.3"
     color "^3.1.3"
     warn-once "^0.1.0"
 
-"@react-navigation/elements@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-1.0.1.tgz#effcdb59aa5cf64445ff2ca7f50ee35df484fa72"
-  integrity sha512-KU6DPqmFmD4E+AwXOBzrqVBYG1Gd8HzPfbCk1PGzUjIiQOg6xv1pyfJ/d2x6aEOzxX5jtuNVCx6S553ZLkJP9Q==
+"@react-navigation/elements@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-1.0.3.tgz#23052dc9c9766614c629a400fc96a600176ab1a3"
+  integrity sha512-hDf55C65kD7X09r4p9Z74xuCLe2damL+i7v0YLM3AFD0TEkDiGwRczhsoZFm8gg/TIJpLqa+CjqX2gvrdQyQ+A==
 
-"@react-navigation/native@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-6.0.1.tgz#1d8047b2b91b5adadb7f1d9b4f3499d9e16d36b3"
-  integrity sha512-hzp+c21hCrHWcvV78cTBWlabsZSgtaSkdzNc0GWum94MtjBEUTcgewxjEDKPwXyUwouEX/319jzrCusJ2Bzxog==
+"@react-navigation/native@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-6.0.2.tgz#6bdb3cfafb6a9cfb603c1555dd61faafca35b7c2"
+  integrity sha512-HDqEwgvQ4Cu16vz8jQ55lfyNK9CGbECI1wM9cPOcUa+gkOQEDZ/95VFfFjGGflXZs3ybPvGXlMC4ZAyh1CcO6w==
   dependencies:
     "@react-navigation/core" "^6.0.1"
     escape-string-regexp "^4.0.0"
@@ -1451,12 +1451,12 @@
   dependencies:
     nanoid "^3.1.23"
 
-"@react-navigation/stack@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-6.0.1.tgz#d4d2576b41cc9681c024a67cd7edf06411a632bc"
-  integrity sha512-Uev7zLcQ10YAQpxCRwHbPJc3QEP6AsPnSVHCWD/uR0xnGYCk2t2SQMGmZFiPJ0YXRmpa0zHpeJIJciN2gfLxmA==
+"@react-navigation/stack@^6.0.4":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-6.0.4.tgz#3cc84363af1beba4093103c9830b82a2fc96f9ac"
+  integrity sha512-mityzVoLsjd7xQGh89PMTk7ySLsQYChLODdwsJFk2KgXQ0Xc60tkl31BBW5aGBjT8F/ojNANNM8pR1iH587SMQ==
   dependencies:
-    "@react-navigation/elements" "^1.0.1"
+    "@react-navigation/elements" "^1.0.3"
     color "^3.1.3"
     warn-once "^0.1.0"
 
@@ -5841,10 +5841,10 @@ react-native-gesture-handler@^1.10.3:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-google-places-autocomplete@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-google-places-autocomplete/-/react-native-google-places-autocomplete-2.3.0.tgz#6ba70e078535ff28c9293d579f75b09a7905fd93"
-  integrity sha512-BuOsAMdEgeA8YO5OgLcD9NyuTxxaHiBd8zc/YUsoPTkaTUgk8zzq6TLM6rCv8PVnAqiY3bNewpSH0N5XnIJQRw==
+react-native-google-places-autocomplete@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-google-places-autocomplete/-/react-native-google-places-autocomplete-2.4.0.tgz#a71369ab61825401457efa43d3ec0a37504148b7"
+  integrity sha512-B4HjgPf40avGY3c4padCyWqJew0ef0lF9g80ApFGLPFGOQBso2y2lS3oXE05vL7rXrgM2ncl23GbsxoUKOISOg==
   dependencies:
     lodash.debounce "^4.0.8"
     prop-types "^15.7.2"
@@ -5861,6 +5861,11 @@ react-native-maps@^0.28.0:
   integrity sha512-F+k5ZT9hhl+iXR1H+5ZcoHOEB5lPu9gCIwtA4lI/LoI9nfa9xFvr1vMiLIv44jzeGNzbE3+/R81IpcNDMJ5uDg==
   dependencies:
     "@types/geojson" "^7946.0.7"
+
+react-native-paper-dates@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/react-native-paper-dates/-/react-native-paper-dates-0.4.6.tgz#e81006528694b3796bdbfd7202bc3ebb0759f2d1"
+  integrity sha512-hEjV040SgKpbcN3fq8gQyycGHKCYJmMocCM4Me1ovQrMTRG5Rwez7j1PnCeil/iY66HRn6cSJ713z7qrTHc3Ow==
 
 react-native-paper@^4.9.2:
   version "4.9.2"
@@ -5881,10 +5886,10 @@ react-native-reanimated@^2.2.0:
     mockdate "^3.0.2"
     string-hash-64 "^1.0.3"
 
-react-native-safe-area-context@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.2.0.tgz#06113c6b208f982d68ab5c3cebd199ca93db6941"
-  integrity sha512-k2Nty4PwSnrg9HwrYeeE+EYqViYJoOFwEy9LxL5RIRfoqxAq/uQXNGwpUg2/u4gnKpBbEPa9eRh15KKMe/VHkA==
+react-native-safe-area-context@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.3.0.tgz#6e0b45baa031589ec9c54f8359ace166a36aa5e5"
+  integrity sha512-IrCNx56LO9RJ75yCf2CSSO1ceLj3mvxTAF+HWnehaeRIfF4pIcIn3WEUlXulFiha641OKS5X0+1XZCbbQ7pITA==
 
 react-native-screens@^3.5.0:
   version "3.5.0"
