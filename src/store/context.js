@@ -4,9 +4,12 @@ import { reducer } from './reducer';
 import { actionCreators } from './actions';
 
 export const initialState = {
-  token: undefined,
+  loading: false,
+  jwt: undefined,
   user: {},
   stores: [],
+  storeEdition: {},
+  products: [],
 };
 
 export const StoreContext = createContext(undefined);

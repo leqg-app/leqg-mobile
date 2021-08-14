@@ -14,7 +14,6 @@ export const reducer = (state, action) => {
     case 'GET_STORES': {
       return { ...state, error: undefined, loading: true };
     }
-
     case 'GET_STORES_SUCCESS': {
       return {
         ...state,
@@ -23,8 +22,26 @@ export const reducer = (state, action) => {
         loading: false,
       };
     }
-
     case 'GET_STORES_FAIL': {
+      return {
+        ...state,
+        error: action.message,
+        loading: false,
+      };
+    }
+
+    case 'GET_PRODUCTS': {
+      return { ...state, error: undefined, loading: true };
+    }
+    case 'GET_PRODUCTS_SUCCESS': {
+      return {
+        ...state,
+        error: undefined,
+        products: action.products,
+        loading: false,
+      };
+    }
+    case 'GET_PRODUCTS_FAIL': {
       return {
         ...state,
         error: action.message,
@@ -51,6 +68,17 @@ export const reducer = (state, action) => {
         ...state,
         error: action.message,
         loading: false,
+      };
+    }
+
+    case 'SET_STORE_EDITION': {
+      const { store } = action;
+      return {
+        ...state,
+        storeEdition: {
+          ...state.storeEdition,
+          ...store,
+        },
       };
     }
 

@@ -1,3 +1,4 @@
+import { getProducts } from '../api/products';
 import { getStores, addStore } from '../api/stores';
 import { signIn, signUp } from '../api/users';
 
@@ -35,6 +36,19 @@ export const actionCreators = (dispatch, state) => {
         .catch(err =>
           dispatch({ type: 'ADD_STORE_FAIL', message: err.message }),
         );
+    },
+
+    getProducts: () => {
+      dispatch({ type: 'GET_PRODUCTS' });
+      getProducts()
+        .then(products => dispatch({ type: 'GET_PRODUCTS_SUCCESS', products }))
+        .catch(err =>
+          dispatch({ type: 'GET_PRODUCTS_FAIL', message: err.message }),
+        );
+    },
+
+    setStoreEdition: store => {
+      dispatch({ type: 'SET_STORE_EDITION', store });
     },
   };
 };
