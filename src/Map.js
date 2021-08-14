@@ -8,6 +8,14 @@ import { useStore } from './store/context';
 const Map = ({ navigation }) => {
   const [state, actions] = useStore();
   const [text, onChangeText] = React.useState('');
+  const [coordinates, onChangeCoordinates] = React.useState({
+    latitude: 48.860395,
+    longitude: 2.341924,
+    latitudeDelta: 0.243,
+    longitudeDelta: 0.134,
+  });
+
+  console.log(coordinates);
 
   useEffect(() => {
     actions.getStores();
@@ -17,12 +25,8 @@ const Map = ({ navigation }) => {
     <SafeAreaView style={styles.absolute}>
       <MapView
         style={styles.absolute}
-        initialRegion={{
-          latitude: 48.860395,
-          longitude: 2.341924,
-          latitudeDelta: 0.243,
-          longitudeDelta: 0.134,
-        }}>
+        initialRegion={coordinates}
+        onRegionChangeComplete={a => onChangeCoordinates(a)}>
         {state.stores.map(store => (
           <Marker
             key={store.name}
