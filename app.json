@@ -1,6 +1,6 @@
 {
   "name": "leqg",
   "displayName": "leqg",
-  "apiDev": "http://192.168.0.103:1337",
-  "api": "https://leqg-app.herokuapp.com"
+  "api": "https://leqg.tk",
+  "apiStag": "https://leqg-app.herokuapp.com"
 }
