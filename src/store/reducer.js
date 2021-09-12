@@ -1,3 +1,5 @@
+import { groupStores } from '../utils/smartLoadMap';
+
 export const reducer = (state, action) => {
   switch (action.type) {
     case 'AUTH': {
@@ -18,7 +20,7 @@ export const reducer = (state, action) => {
       return {
         ...state,
         error: undefined,
-        stores: action.stores,
+        stores: groupStores(action.stores, action.coordinates),
         loading: false,
       };
     }
@@ -54,7 +56,6 @@ export const reducer = (state, action) => {
     }
 
     case 'ADD_STORE_SUCCESS': {
-      console.log(action.store);
       return {
         ...state,
         error: undefined,
@@ -63,7 +64,6 @@ export const reducer = (state, action) => {
     }
 
     case 'ADD_STORE_FAIL': {
-      console.log(action.message);
       return {
         ...state,
         error: action.message,

@@ -1,6 +1,7 @@
 import { getProducts } from '../api/products';
-import { getStores, addStore } from '../api/stores';
+import { getStores, getStore, addStore } from '../api/stores';
 import { signIn, signUp } from '../api/users';
+import { alreadyLoaded } from '../utils/smartLoadMap';
 
 export const actionCreators = (dispatch, state) => {
   return {
@@ -21,10 +22,15 @@ export const actionCreators = (dispatch, state) => {
         );
     },
 
-    getStores: () => {
+    getStores: coordinates => {
+      if (alreadyLoaded(coordinates)) {
+        return;
+      }
       dispatch({ type: 'GET_STORES' });
-      getStores()
-        .then(stores => dispatch({ type: 'GET_STORES_SUCCESS', stores }))
+      getStores(coordinates)
+        .then(stores =>
+          dispatch({ type: 'GET_STORES_SUCCESS', stores, coordinates }),
+        )
         .catch(err =>
           dispatch({ type: 'GET_STORES_FAIL', message: err.message }),
         );
