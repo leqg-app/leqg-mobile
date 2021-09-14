@@ -122,7 +122,13 @@ const Map = ({ navigation }) => {
         pitchEnabled={false}
         onRegionDidChange={regionChanged}
         onPress={() => selectBar(false)}>
-        <MapboxGL.Camera zoomLevel={11} centerCoordinate={CENTER} />
+        <MapboxGL.Camera
+          zoomLevel={11}
+          centerCoordinate={CENTER}
+          followUserMode={'normal'}
+          followUserLocation
+        />
+        <MapboxGL.UserLocation />
         <MapboxGL.ShapeSource
           cluster
           clusterRadius={10}
