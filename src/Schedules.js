@@ -21,17 +21,7 @@ import { TimePickerModal } from 'react-native-paper-dates';
 import { useStore } from './store/context';
 
 import formatHour from './utils/formatHour';
-
-const daysShort = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-const daysFull = [
-  'lundi',
-  'mardi',
-  'mercredi',
-  'jeudi',
-  'vendredi',
-  'samedi',
-  'dimanche',
-];
+import { daysFull, daysShort } from './constants';
 
 const newTime = () => ({
   start: { hours: 17, minutes: 0 },
