@@ -13,6 +13,26 @@ export const reducer = (state, action) => {
       return { ...state, error: action.message };
     }
 
+    case 'GET_STORE': {
+      return { ...state, error: undefined };
+    }
+    case 'GET_STORE_SUCCESS': {
+      return {
+        ...state,
+        error: undefined,
+        storesDetails: {
+          ...state.storesDetails,
+          [action.id]: action.store,
+        },
+      };
+    }
+    case 'GET_STORE_FAIL': {
+      return {
+        ...state,
+        error: action.message,
+      };
+    }
+
     case 'GET_STORES': {
       return { ...state, error: undefined, loading: true };
     }

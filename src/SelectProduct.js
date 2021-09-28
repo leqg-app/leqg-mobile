@@ -40,7 +40,7 @@ const SelectProduct = ({ navigation }) => {
         <ActivityIndicator animating={true} />
       ) : (
         <SectionList
-          sections={data}
+          sections={Object.values(data)}
           renderItem={({ item }) => (
             <DataTable.Row>
               <DataTable.Cell numeric>{item}</DataTable.Cell>

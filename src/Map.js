@@ -17,43 +17,6 @@ MapboxGL.setAccessToken(
   'pk.eyJ1IjoibmljbzJjaGUiLCJhIjoiY2lzYm5zcHAzMDAxNDJvbWtwb3dyY2ZuYiJ9.eSWQhgnzx-RQWqSx5ltXcg',
 );
 
-const layerStyles = {
-  singlePoint: {
-    circleColor: 'green',
-    circleOpacity: 0.84,
-    circleStrokeWidth: 2,
-    circleStrokeColor: 'white',
-    circleRadius: 5,
-    circlePitchAlignment: 'map',
-  },
-
-  clusteredPoints: {
-    circlePitchAlignment: 'map',
-
-    circleColor: [
-      'step',
-      ['get', 'point_count'],
-      '#51bbd6',
-      100,
-      '#f1f075',
-      750,
-      '#f28cb1',
-    ],
-
-    circleRadius: ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
-
-    circleOpacity: 0.84,
-    circleStrokeWidth: 2,
-    circleStrokeColor: 'white',
-  },
-
-  clusterCount: {
-    textField: '{point_count}',
-    textSize: 12,
-    textPitchAlignment: 'map',
-  },
-};
-
 function CalloutBar({ selectedBar, store = {} }) {
   const navigation = useNavigation();
   const { name } = selectedBar;
@@ -122,25 +85,19 @@ const Map = ({ navigation }) => {
         pitchEnabled={false}
         onRegionDidChange={regionChanged}
         onPress={() => selectBar(false)}>
-        <MapboxGL.Camera
-          zoomLevel={11}
-          centerCoordinate={CENTER}
-          followUserMode={'normal'}
-          followUserLocation
-        />
+        <MapboxGL.Camera zoomLevel={11} centerCoordinate={CENTER} />
         <MapboxGL.UserLocation />
         <MapboxGL.ShapeSource
           cluster
-          clusterRadius={10}
+          clusterRadius={11}
           id="earthquakes"
           shape={storesShape}
           onPress={e => selectBar(e.features[0].properties)}>
           <MapboxGL.CircleLayer
             id="singlePoint"
+            filter={['has', 'price']}
             style={{
               circleColor: 'green',
-              circleStrokeWidth: 2,
-              circleStrokeColor: 'white',
               circleRadius: 10,
             }}
           />
@@ -161,8 +118,6 @@ const Map = ({ navigation }) => {
       </MapboxGL.MapView>
       <Searchbar
         style={styles.searchbar}
-        icon="menu"
-        onIconPress={() => navigation.toggleDrawer()}
         placeholder="Rechercher"
         onChangeText={onChangeText}
         value={text}
