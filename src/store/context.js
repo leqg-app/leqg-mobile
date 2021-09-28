@@ -9,6 +9,7 @@ export const initialState = {
   user: {},
   stores: [],
   storeEdition: {},
+  storesDetails: {},
   products: [],
 };
 

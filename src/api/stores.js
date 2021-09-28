@@ -19,8 +19,12 @@ function getStores(coordinates) {
   return get(`/stores?${params}`);
 }
 
+function getStore(id) {
+  return get(`/stores/${id}`);
+}
+
 function addStore(data, { jwt }) {
   return post('/stores', data, { Authorization: `bearer ${jwt}` });
 }
 
-export { getStores, addStore };
+export { getStores, getStore, addStore };
