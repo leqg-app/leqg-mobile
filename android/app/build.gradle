@@ -122,6 +122,7 @@ def jscFlavor = 'org.webkit:android-jsc-intl:+'
 def enableHermes = project.ext.react.get("enableHermes", false);
 
 android {
+
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -132,11 +133,12 @@ android {
     }
 
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.leqg"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 1
+        versionName "1.0.0"
     }
     splits {
         abi {
@@ -160,8 +162,7 @@ android {
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // see https://reactnative.dev/docs/signed-apk-android.b
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -181,6 +182,12 @@ android {
             }
 
         }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+        disable 'LongLogTag'
     }
 }
 
@@ -215,6 +222,7 @@ dependencies {
         implementation jscFlavor
     }
 }
+
 
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
