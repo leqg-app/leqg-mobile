@@ -50,6 +50,9 @@ const Map = ({ navigation }) => {
   useEffect(() => {
     if (!state.loading && coordinates.northEast) {
       actions.getStores(coordinates);
+      if (!state.products.length) {
+        actions.getProducts();
+      }
     }
   }, [coordinates]);
 

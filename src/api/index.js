@@ -5,7 +5,6 @@ function get(path) {
 }
 
 function post(path, data, headers = {}) {
-  console.log('POST', `${apiEndpoint}${path}`, data, headers);
   return fetch(`${apiEndpoint}${path}`, {
     method: 'POST',
     headers: {

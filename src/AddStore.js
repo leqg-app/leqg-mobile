@@ -92,8 +92,7 @@ const AddStore = ({ route, navigation }) => {
   return (
     <SafeAreaView>
       <Appbar.Header>
-        <Appbar.Action icon="menu" onPress={() => navigation.toggleDrawer()} />
-        <Appbar.Content title="Ajouter" />
+        <Appbar.Content title="Ajouter un bar" />
         <Appbar.Action
           disabled={!validForm || state.loading}
           icon="send"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import {
   Platform,
   StyleSheet,
@@ -12,7 +12,9 @@ import {
   Avatar,
   Button,
   Caption,
+  DataTable,
   Divider,
+  Subheading,
   Title,
   TouchableRipple,
 } from 'react-native-paper';
@@ -27,14 +29,13 @@ function Schedules({ schedules }) {
     (days, schedule) => ((days[schedule.dayOfWeek] = schedule), days),
     {},
   );
-  console.log(days);
   return (
     <View style={styles.infoText}>
       {daysFull.map((day, i) => (
         <View key={day} style={styles.scheduleRow}>
           <Text style={styles.scheduleRowDay}>{day}</Text>
           <Text style={styles.scheduleRowDay}>
-            {days[i + 1].alwaysOpen ? 'Ouvert' : 'Fermé'}
+            {days[i + 1]?.alwaysOpen ? 'Ouvert' : 'Fermé'}
           </Text>
         </View>
       ))}
@@ -42,12 +43,37 @@ function Schedules({ schedules }) {
   );
 }
 
+function Product({ product }) {
+  const [state] = useStore();
+  const { volume, price, specialPrice, type, productName } = product;
+  const productDetail = state.products[product.product];
+  return (
+    <Fragment>
+      <View style={styles.product}>
+        <View style={styles.productName}>
+          <Text>{productDetail?.name || productName || 'Bière'}</Text>
+        </View>
+        <View style={styles.productDetails}>
+          <View style={styles.productCell}>
+            <Text>{volume}cl</Text>
+          </View>
+          <View style={styles.productCell}>
+            <Text>{price}€</Text>
+          </View>
+          <View style={styles.productCell}>
+            <Text>{specialPrice}€</Text>
+          </View>
+        </View>
+      </View>
+      <Divider />
+    </Fragment>
+  );
+}
+
 const StoreDetails = ({ navigation, route }) => {
   const { params } = route;
   const [state] = useStore();
   const store = state.storesDetails[params.store.id];
-
-  console.log(store);
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
 
@@ -137,7 +163,7 @@ const StoreDetails = ({ navigation, route }) => {
         </Button>
       )}
       <Divider />
-      <TouchableRipple
+      {/* <TouchableRipple
         onPress={() => openAddress()}
         rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.infoRow}>
@@ -150,7 +176,7 @@ const StoreDetails = ({ navigation, route }) => {
           <Text style={styles.infoText}>https://google.com/</Text>
         </View>
       </TouchableRipple>
-      <Divider />
+      <Divider /> */}
       <TouchableRipple
         onPress={() => openAddress()}
         rippleColor="rgba(0, 0, 0, .25)">
@@ -165,6 +191,13 @@ const StoreDetails = ({ navigation, route }) => {
         </View>
       </TouchableRipple>
       <Divider />
+      <Subheading style={styles.subtitle}>Bières</Subheading>
+      <DataTable>
+        <DataTable.Header></DataTable.Header>
+        {store.products.map(product => (
+          <Product key={product.id} product={product} />
+        ))}
+      </DataTable>
       {/* <Subheading>Résumé des avis</Subheading>
       <Divider />
       <Subheading>Donner une note et un avis</Subheading>
@@ -241,6 +274,29 @@ const styles = StyleSheet.create({
   },
   scheduleRowDay: {
     width: '50%',
+  },
+  subtitle: {
+    marginLeft: 15,
+    marginTop: 15,
+    marginBottom: -35,
+    fontWeight: 'bold',
+  },
+  product: {
+    margin: 15,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  productName: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  productDetails: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  productCell: {
+    width: 40,
   },
 });
 
