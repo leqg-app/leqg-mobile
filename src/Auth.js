@@ -56,7 +56,6 @@ const Auth = ({ navigation }) => {
   return (
     <SafeAreaView>
       <Appbar.Header>
-        <Appbar.Action icon="menu" onPress={() => navigation.toggleDrawer()} />
         <Appbar.Content
           title={mode === 'login' ? 'Connexion' : 'Inscription'}
         />

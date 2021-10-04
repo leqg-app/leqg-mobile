@@ -1,12 +1,6 @@
 name: Deploy App CI
 
-on:
-  push:
-    branches: [master]
-
-defaults:
-  run:
-    working-directory: android
+on: [tags]
 
 jobs:
   build:
@@ -62,7 +56,7 @@ jobs:
         with:
           gradlePath: android/app/build.gradle
           versionCode: ${{ github.run_number }}
-          versionName: '0.0.1'
+          versionName: ${{ env.RELEASE_VERSION }}
 
       - name: Build Release AAB
         working-directory: android
