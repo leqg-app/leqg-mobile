@@ -1,6 +1,9 @@
 name: Deploy App CI
 
-on: [tags]
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
   build:
