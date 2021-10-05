@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, SafeAreaView, View, Pressable } from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  StatusBar,
+  Pressable,
+} from 'react-native';
 import {
   ActivityIndicator,
   Card,
@@ -81,6 +87,7 @@ const Map = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.absolute}>
+      <StatusBar translucent={true} backgroundColor={'transparent'} />
       <MapboxGL.MapView
         style={styles.absolute}
         localizeLabels={true}
@@ -146,7 +153,8 @@ const styles = StyleSheet.create({
   searchbar: {
     elevation: 3,
     color: 'white',
-    margin: 20,
+    marginTop: 50,
+    marginHorizontal: 20,
     borderRadius: 30,
     height: 45,
     paddingLeft: 10,
