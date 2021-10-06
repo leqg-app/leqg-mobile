@@ -4,15 +4,15 @@ import { Appbar, Button, Paragraph } from 'react-native-paper';
 
 import Header from './components/Header';
 
-const Contributions = ({ navigation }) => {
+const Favorites = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <Header>
-        <Appbar.Content title="Contributions" />
+        <Appbar.Content title="Enregistrés" />
       </Header>
       <View style={styles.center}>
         <Paragraph>
-          Veuillez vous connecter pour voir vos contributions
+          Veuillez vous connecter pour voir vos bars favoris
         </Paragraph>
         <Button onPress={() => navigation.navigate('Auth')}>Connexion</Button>
       </View>
@@ -32,4 +32,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Contributions;
+export default Favorites;

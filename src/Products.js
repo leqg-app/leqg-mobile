@@ -1,23 +1,6 @@
 import React from 'react';
-import {
-  Pressable,
-  Text,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
-import {
-  Appbar,
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  Checkbox,
-  Dialog,
-  Portal,
-  TextInput,
-} from 'react-native-paper';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { Appbar, Button } from 'react-native-paper';
 
 const Products = ({ navigation }) => {
   const save = () => {};

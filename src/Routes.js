@@ -6,8 +6,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useStore } from './store/context';
 import Map from './Map';
 import Auth from './Auth';
-import AddStore from './AddStore';
 import Contributions from './Contributions';
+import Favorites from './Favorites';
 
 const Tab = createBottomTabNavigator();
 
@@ -40,7 +40,7 @@ const Routes = () => {
         />
         <Tab.Screen
           name="Add"
-          component={AddStore}
+          component={Favorites}
           options={{
             title: 'Enregistrés',
             tabBarIcon: ({ color, size }) => (
