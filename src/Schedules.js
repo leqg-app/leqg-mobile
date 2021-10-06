@@ -22,6 +22,7 @@ import { useStore } from './store/context';
 
 import formatHour from './utils/formatHour';
 import { daysFull, daysShort } from './constants';
+import Header from './components/Header';
 
 const newTime = () => ({
   start: { hours: 17, minutes: 0 },
@@ -207,11 +208,11 @@ const Schedules = ({ navigation }) => {
 
   return (
     <SafeAreaView>
-      <Appbar.Header>
+      <Header>
         <Appbar.BackAction onPress={goBack} />
         <Appbar.Content title="Horaires" />
         <Appbar.Action icon="check" onPress={save} />
-      </Appbar.Header>
+      </Header>
       <View style={styles.box}>
         {daysFull.map((day, i) => {
           return (

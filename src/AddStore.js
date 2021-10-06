@@ -25,6 +25,7 @@ import Schedules from './Schedules';
 import Products from './Products';
 import SelectAddress from './SelectAddress';
 import SelectProduct from './SelectProduct';
+import Header from './components/Header';
 
 const AuthStack = createNativeStackNavigator();
 const daysShort = ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'];
@@ -91,14 +92,14 @@ const AddStore = ({ route, navigation }) => {
 
   return (
     <SafeAreaView>
-      <Appbar.Header>
+      <Header>
         <Appbar.Content title="Ajouter un bar" />
         <Appbar.Action
           disabled={!validForm || state.loading}
           icon="send"
           onPress={save}
         />
-      </Appbar.Header>
+      </Header>
       <ScrollView style={styles.box}>
         <TextInput
           style={{

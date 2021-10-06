@@ -10,6 +10,7 @@ import {
   HelperText,
 } from 'react-native-paper';
 
+import Header from './components/Header';
 import { useStore } from './store/context';
 
 const Auth = ({ navigation }) => {
@@ -55,11 +56,11 @@ const Auth = ({ navigation }) => {
 
   return (
     <SafeAreaView>
-      <Appbar.Header>
+      <Header>
         <Appbar.Content
           title={mode === 'login' ? 'Connexion' : 'Inscription'}
         />
-      </Appbar.Header>
+      </Header>
       <View style={styles.box}>
         <Paragraph>
           {mode === 'login' ? 'Pas encore inscrit ?' : 'Déjà inscrit ?'}
