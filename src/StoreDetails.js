@@ -18,9 +18,10 @@ import {
   Title,
   TouchableRipple,
 } from 'react-native-paper';
-import { daysFull } from './constants';
 
 import { useStore } from './store/context';
+import { daysFull } from './constants';
+import Header from './components/Header';
 
 const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 
@@ -51,7 +52,7 @@ function Product({ product }) {
     <Fragment>
       <View style={styles.product}>
         <View style={styles.productName}>
-          <Text>{productDetail?.name || productName || 'Bière'}</Text>
+          <Text>{productDetail?.name || productName || 'Blonde'}</Text>
         </View>
         <View style={styles.productDetails}>
           <View style={styles.productCell}>
@@ -94,11 +95,11 @@ const StoreDetails = ({ navigation, route }) => {
 
   return (
     <ScrollView>
-      <Appbar.Header style={styles.header}>
+      <Header style={styles.header} barStyle="dark-content">
         <Appbar.Action icon="close" onPress={() => navigation.goBack()} />
         <Appbar.Content />
         <Appbar.Action icon={MORE_ICON} onPress={() => {}} />
-      </Appbar.Header>
+      </Header>
       <Title style={styles.title}>{store.name}</Title>
       <Divider />
       <View style={styles.actionsBar}>

@@ -3,6 +3,7 @@ import { SafeAreaView, View } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Appbar, Searchbar } from 'react-native-paper';
 
+import Header from './components/Header';
 import { useStore } from './store/context';
 
 const SelectAddress = ({ navigation }) => {
@@ -15,10 +16,10 @@ const SelectAddress = ({ navigation }) => {
 
   return (
     <SafeAreaView>
-      <Appbar.Header>
+      <Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Adresse" />
-      </Appbar.Header>
+      </Header>
       <View>
         <GooglePlacesAutocomplete
           ref={addressInput}
