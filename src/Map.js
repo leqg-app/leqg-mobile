@@ -8,16 +8,22 @@ import {
 } from 'react-native';
 import {
   ActivityIndicator,
+  Button,
   Card,
+  Chip,
+  Dialog,
   Paragraph,
+  Portal,
   Searchbar,
 } from 'react-native-paper';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/core';
+import Slider from '@react-native-community/slider';
 
 import { useStore } from './store/context';
 import StoreDetails from './StoreDetails';
+import ProductFilter from './ProductFilter';
 
 MapboxGL.setAccessToken('');
 
@@ -43,6 +49,42 @@ function CalloutBar({ selectedBar, store = {} }) {
   );
 }
 
+function PriceFilter({ onClose, onPrice, initialPrice = 10 }) {
+  const [price, setPrice] = React.useState(initialPrice);
+
+  useEffect(() => {
+    setPrice(initialPrice);
+  }, [initialPrice]);
+
+  const onSubmit = () => {
+    onClose();
+    onPrice(price);
+  };
+
+  return (
+    <Portal>
+      <Dialog visible onDismiss={onClose}>
+        <Dialog.Title>Filtrer par prix: {price}€</Dialog.Title>
+        <Dialog.Content>
+          <Slider
+            minimumValue={1}
+            maximumValue={10}
+            step={1}
+            minimumTrackTintColor="#000000"
+            maximumTrackTintColor="#000000"
+            onValueChange={value => setPrice(value)}
+            value={price}
+          />
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={onClose}>Annuler</Button>
+          <Button onPress={onSubmit}>Valider</Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
+  );
+}
+
 const CENTER = [2.341924, 48.860395];
 
 const Map = ({ navigation }) => {
@@ -50,6 +92,9 @@ const Map = ({ navigation }) => {
   const [text, onChangeText] = React.useState('');
   const [coordinates, setCoordinates] = React.useState({});
   const [selectedBar, selectBar] = React.useState(false);
+  const [priceModal, setPriceModal] = React.useState(false);
+  const [priceFilter, setPriceFilter] = React.useState(undefined);
+  // const [beerFilter, setBeerFilyarnter] = React.useState(13);
 
   useEffect(() => {
     if (!state.loading && coordinates.northEast) {
@@ -83,9 +128,21 @@ const Map = ({ navigation }) => {
     setCoordinates({ northEast, southWest });
   };
 
+  const filters = [];
+  if (priceFilter) {
+    filters.push(['<=', 'price', priceFilter]);
+  }
+  // if (beerFilter) {
+  //   filters.push(['<=', 'price', priceFilter]);
+  // }
+
   return (
     <SafeAreaView style={styles.absolute}>
-      <StatusBar translucent={true} backgroundColor={'transparent'} />
+      <StatusBar
+        barStyle="dark-content"
+        translucent={true}
+        backgroundColor="transparent"
+      />
       <MapboxGL.MapView
         style={styles.absolute}
         localizeLabels={true}
@@ -96,14 +153,12 @@ const Map = ({ navigation }) => {
         <MapboxGL.Camera zoomLevel={11} centerCoordinate={CENTER} />
         <MapboxGL.UserLocation />
         <MapboxGL.ShapeSource
-          cluster
-          clusterRadius={11}
           id="earthquakes"
           shape={storesShape}
           onPress={e => selectBar(e.features[0].properties)}>
           <MapboxGL.CircleLayer
             id="singlePoint"
-            filter={['has', 'price']}
+            filter={filters && ['all', ...filters]}
             style={{
               circleColor: 'green',
               circleRadius: 10,
@@ -112,6 +167,7 @@ const Map = ({ navigation }) => {
           <MapboxGL.SymbolLayer
             id="singlePointCount"
             aboveLayerID="singlePoint"
+            filter={filters && ['all', ...filters]}
             style={{
               textField: ['to-string', ['get', 'price']],
               textSize: 9,
@@ -130,10 +186,34 @@ const Map = ({ navigation }) => {
         onChangeText={onChangeText}
         value={text}
       />
+      <View style={styles.filters}>
+        <Chip
+          style={styles.filter}
+          icon="currency-usd"
+          onPress={() => setPriceModal(true)}
+          onClose={priceFilter && (() => setPriceFilter(undefined))}
+          mode="outlined">
+          {priceFilter ? `Prix: ${priceFilter}€` : 'Prix'}
+        </Chip>
+        <Chip
+          style={styles.filter}
+          icon="beer-outline"
+          onPress={() => navigation.navigate('ProductFilter')}
+          mode="outlined">
+          Bières
+        </Chip>
+      </View>
       {selectedBar && (
         <CalloutBar
           selectedBar={selectedBar}
           store={state.storesDetails[selectedBar.id]}
+        />
+      )}
+      {priceModal && (
+        <PriceFilter
+          onClose={() => setPriceModal(false)}
+          onPrice={price => setPriceFilter(price)}
+          initialPrice={priceFilter}
         />
       )}
     </SafeAreaView>
@@ -151,11 +231,21 @@ const styles = StyleSheet.create({
   searchbar: {
     elevation: 3,
     color: 'white',
-    marginTop: 50,
+    marginTop: 40,
     marginHorizontal: 20,
     borderRadius: 30,
     height: 45,
     paddingLeft: 10,
+  },
+  filters: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 15,
+    marginLeft: 25,
+  },
+  filter: {
+    elevation: 2,
+    marginRight: 10,
   },
   circleMarker: {
     width: 80,
@@ -176,5 +266,6 @@ export default () => (
   <MapStack.Navigator screenOptions={{ headerShown: false }}>
     <MapStack.Screen name="MapSsz" component={Map} />
     <MapStack.Screen name="StoreDetails" component={StoreDetails} />
+    <MapStack.Screen name="ProductFilter" component={ProductFilter} />
   </MapStack.Navigator>
 );
