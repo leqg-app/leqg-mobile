@@ -7,6 +7,7 @@ import { useStore } from './store/context';
 import Map from './Map';
 import Auth from './Auth';
 import AddStore from './AddStore';
+import Contributions from './Contributions';
 
 const Tab = createBottomTabNavigator();
 
@@ -27,18 +28,16 @@ const Routes = () => {
             ),
           }}
         />
-        {!state.jwt && (
-          <Tab.Screen
-            name="Auth"
-            component={Auth}
-            options={{
-              title: 'Contribuer',
-              tabBarIcon: ({ color, size }) => (
-                <MaterialCommunityIcons name="plus" color={color} size={size} />
-              ),
-            }}
-          />
-        )}
+        <Tab.Screen
+          name="Contributions"
+          component={Contributions}
+          options={{
+            title: 'Contribuer',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="plus" color={color} size={size} />
+            ),
+          }}
+        />
         <Tab.Screen
           name="Add"
           component={AddStore}
@@ -54,8 +53,8 @@ const Routes = () => {
           }}
         />
         <Tab.Screen
-          name="Account"
-          component={AddStore}
+          name="Auth"
+          component={Auth}
           options={{
             title: 'Compte',
             tabBarIcon: ({ color, size }) => (
