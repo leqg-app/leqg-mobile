@@ -79,17 +79,13 @@ const StoreDetails = ({ navigation, route }) => {
   const [expandSchedules, setExpandSchedules] = React.useState(false);
 
   const openAddress = () => {
-    const { name, latitude, longitude } = store;
-    const scheme = Platform.select({
-      ios: 'maps:0,0?q=',
-      android: 'geo:0,0?q=',
-    });
-    const latLng = `${latitude},${longitude}`;
+    const { name, latitude, longitude, address } = store;
+    const encodedName = encodeURIComponent(name);
+    const encodedAddress = encodeURIComponent(address);
     const url = Platform.select({
-      ios: `${scheme}${name}@${latLng}`,
-      android: `${scheme}${latLng}(${name.replace(/ /g, '+')})`,
+      ios: `maps:0,0?q=${encodedName}@${latitude},${longitude}`,
+      android: `https://www.google.com/maps/search/${encodedName},+${encodedAddress}?hl=fr`,
     });
-
     Linking.openURL(url);
   };
 
