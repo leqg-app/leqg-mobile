@@ -1,6 +1,6 @@
 import { getProducts } from '../api/products';
 import { getStores, getStore, addStore } from '../api/stores';
-import { signIn, signUp } from '../api/users';
+import { signIn, signUp, updateProfile } from '../api/users';
 import { alreadyLoaded } from '../utils/smartLoadMap';
 
 export const actionCreators = (dispatch, state) => {
@@ -8,10 +8,13 @@ export const actionCreators = (dispatch, state) => {
     signUp: body => {
       dispatch({ type: 'AUTH' });
       return signUp(body)
-        .then(({ jwt, user }) => dispatch({ type: 'AUTH_SUCCESS', jwt, user }))
-        .catch(({ data }) =>
-          dispatch({ type: 'AUTH_FAIL', message: data[0].messages[0] }),
-        );
+        .then(({ jwt, user, data, error }) => {
+          if (error) {
+            return data[0].messages[0].id;
+          }
+          dispatch({ type: 'AUTH_SUCCESS', jwt, user });
+        })
+        .catch(({ message }) => message);
     },
     signIn: body => {
       dispatch({ type: 'AUTH' });
@@ -63,6 +66,33 @@ export const actionCreators = (dispatch, state) => {
 
     setStoreEdition: store => {
       dispatch({ type: 'SET_STORE_EDITION', store });
+    },
+
+    addFavorite: store => {
+      if (!state.user?.details?.id) {
+        return;
+      }
+      dispatch({ type: 'ADD_FAVORITE', store });
+      const { jwt, details } = state.user;
+      // Add store and get ids
+      const favorites = [...details.favorites, store].map(store => store.id);
+      updateProfile({ favorites }, jwt).catch(() =>
+        dispatch({ type: 'REMOVE_FAVORITE', store }),
+      );
+    },
+    removeFavorite: store => {
+      if (!state.user?.details?.id) {
+        return;
+      }
+      dispatch({ type: 'REMOVE_FAVORITE', store });
+      const { jwt, details } = state.user;
+      // Filter and get ids
+      const favorites = details.favorites
+        .filter(favorite => favorite.id !== store.id)
+        .map(store => store.id);
+      updateProfile({ favorites }, jwt).catch(() =>
+        dispatch({ type: 'ADD_FAVORITE', store }),
+      );
     },
   };
 };

@@ -4,22 +4,21 @@ import { NavigationContainer } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useStore } from './store/context';
-import Map from './Map';
-import Auth from './Auth';
+import Map from './containers/Map/Map';
 import Contributions from './Contributions';
 import Favorites from './Favorites';
+import Account from './containers/Account/Account';
 
 const Tab = createBottomTabNavigator();
 
 const Routes = () => {
-  const [state] = useStore();
   return (
     <NavigationContainer>
       <Tab.Navigator
-        initialRouteName="Map"
+        initialRouteName="MapTab"
         screenOptions={{ headerShown: false }}>
         <Tab.Screen
-          name="Map"
+          name="MapTab"
           component={Map}
           options={{
             title: 'Carte',
@@ -29,7 +28,7 @@ const Routes = () => {
           }}
         />
         <Tab.Screen
-          name="Contributions"
+          name="ContributionsTab"
           component={Contributions}
           options={{
             title: 'Contribuer',
@@ -39,7 +38,7 @@ const Routes = () => {
           }}
         />
         <Tab.Screen
-          name="Add"
+          name="FavoritesTab"
           component={Favorites}
           options={{
             title: 'Enregistrés',
@@ -53,8 +52,8 @@ const Routes = () => {
           }}
         />
         <Tab.Screen
-          name="Auth"
-          component={Auth}
+          name="AccountTab"
+          component={Account}
           options={{
             title: 'Compte',
             tabBarIcon: ({ color, size }) => (

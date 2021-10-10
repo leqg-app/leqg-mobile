@@ -5,8 +5,10 @@ import { actionCreators } from './actions';
 
 export const initialState = {
   loading: false,
-  jwt: undefined,
-  user: {},
+  user: {
+    jwt: undefined,
+    details: {},
+  },
   stores: [],
   storeEdition: {},
   storesDetails: {},

@@ -7,9 +7,9 @@ import {
   VirtualizedList,
 } from 'react-native';
 import { Appbar, TouchableRipple } from 'react-native-paper';
-import Header from './components/Header';
 
-import { useStore } from './store/context';
+import Header from '../../components/Header';
+import { useStore } from '../../store/context';
 
 const Row = ({ product, onSelect }) => (
   <TouchableRipple onPress={() => onSelect(product.id)}>

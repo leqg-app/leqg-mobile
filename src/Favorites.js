@@ -1,20 +1,47 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
-import { Appbar, Button, Paragraph } from 'react-native-paper';
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import { Appbar, Button, DataTable, Paragraph } from 'react-native-paper';
 
 import Header from './components/Header';
+import { useStore } from './store/context';
+
+const AuthRequired = ({ navigation }) => (
+  <>
+    <Paragraph>Veuillez vous connecter pour voir vos bars favoris</Paragraph>
+    <Button onPress={() => navigation.navigate('AccountTab')}>Connexion</Button>
+  </>
+);
 
 const Favorites = ({ navigation }) => {
+  const [{ user }] = useStore();
   return (
     <SafeAreaView style={styles.container}>
       <Header>
         <Appbar.Content title="Enregistrés" />
       </Header>
       <View style={styles.center}>
-        <Paragraph>
-          Veuillez vous connecter pour voir vos bars favoris
-        </Paragraph>
-        <Button onPress={() => navigation.navigate('Auth')}>Connexion</Button>
+        {user.jwt ? (
+          user.details.favorites.length ? (
+            <FlatList
+              data={user.details.favorites}
+              renderItem={favorite => (
+                <DataTable.Row>
+                  <DataTable.Cell>{favorite.id}</DataTable.Cell>
+                </DataTable.Row>
+              )}
+              keyExtractor={favorite => favorite.id}
+            />
+          ) : (
+            <>
+              <Paragraph>Vous n'avez pas encore de bar favoris.</Paragraph>
+              <Paragraph>
+                Explorez la carte pour en ajouter de nouveaux !
+              </Paragraph>
+            </>
+          )
+        ) : (
+          <AuthRequired navigation={navigation} />
+        )}
       </View>
     </SafeAreaView>
   );
