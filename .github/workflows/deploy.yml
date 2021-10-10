@@ -81,3 +81,4 @@ jobs:
           packageName: com.leqg
           releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
           track: beta
+          status: completed
