@@ -89,14 +89,20 @@ function PriceFilter({ onClose, onPrice, initialPrice = 10 }) {
 
 const CENTER = [2.341924, 48.860395];
 
-const Map = ({ navigation }) => {
+const Map = ({ navigation, route }) => {
   const [state, actions] = useStore();
   const [text, onChangeText] = React.useState('');
   const [coordinates, setCoordinates] = React.useState({});
   const [selectedBar, selectBar] = React.useState(false);
   const [priceModal, setPriceModal] = React.useState(false);
   const [priceFilter, setPriceFilter] = React.useState(undefined);
-  // const [beerFilter, setBeerFilyarnter] = React.useState(13);
+  const [beerFilter, setBeerFilter] = React.useState(13);
+
+  useEffect(() => {
+    if (beerFilter !== route.params?.productFilter) {
+      setBeerFilter(route.params?.productFilter);
+    }
+  }, [route.params?.productFilter]);
 
   useEffect(() => {
     if (!state.loading && coordinates.northEast) {
@@ -134,9 +140,9 @@ const Map = ({ navigation }) => {
   if (priceFilter) {
     filters.push(['<=', 'price', priceFilter]);
   }
-  // if (beerFilter) {
-  //   filters.push(['<=', 'price', priceFilter]);
-  // }
+  if (beerFilter) {
+    filters.push(['in', beerFilter, ['get', 'products']]);
+  }
 
   return (
     <SafeAreaView style={styles.absolute}>
@@ -163,7 +169,15 @@ const Map = ({ navigation }) => {
             filter={filters && ['all', ...filters]}
             style={{
               circleColor: 'green',
-              circleRadius: 10,
+              circleRadius: [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                10,
+                5,
+                13,
+                10,
+              ],
             }}
           />
           <MapboxGL.SymbolLayer
@@ -172,7 +186,7 @@ const Map = ({ navigation }) => {
             filter={filters && ['all', ...filters]}
             style={{
               textField: ['to-string', ['get', 'price']],
-              textSize: 9,
+              textSize: ['interpolate', ['linear'], ['zoom'], 10, 5, 13, 9],
               textMaxWidth: 50,
               textColor: '#FFF',
               textAnchor: 'center',
@@ -201,8 +215,11 @@ const Map = ({ navigation }) => {
           style={styles.filter}
           icon="beer-outline"
           onPress={() => navigation.navigate('ProductFilter')}
+          onClose={beerFilter && (() => setBeerFilter(undefined))}
           mode="outlined">
-          Bières
+          {beerFilter
+            ? `Bière: ${state.products.find(p => p.id === beerFilter)?.name}`
+            : 'Bière'}
         </Chip>
       </View>
       {selectedBar && (
@@ -266,7 +283,7 @@ const MapStack = createNativeStackNavigator();
 
 export default () => (
   <MapStack.Navigator screenOptions={{ headerShown: false }}>
-    <MapStack.Screen name="MapSsz" component={Map} />
+    <MapStack.Screen name="MapScreen" component={Map} />
     <MapStack.Screen name="StoreDetails" component={StoreDetails} />
     <MapStack.Screen name="ProductFilter" component={ProductFilter} />
   </MapStack.Navigator>
