@@ -14,7 +14,9 @@ const Contributions = ({ navigation }) => {
         <Paragraph>
           Veuillez vous connecter pour voir vos contributions
         </Paragraph>
-        <Button onPress={() => navigation.navigate('Auth')}>Connexion</Button>
+        <Button onPress={() => navigation.navigate('AccountTab')}>
+          Connexion
+        </Button>
       </View>
     </SafeAreaView>
   );

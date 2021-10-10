@@ -19,9 +19,9 @@ import {
   TouchableRipple,
 } from 'react-native-paper';
 
-import { useStore } from './store/context';
-import { daysFull } from './constants';
-import Header from './components/Header';
+import { useStore } from '../../store/context';
+import { daysFull } from '../../constants';
+import Header from '../../components/Header';
 
 const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 
@@ -46,7 +46,7 @@ function Schedules({ schedules }) {
 
 function Product({ product }) {
   const [state] = useStore();
-  const { volume, price, specialPrice, type, productName } = product;
+  const { volume, price, specialPrice, productName } = product;
   const productDetail = state.products[product.product];
   return (
     <Fragment>
@@ -73,7 +73,7 @@ function Product({ product }) {
 
 const StoreDetails = ({ navigation, route }) => {
   const { params } = route;
-  const [state] = useStore();
+  const [state, actions] = useStore();
   const store = state.storesDetails[params.store.id];
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
@@ -87,6 +87,25 @@ const StoreDetails = ({ navigation, route }) => {
       android: `https://www.google.com/maps/search/${encodedName},+${encodedAddress}?hl=fr`,
     });
     Linking.openURL(url);
+  };
+
+  const toggleFavorite = () => {
+    if (!state.user?.details?.id) {
+      return;
+    }
+    if (isFavorite()) {
+      actions.removeFavorite(store);
+    } else {
+      actions.addFavorite(store);
+    }
+  };
+
+  const isFavorite = () => {
+    if (!state.user?.details?.id) {
+      return;
+    }
+    const { favorites = [] } = state.user.details;
+    return favorites.some(favorite => favorite.id === store.id);
   };
 
   return (
@@ -104,23 +123,33 @@ const StoreDetails = ({ navigation, route }) => {
           centered
           onPress={() => openAddress()}
           rippleColor="rgba(0, 0, 0, .25)">
-          <View>
+          <Fragment>
             <Avatar.Icon style={styles.action} size={45} icon="google-maps" />
             <Caption>Itinéraire</Caption>
-          </View>
+          </Fragment>
         </TouchableRipple>
         <View>
           <Avatar.Icon style={styles.action} size={45} icon="share-variant" />
           <Caption>Partager</Caption>
         </View>
+        <TouchableRipple
+          borderless
+          centered
+          onPress={toggleFavorite}
+          rippleColor="rgba(0, 0, 0, .25)">
+          <View>
+            <Avatar.Icon
+              style={styles.action}
+              size={45}
+              icon={isFavorite() ? 'star' : 'star-outline'}
+            />
+            <Caption>Enregistrer</Caption>
+          </View>
+        </TouchableRipple>
         {/* <View>
           <Avatar.Icon style={styles.action} size={45} icon="phone" />
           <Caption>Appeler</Caption>
         </View> */}
-        <View>
-          <Avatar.Icon style={styles.action} size={45} icon="check-all" />
-          <Caption>Confirmer</Caption>
-        </View>
       </View>
       <Divider />
       <TouchableRipple

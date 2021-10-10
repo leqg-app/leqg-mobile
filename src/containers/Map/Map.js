@@ -21,7 +21,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/core';
 import Slider from '@react-native-community/slider';
 
-import { useStore } from './store/context';
+import { useStore } from '../../store/context';
 import StoreDetails from './StoreDetails';
 import ProductFilter from './ProductFilter';
 
