@@ -90,7 +90,7 @@ const StoreDetails = ({ navigation, route }) => {
   };
 
   const toggleFavorite = () => {
-    if (!state.user?.details?.id) {
+    if (!state.user?.id) {
       return;
     }
     if (isFavorite()) {
@@ -101,10 +101,10 @@ const StoreDetails = ({ navigation, route }) => {
   };
 
   const isFavorite = () => {
-    if (!state.user?.details?.id) {
+    if (!state.user?.id) {
       return;
     }
-    const { favorites = [] } = state.user.details;
+    const { favorites = [] } = state.user;
     return favorites.some(favorite => favorite.id === store.id);
   };
 

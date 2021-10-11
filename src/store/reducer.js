@@ -3,14 +3,11 @@ import { groupStores } from '../utils/smartLoadMap';
 export const reducer = (state, action) => {
   switch (action.type) {
     case 'AUTH': {
-      return { ...state, user: { loading: true, error: undefined } };
+      return { ...state, user: {} };
     }
     case 'AUTH_SUCCESS': {
       const { jwt, user } = action;
-      return { ...state, user: { jwt, details: user, loading: false } };
-    }
-    case 'AUTH_FAIL': {
-      return { ...state, user: { loading: false, error: action.message } };
+      return { ...state, user: { jwt, ...user } };
     }
 
     case 'GET_STORE': {
@@ -107,10 +104,7 @@ export const reducer = (state, action) => {
         ...state,
         user: {
           ...state.user,
-          details: {
-            ...state.user.details,
-            favorites: [...state.user.details.favorites, action.store],
-          },
+          favorites: [...state.user.favorites, action.store],
         },
       };
     }
@@ -119,12 +113,9 @@ export const reducer = (state, action) => {
         ...state,
         user: {
           ...state.user,
-          details: {
-            ...state.user.details,
-            favorites: state.user.details.favorites.filter(
-              favorite => favorite.id !== action.store.id,
-            ),
-          },
+          favorites: state.user.favorites.filter(
+            favorite => favorite.id !== action.store.id,
+          ),
         },
       };
     }

@@ -19,10 +19,13 @@ export const actionCreators = (dispatch, state) => {
     signIn: body => {
       dispatch({ type: 'AUTH' });
       return signIn(body)
-        .then(({ jwt, user }) => dispatch({ type: 'AUTH_SUCCESS', jwt, user }))
-        .catch(({ data }) =>
-          dispatch({ type: 'AUTH_FAIL', message: data[0].messages[0] }),
-        );
+        .then(({ jwt, user, data, error }) => {
+          if (error) {
+            return data[0].messages[0].id;
+          }
+          dispatch({ type: 'AUTH_SUCCESS', jwt, user });
+        })
+        .catch(({ message }) => message);
     },
 
     getStore: id => {
@@ -69,28 +72,28 @@ export const actionCreators = (dispatch, state) => {
     },
 
     addFavorite: store => {
-      if (!state.user?.details?.id) {
+      if (!state.user?.id) {
         return;
       }
       dispatch({ type: 'ADD_FAVORITE', store });
-      const { jwt, details } = state.user;
+      const { user } = state;
       // Add store and get ids
-      const favorites = [...details.favorites, store].map(store => store.id);
-      updateProfile({ favorites }, jwt).catch(() =>
+      const favorites = [...user.favorites, store].map(store => store.id);
+      updateProfile({ favorites }, user.jwt).catch(() =>
         dispatch({ type: 'REMOVE_FAVORITE', store }),
       );
     },
     removeFavorite: store => {
-      if (!state.user?.details?.id) {
+      if (!state.user?.id) {
         return;
       }
       dispatch({ type: 'REMOVE_FAVORITE', store });
-      const { jwt, details } = state.user;
+      const { user } = state;
       // Filter and get ids
-      const favorites = details.favorites
+      const favorites = user.favorites
         .filter(favorite => favorite.id !== store.id)
         .map(store => store.id);
-      updateProfile({ favorites }, jwt).catch(() =>
+      updateProfile({ favorites }, user.jwt).catch(() =>
         dispatch({ type: 'ADD_FAVORITE', store }),
       );
     },
