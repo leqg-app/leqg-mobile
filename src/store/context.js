@@ -7,7 +7,6 @@ export const initialState = {
   loading: false,
   user: {
     jwt: undefined,
-    details: {},
   },
   stores: [],
   storeEdition: {},

@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { useStore } from './store/context';
 import Map from './containers/Map/Map';
 import Contributions from './Contributions';
 import Favorites from './Favorites';
