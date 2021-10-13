@@ -18,11 +18,11 @@ import {
   TextInput,
 } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
-import { useStore } from './store/context';
 
-import formatHour from './utils/formatHour';
-import { daysFull, daysShort } from './constants';
-import Header from './components/Header';
+import { useStore } from '../../store/context';
+import formatHour from '../../utils/formatHour';
+import { daysFull, daysShort } from '../../constants';
+import Header from '../../components/Header';
 
 const newTime = () => ({
   start: { hours: 17, minutes: 0 },
@@ -189,7 +189,7 @@ const EditSchedulesModal = props => {
   );
 };
 
-const Schedules = ({ navigation }) => {
+const EditSchedules = ({ navigation }) => {
   const [state, actions] = useStore();
   const [schedules, setSchedules] = React.useState(
     state.storeEdition.schedules ||
@@ -239,7 +239,7 @@ const Schedules = ({ navigation }) => {
           uppercase={false}
           style={styles.buttonEditAll}
           onPress={() => setEditingDay(0)}>
-          Modifier les horaires
+          Tout modifier
         </Button>
       </View>
       {editingDay !== false && (
@@ -303,4 +303,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Schedules;
+export default EditSchedules;

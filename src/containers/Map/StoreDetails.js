@@ -1,14 +1,7 @@
 import React, { Fragment } from 'react';
+import { Platform, StyleSheet, Text, View, Linking } from 'react-native';
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  ScrollView,
-  View,
-  Linking,
-} from 'react-native';
-import {
-  Appbar,
+  ActivityIndicator,
   Avatar,
   Button,
   Caption,
@@ -21,7 +14,6 @@ import {
 
 import { useStore } from '../../store/context';
 import { daysFull } from '../../constants';
-import Header from '../../components/Header';
 
 const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 
@@ -71,12 +63,15 @@ function Product({ product }) {
   );
 }
 
-const StoreDetails = ({ navigation, route }) => {
-  const { params } = route;
+const StoreDetails = props => {
   const [state, actions] = useStore();
-  const store = state.storesDetails[params.store.id];
+  const store = state.storesDetails[props.store.id];
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
+
+  if (!store) {
+    return <ActivityIndicator />;
+  }
 
   const openAddress = () => {
     const { name, latitude, longitude, address } = store;
@@ -109,12 +104,7 @@ const StoreDetails = ({ navigation, route }) => {
   };
 
   return (
-    <ScrollView>
-      <Header style={styles.header} barStyle="dark-content">
-        <Appbar.Action icon="close" onPress={() => navigation.goBack()} />
-        <Appbar.Content />
-        <Appbar.Action icon={MORE_ICON} onPress={() => {}} />
-      </Header>
+    <View style={{ backgroundColor: 'white' }}>
       <Title style={styles.title}>{store.name}</Title>
       <Divider />
       <View style={styles.actionsBar}>
@@ -263,7 +253,7 @@ const StoreDetails = ({ navigation, route }) => {
           onPress={() => console.log('Pressed')}
         />
       </View> */}
-    </ScrollView>
+    </View>
   );
 };
 
@@ -273,6 +263,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 15,
     marginBottom: 10,
+    marginTop: 40,
   },
   actionsBar: {
     marginHorizontal: 30,

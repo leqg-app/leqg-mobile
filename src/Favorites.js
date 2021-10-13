@@ -1,12 +1,6 @@
 import React from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-import {
-  Appbar,
-  Button,
-  Card,
-  IconButton,
-  Paragraph,
-} from 'react-native-paper';
+import { Appbar, Button, List, Paragraph } from 'react-native-paper';
 
 import Header from './components/Header';
 import { useStore } from './store/context';
@@ -22,23 +16,18 @@ const Row =
   actions =>
   ({ item }) =>
     (
-      <Card style={styles.row}>
-        <View style={styles.flex}>
-          <View style={styles.info}>
-            <Card.Title title={item.name} />
-            <Card.Content>
-              <Paragraph>{item.address}</Paragraph>
-            </Card.Content>
-          </View>
-          <View style={styles.star}>
-            <IconButton
-              icon="star"
-              color="green"
-              onPress={() => actions.removeFavorite(item)}
-            />
-          </View>
-        </View>
-      </Card>
+      <List.Item
+        title={item.name}
+        description={item.address}
+        right={props => (
+          <List.Icon
+            {...props}
+            icon="star"
+            color="green"
+            onPress={() => actions.removeFavorite(item)}
+          />
+        )}
+      />
     );
 
 const Favorites = ({ navigation }) => {
