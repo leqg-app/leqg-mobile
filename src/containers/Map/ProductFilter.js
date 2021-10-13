@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  VirtualizedList,
-} from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Appbar, TouchableRipple } from 'react-native-paper';
 
 import Header from '../../components/Header';
@@ -33,16 +27,10 @@ const ProductFilter = ({ navigation }) => {
         <Appbar.Content title="Filtrer par bière" />
       </Header>
       <View style={styles.container}>
-        <VirtualizedList
+        <FlatList
           data={state.products}
-          initialNumToRender={10}
           renderItem={({ item }) => <Row product={item} onSelect={onSelect} />}
           keyExtractor={product => product.id}
-          getItemCount={products => products.length}
-          getItem={(products, index) => ({
-            name: products[index].name,
-            id: products[index].id,
-          })}
         />
       </View>
     </SafeAreaView>

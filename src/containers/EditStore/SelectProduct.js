@@ -1,0 +1,88 @@
+import React, { useState } from 'react';
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Appbar, Searchbar, TouchableRipple } from 'react-native-paper';
+
+import Header from '../../components/Header';
+import { useStore } from '../../store/context';
+
+const ProductRow = ({ product, onSelect }) => (
+  <TouchableRipple onPress={() => onSelect(product.id)}>
+    <View style={styles.productRow}>
+      <Text>{product.name}</Text>
+    </View>
+  </TouchableRipple>
+);
+const ITEM_HEIGHT = 59.64;
+
+const SelectProduct = ({ navigation }) => {
+  const [state] = useStore();
+  const [search, setSearch] = useState('');
+
+  const onSelect = productId => {
+    if (productId) {
+      navigation.navigate('EditProduct', { productId });
+    } else {
+      navigation.navigate('EditProduct', { productName: search });
+    }
+  };
+
+  const products = search
+    ? state.products.filter(product =>
+        product.name.toLowerCase().includes(search.toLowerCase()),
+      )
+    : state.products;
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Header>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content title="Ajouter une bière" />
+      </Header>
+      <View style={styles.container}>
+        <Searchbar
+          placeholder="Nommer ou rechercher une bière"
+          style={styles.searchBar}
+          onChangeText={setSearch}
+        />
+        {search ? (
+          <TouchableRipple onPress={() => onSelect()}>
+            <View style={styles.productRow}>
+              <Text style={styles.customName}>Ajouter "{search}"</Text>
+            </View>
+          </TouchableRipple>
+        ) : null}
+        <FlatList
+          data={products}
+          renderItem={({ item }) => (
+            <ProductRow product={item} onSelect={onSelect} />
+          )}
+          keyExtractor={product => product.id}
+          getItemLayout={(_, index) => ({
+            length: ITEM_HEIGHT,
+            offset: ITEM_HEIGHT * index,
+            index,
+          })}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  searchBar: {
+    borderRadius: 0,
+  },
+  productRow: {
+    padding: 20,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(0,0,0,0.12)',
+  },
+  customName: {
+    fontWeight: 'bold',
+  },
+});
+
+export default SelectProduct;

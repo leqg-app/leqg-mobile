@@ -30,9 +30,9 @@ const Auth = ({ navigation }) => {
     loading: false,
   });
 
-  const [username, onChangeUsername] = React.useState('nicolasdc');
-  const [email, onChangeEmail] = React.useState('nico2che@gmail.com');
-  const [password, onChangePassword] = React.useState('azerty');
+  const [username, onChangeUsername] = React.useState('');
+  const [email, onChangeEmail] = React.useState('');
+  const [password, onChangePassword] = React.useState('');
 
   const signUp = () =>
     actions.signUp({

@@ -4,9 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Map from './containers/Map/Map';
-import Contributions from './Contributions';
 import Favorites from './Favorites';
 import Account from './containers/Account/Account';
+import EditStore from './containers/EditStore/EditStore';
 
 const Tab = createBottomTabNavigator();
 
@@ -27,8 +27,8 @@ const Routes = () => {
           }}
         />
         <Tab.Screen
-          name="ContributionsTab"
-          component={Contributions}
+          name="EditStoreTab"
+          component={EditStore}
           options={{
             title: 'Contribuer',
             tabBarIcon: ({ color, size }) => (

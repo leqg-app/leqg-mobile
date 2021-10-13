@@ -1,25 +1,10 @@
-import React, { useEffect } from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  View,
-  StatusBar,
-  Pressable,
-} from 'react-native';
-import {
-  ActivityIndicator,
-  Button,
-  Card,
-  Chip,
-  Dialog,
-  Paragraph,
-  Portal,
-  Searchbar,
-} from 'react-native-paper';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, SafeAreaView, View, StatusBar } from 'react-native';
+import { Button, Chip, Dialog, Portal, Searchbar } from 'react-native-paper';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/core';
 import Slider from '@react-native-community/slider';
+import BottomSheet from 'reanimated-bottom-sheet';
 
 import { useStore } from '../../store/context';
 import StoreDetails from './StoreDetails';
@@ -28,28 +13,6 @@ import ProductFilter from './ProductFilter';
 MapboxGL.setAccessToken(
   'pk.eyJ1IjoibmljbzJjaGUiLCJhIjoiY2lzYm5zcHAzMDAxNDJvbWtwb3dyY2ZuYiJ9.eSWQhgnzx-RQWqSx5ltXcg',
 );
-
-function CalloutBar({ selectedBar, store = {} }) {
-  const navigation = useNavigation();
-  const { name } = selectedBar;
-  const { address } = store;
-  return (
-    <View style={styles.calloutWrapper}>
-      <Pressable onPress={() => navigation.navigate('StoreDetails', { store })}>
-        <Card>
-          <Card.Title title={name} />
-          <Card.Content>
-            {address ? (
-              <Paragraph>{address}</Paragraph>
-            ) : (
-              <ActivityIndicator animating={true} />
-            )}
-          </Card.Content>
-        </Card>
-      </Pressable>
-    </View>
-  );
-}
 
 function PriceFilter({ onClose, onPrice, initialPrice = 10 }) {
   const [price, setPrice] = React.useState(initialPrice);
@@ -131,6 +94,9 @@ const Map = ({ navigation, route }) => {
     })),
   };
 
+  // hooks
+  const sheetRef = useRef(null);
+
   const regionChanged = ({ properties }) => {
     const [northEast, southWest] = properties.visibleBounds;
     setCoordinates({ northEast, southWest });
@@ -145,7 +111,7 @@ const Map = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView style={styles.absolute}>
+    <SafeAreaView style={styles.map}>
       <StatusBar
         barStyle="dark-content"
         translucent={true}
@@ -157,13 +123,16 @@ const Map = ({ navigation, route }) => {
         rotateEnabled={false}
         pitchEnabled={false}
         onRegionDidChange={regionChanged}
-        onPress={() => selectBar(false)}>
+        onPress={() => sheetRef.current?.snapTo(0)}>
         <MapboxGL.Camera zoomLevel={11} centerCoordinate={CENTER} />
         <MapboxGL.UserLocation />
         <MapboxGL.ShapeSource
           id="earthquakes"
           shape={storesShape}
-          onPress={e => selectBar(e.features[0].properties)}>
+          onPress={e => {
+            sheetRef.current?.snapTo(1);
+            selectBar(e.features[0].properties);
+          }}>
           <MapboxGL.CircleLayer
             id="singlePoint"
             filter={filters && ['all', ...filters]}
@@ -222,12 +191,6 @@ const Map = ({ navigation, route }) => {
             : 'Bière'}
         </Chip>
       </View>
-      {selectedBar && (
-        <CalloutBar
-          selectedBar={selectedBar}
-          store={state.storesDetails[selectedBar.id]}
-        />
-      )}
       {priceModal && (
         <PriceFilter
           onClose={() => setPriceModal(false)}
@@ -235,6 +198,14 @@ const Map = ({ navigation, route }) => {
           initialPrice={priceFilter}
         />
       )}
+      <BottomSheet
+        ref={sheetRef}
+        snapPoints={['0%', '15%', '100%']}
+        borderRadius={10}
+        renderContent={() =>
+          selectedBar ? <StoreDetails store={selectedBar} /> : false
+        }
+      />
     </SafeAreaView>
   );
 };
@@ -248,7 +219,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchbar: {
-    elevation: 3,
+    zIndex: 1,
+    elevation: 0,
     color: 'white',
     marginTop: 40,
     marginHorizontal: 20,
@@ -257,32 +229,33 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   filters: {
+    zIndex: 1,
     display: 'flex',
     flexDirection: 'row',
     marginTop: 15,
     marginLeft: 25,
   },
   filter: {
-    elevation: 2,
+    zIndex: 1,
     marginRight: 10,
   },
-  circleMarker: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-    backgroundColor: '#00f',
+  contentContainer: {
+    zIndex: 99,
+    flex: 1,
+    elevation: 3,
+    alignItems: 'center',
   },
   calloutWrapper: {
-    position: 'absolute',
-    width: '100%',
-    bottom: 0,
+    backgroundColor: 'white',
+    height: '100%',
   },
 });
 
 const MapStack = createNativeStackNavigator();
 
 export default () => (
-  <MapStack.Navigator screenOptions={{ headerShown: false }}>
+  <MapStack.Navigator
+    screenOptions={{ headerShown: false, safeAreaInsets: { top: 0 } }}>
     <MapStack.Screen name="MapScreen" component={Map} />
     <MapStack.Screen name="StoreDetails" component={StoreDetails} />
     <MapStack.Screen name="ProductFilter" component={ProductFilter} />

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -20,14 +20,13 @@ import {
   Title,
 } from 'react-native-paper';
 
-import { useStore } from './store/context';
-import Schedules from './Schedules';
-import Products from './Products';
-import SelectAddress from './SelectAddress';
+import { useStore } from '../../store/context';
+import Header from '../../components/Header';
+import EditSchedules from './EditSchedules';
+import EditAddress from './EditAddress';
 import SelectProduct from './SelectProduct';
-import Header from './components/Header';
+import EditProduct from './EditProduct';
 
-const AuthStack = createNativeStackNavigator();
 const daysShort = ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'];
 
 const Product = ({ product, onPress }) => {
@@ -57,7 +56,7 @@ const Product = ({ product, onPress }) => {
   );
 };
 
-const AddStore = ({ route, navigation }) => {
+const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
 
   console.log(state.storeEdition);
@@ -122,7 +121,7 @@ const AddStore = ({ route, navigation }) => {
         <Button
           mode="contained"
           uppercase={false}
-          onPress={() => navigation.navigate('SelectAddress')}
+          onPress={() => navigation.navigate('EditAddress')}
           style={{ marginTop: 20, zIndex: 0, position: 'relative' }}>
           {validAddress ? 'Modifier' : 'Préciser'} l'adresse
         </Button>
@@ -161,7 +160,7 @@ const AddStore = ({ route, navigation }) => {
         <Button
           mode="contained"
           uppercase={false}
-          onPress={() => navigation.navigate('Schedules')}
+          onPress={() => navigation.navigate('EditSchedules')}
           style={{ marginTop: 20 }}>
           Modifier les horaires
         </Button>
@@ -202,12 +201,14 @@ const styles = StyleSheet.create({
   },
 });
 
+const AddStack = createNativeStackNavigator();
+
 export default () => (
-  <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-    <AuthStack.Screen name="AddStore" component={AddStore} />
-    <AuthStack.Screen name="SelectAddress" component={SelectAddress} />
-    <AuthStack.Screen name="Schedules" component={Schedules} />
-    <AuthStack.Screen name="SelectProduct" component={SelectProduct} />
-    <AuthStack.Screen name="Products" component={Products} />
-  </AuthStack.Navigator>
+  <AddStack.Navigator screenOptions={{ headerShown: false }}>
+    <AddStack.Screen name="EditStore" component={EditStore} />
+    <AddStack.Screen name="EditAddress" component={EditAddress} />
+    <AddStack.Screen name="EditSchedules" component={EditSchedules} />
+    <AddStack.Screen name="SelectProduct" component={SelectProduct} />
+    <AddStack.Screen name="EditProduct" component={EditProduct} />
+  </AddStack.Navigator>
 );
