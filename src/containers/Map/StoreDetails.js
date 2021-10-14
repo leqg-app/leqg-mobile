@@ -15,8 +15,6 @@ import {
 import { useStore } from '../../store/context';
 import { daysFull } from '../../constants';
 
-const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
-
 function Schedules({ schedules }) {
   const days = schedules.reduce(
     (days, schedule) => ((days[schedule.dayOfWeek] = schedule), days),
@@ -70,7 +68,12 @@ const StoreDetails = props => {
   const [expandSchedules, setExpandSchedules] = React.useState(false);
 
   if (!store) {
-    return <ActivityIndicator />;
+    return (
+      <View style={{ backgroundColor: 'white', height: 135 }}>
+        <Title style={styles.title}>{props.store.name}</Title>
+        <ActivityIndicator style={styles.loading} />
+      </View>
+    );
   }
 
   const openAddress = () => {
@@ -104,8 +107,21 @@ const StoreDetails = props => {
   };
 
   return (
-    <View style={{ backgroundColor: 'white' }}>
+    <View style={{ backgroundColor: 'white', minHeight: '100%' }}>
       <Title style={styles.title}>{store.name}</Title>
+      <TouchableRipple
+        onPress={() => openAddress()}
+        rippleColor="rgba(0, 0, 0, .25)">
+        <View style={styles.infoRow}>
+          <Avatar.Icon
+            style={styles.infoIcon}
+            size={40}
+            icon="map-marker"
+            color="green"
+          />
+          <Text style={styles.infoText}>{store.address}</Text>
+        </View>
+      </TouchableRipple>
       <Divider />
       <View style={styles.actionsBar}>
         <TouchableRipple
@@ -141,20 +157,6 @@ const StoreDetails = props => {
           <Caption>Appeler</Caption>
         </View> */}
       </View>
-      <Divider />
-      <TouchableRipple
-        onPress={() => openAddress()}
-        rippleColor="rgba(0, 0, 0, .25)">
-        <View style={styles.infoRow}>
-          <Avatar.Icon
-            style={styles.infoIcon}
-            size={40}
-            icon="map-marker"
-            color="green"
-          />
-          <Text style={styles.infoText}>{store.address}</Text>
-        </View>
-      </TouchableRipple>
       <Divider />
       <TouchableRipple
         onPress={() => setExpandSchedules(!expandSchedules)}
@@ -263,11 +265,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 15,
     marginBottom: 10,
-    marginTop: 40,
+    marginTop: 20,
+  },
+  loading: {
+    marginTop: 10,
   },
   actionsBar: {
     marginHorizontal: 30,
-    marginVertical: 10,
+    marginTop: 20,
+    marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { Dimensions, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -22,6 +22,11 @@ const Map = () => {
       actions.getStore(selectedStore.id);
     }
   }, [selectedStore]);
+
+  const sheetSize = useMemo(
+    () => (135 / Dimensions.get('window').height) * 100,
+    [],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,7 +52,7 @@ const Map = () => {
       <Filters onChange={filters => setFilters(filters)} />
       <BottomSheet
         ref={sheetRef}
-        snapPoints={['0%', '15%', '100%']}
+        snapPoints={['0%', `${sheetSize}%`, '100%']}
         borderRadius={10}
         renderContent={() =>
           selectedStore ? <StoreDetails store={selectedStore} /> : false
