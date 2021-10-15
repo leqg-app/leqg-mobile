@@ -58,6 +58,7 @@ const Product = ({ product, onPress }) => {
 
 const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
+  const [error, setError] = React.useState(false);
 
   const {
     name = '',
@@ -67,8 +68,6 @@ const EditStore = ({ route, navigation }) => {
     products = [],
     schedules = [],
   } = state.storeEdition;
-
-  const [error, setError] = React.useState(false);
 
   const validAddress = address && longitude && latitude;
   const validForm = name && validAddress;
@@ -86,6 +85,24 @@ const EditStore = ({ route, navigation }) => {
       index: 0,
       routes: [{ name: 'Auth' }],
     });
+
+  if (!state.user.jwt) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Header>
+          <Appbar.Content title="Ajouter un bar" />
+        </Header>
+        <View style={styles.center}>
+          <View>
+            <Paragraph>Veuillez vous connecter pour contribuer</Paragraph>
+            <Button onPress={() => navigation.navigate('AccountTab')}>
+              Connexion
+            </Button>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView>
@@ -180,6 +197,15 @@ const EditStore = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  center: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   box: {
     paddingHorizontal: 20,
   },
