@@ -1,32 +1,18 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { Dimensions, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BottomSheet from 'reanimated-bottom-sheet';
 
-import { useStore } from '../../store/context';
-import StoreDetails from './StoreDetails';
 import ProductFilter from './ProductFilter';
 import Filters from './Filters';
 import Mapbox from './Mapbox';
+import StoreScreen from './StoreScreen';
 
 const Map = () => {
-  const [, actions] = useStore();
   const [text, onChangeText] = useState('');
   const [selectedStore, selectStore] = useState(false);
   const [filters, setFilters] = useState([]);
   const sheetRef = useRef(null);
-
-  useEffect(() => {
-    if (selectedStore) {
-      actions.getStore(selectedStore.id);
-    }
-  }, [selectedStore]);
-
-  const sheetSize = useMemo(
-    () => (135 / Dimensions.get('window').height) * 100,
-    [],
-  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,7 +24,6 @@ const Map = () => {
       <Mapbox
         filters={filters}
         onPress={store => {
-          console.log({ store });
           selectStore(store);
           sheetRef.current.snapTo(store ? 1 : 0);
         }}
@@ -50,14 +35,7 @@ const Map = () => {
         value={text}
       />
       <Filters onChange={filters => setFilters(filters)} />
-      <BottomSheet
-        ref={sheetRef}
-        snapPoints={['0%', `${sheetSize}%`, '100%']}
-        borderRadius={10}
-        renderContent={() =>
-          selectedStore ? <StoreDetails store={selectedStore} /> : false
-        }
-      />
+      <StoreScreen store={selectedStore} sheetRef={sheetRef} />
     </SafeAreaView>
   );
 };
@@ -84,7 +62,6 @@ export default () => (
   <MapStack.Navigator
     screenOptions={{ headerShown: false, safeAreaInsets: { top: 0 } }}>
     <MapStack.Screen name="MapScreen" component={Map} />
-    <MapStack.Screen name="StoreDetails" component={StoreDetails} />
     <MapStack.Screen name="ProductFilter" component={ProductFilter} />
   </MapStack.Navigator>
 );
