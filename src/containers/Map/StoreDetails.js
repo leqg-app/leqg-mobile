@@ -1,14 +1,12 @@
 import React, { Fragment } from 'react';
 import { Platform, StyleSheet, Text, View, Linking } from 'react-native';
 import {
-  ActivityIndicator,
   Avatar,
   Button,
   Caption,
   DataTable,
   Divider,
   Subheading,
-  Title,
   TouchableRipple,
 } from 'react-native-paper';
 
@@ -61,20 +59,10 @@ function Product({ product }) {
   );
 }
 
-const StoreDetails = props => {
+const StoreDetails = ({ store }) => {
   const [state, actions] = useStore();
-  const store = state.storesDetails[props.store.id];
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
-
-  if (!store) {
-    return (
-      <View style={{ backgroundColor: 'white', height: 135 }}>
-        <Title style={styles.title}>{props.store.name}</Title>
-        <ActivityIndicator style={styles.loading} />
-      </View>
-    );
-  }
 
   const openAddress = () => {
     const { name, latitude, longitude, address } = store;
@@ -107,22 +95,7 @@ const StoreDetails = props => {
   };
 
   return (
-    <View style={{ backgroundColor: 'white', minHeight: '100%' }}>
-      <Title style={styles.title}>{store.name}</Title>
-      <TouchableRipple
-        onPress={() => openAddress()}
-        rippleColor="rgba(0, 0, 0, .25)">
-        <View style={styles.infoRow}>
-          <Avatar.Icon
-            style={styles.infoIcon}
-            size={40}
-            icon="map-marker"
-            color="green"
-          />
-          <Text style={styles.infoText}>{store.address}</Text>
-        </View>
-      </TouchableRipple>
-      <Divider />
+    <View>
       <View style={styles.actionsBar}>
         <TouchableRipple
           borderless
@@ -157,6 +130,20 @@ const StoreDetails = props => {
           <Caption>Appeler</Caption>
         </View> */}
       </View>
+      <Divider />
+      <TouchableRipple
+        onPress={() => openAddress()}
+        rippleColor="rgba(0, 0, 0, .25)">
+        <View style={styles.infoRow}>
+          <Avatar.Icon
+            style={styles.infoIcon}
+            size={40}
+            icon="map-marker"
+            color="green"
+          />
+          <Text style={styles.infoText}>{store.address}</Text>
+        </View>
+      </TouchableRipple>
       <Divider />
       <TouchableRipple
         onPress={() => setExpandSchedules(!expandSchedules)}
@@ -260,16 +247,6 @@ const StoreDetails = props => {
 };
 
 const styles = StyleSheet.create({
-  header: { backgroundColor: 'transparent', elevation: 0 },
-  title: {
-    fontWeight: 'bold',
-    margin: 15,
-    marginBottom: 10,
-    marginTop: 20,
-  },
-  loading: {
-    marginTop: 10,
-  },
   actionsBar: {
     marginHorizontal: 30,
     marginTop: 20,
