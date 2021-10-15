@@ -26,7 +26,7 @@ const StoreScreen = props => {
     if (props.store?.id) {
       actions.getStore(props.store?.id);
     }
-  }, [props.store?.id]);
+  }, [props.store?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sheetSize = useMemo(
     () => (120 / Dimensions.get('window').height) * 100,

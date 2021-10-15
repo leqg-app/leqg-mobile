@@ -10,10 +10,7 @@ const EditProducts = ({ navigation, route }) => {
   const [beer, setBeer] = useState({});
   const [type, setType] = React.useState('draft');
 
-  console.log(beer);
-
   useEffect(() => {
-    console.log(route.params);
     if (!route.params) {
       // WTF
       return;
@@ -26,7 +23,7 @@ const EditProducts = ({ navigation, route }) => {
     setBeer({
       name: productName,
     });
-  }, [route.params]);
+  }, [route.params]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <SafeAreaView>

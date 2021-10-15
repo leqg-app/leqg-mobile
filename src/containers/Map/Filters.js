@@ -23,13 +23,13 @@ const Filters = ({ onChange }) => {
       filters.push(['in', beerFilter, ['get', 'products']]);
     }
     onChange(filters);
-  }, [priceFilter, beerFilter]);
+  }, [priceFilter, beerFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (beerFilter !== route.params?.productFilter) {
       setBeerFilter(route.params?.productFilter);
     }
-  }, [route.params?.productFilter]);
+  }, [route.params?.productFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

@@ -21,7 +21,7 @@ const Mapbox = ({ filters, onPress }) => {
         actions.getProducts();
       }
     }
-  }, [coordinates]);
+  }, [coordinates]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const storesShape = useMemo(
     () => ({
@@ -60,28 +60,33 @@ const Mapbox = ({ filters, onPress }) => {
         <MapboxGL.CircleLayer
           id="singlePoint"
           filter={filters && ['all', ...filters]}
-          style={{
-            circleColor: 'green',
-            circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 5, 13, 10],
-          }}
+          style={mapStyle.pointCircle}
         />
         <MapboxGL.SymbolLayer
           id="singlePointCount"
           aboveLayerID="singlePoint"
           filter={filters && ['all', ...filters]}
-          style={{
-            textField: ['to-string', ['get', 'price']],
-            textSize: ['interpolate', ['linear'], ['zoom'], 10, 5, 13, 9],
-            textMaxWidth: 50,
-            textColor: '#FFF',
-            textAnchor: 'center',
-            textTranslate: [0, 0],
-            textAllowOverlap: true,
-          }}
+          style={mapStyle.priceText}
         />
       </MapboxGL.ShapeSource>
     </MapboxGL.MapView>
   );
+};
+
+const mapStyle = {
+  pointCircle: {
+    circleColor: 'green',
+    circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 5, 13, 10],
+  },
+  priceText: {
+    textField: ['to-string', ['get', 'price']],
+    textSize: ['interpolate', ['linear'], ['zoom'], 10, 5, 13, 9],
+    textMaxWidth: 50,
+    textColor: '#FFF',
+    textAnchor: 'center',
+    textTranslate: [0, 0],
+    textAllowOverlap: true,
+  },
 };
 
 const styles = StyleSheet.create({

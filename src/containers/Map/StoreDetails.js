@@ -198,7 +198,7 @@ const StoreDetails = ({ store }) => {
       <Divider />
       <Subheading style={styles.subtitle}>Bières</Subheading>
       <DataTable>
-        <DataTable.Header></DataTable.Header>
+        <DataTable.Header />
         {store.products.map(product => (
           <Product key={product.id} product={product} />
         ))}

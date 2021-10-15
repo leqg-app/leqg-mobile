@@ -73,18 +73,18 @@ const Auth = ({ navigation }) => {
           {mode === 'login' ? 'Pas encore inscrit ?' : 'Déjà inscrit ?'}
         </Paragraph>
         <Button
-          style={{ marginTop: 15 }}
+          style={styles.space}
           mode="contained"
           onPress={() => toggleMode()}>
           {mode === 'login' ? 'Inscription' : 'Connexion'}
         </Button>
-        <Divider style={{ marginVertical: 15 }} />
+        <Divider style={styles.divider} />
         <View>
           <Title>{mode === 'login' ? 'Connexion' : 'Inscription'}</Title>
           {mode === 'login' ? (
             <>
               <TextInput
-                style={{ marginTop: 15 }}
+                style={styles.space}
                 label="Pseudo"
                 mode="outlined"
                 textContentType="nickname"
@@ -96,7 +96,7 @@ const Auth = ({ navigation }) => {
               />
               <TextInput
                 ref={passwordInput}
-                style={{ marginTop: 15 }}
+                style={styles.space}
                 label="Mot de passe"
                 mode="outlined"
                 textContentType="password"
@@ -112,7 +112,7 @@ const Auth = ({ navigation }) => {
                 Inscrivez-vous et profitez de tous les avantages des membres
               </Paragraph>
               <TextInput
-                style={{ marginTop: 15 }}
+                style={styles.space}
                 label="Pseudo"
                 mode="outlined"
                 textContentType="nickname"
@@ -124,7 +124,7 @@ const Auth = ({ navigation }) => {
               />
               <TextInput
                 ref={emailInput}
-                style={{ marginTop: 15 }}
+                style={styles.space}
                 label="E-mail"
                 mode="outlined"
                 returnKeyType="next"
@@ -139,7 +139,7 @@ const Auth = ({ navigation }) => {
               />
               <TextInput
                 ref={passwordInput}
-                style={{ marginTop: 15 }}
+                style={styles.space}
                 label="Mot de passe"
                 mode="outlined"
                 textContentType="password"
@@ -157,7 +157,7 @@ const Auth = ({ navigation }) => {
             </HelperText>
           )}
           <Button
-            style={{ marginTop: 15 }}
+            style={styles.space}
             mode="contained"
             onPress={submit}
             loading={state.loading}
@@ -173,6 +173,12 @@ const Auth = ({ navigation }) => {
 const styles = StyleSheet.create({
   box: {
     padding: 20,
+  },
+  divider: {
+    marginVertical: 15,
+  },
+  space: {
+    marginTop: 15,
   },
 });
 
