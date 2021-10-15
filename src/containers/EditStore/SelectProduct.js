@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Appbar, Searchbar, TouchableRipple } from 'react-native-paper';
 
@@ -14,6 +14,10 @@ const ProductRow = ({ product, onSelect }) => (
 );
 const ITEM_HEIGHT = 59.64;
 
+function sortByName(a, b) {
+  return a.name > b.name ? 1 : -1;
+}
+
 const SelectProduct = ({ navigation }) => {
   const [state] = useStore();
   const [search, setSearch] = useState('');
@@ -26,11 +30,17 @@ const SelectProduct = ({ navigation }) => {
     }
   };
 
-  const products = search
-    ? state.products.filter(product =>
-        product.name.toLowerCase().includes(search.toLowerCase()),
-      )
-    : state.products;
+  const products = useMemo(
+    () =>
+      search
+        ? state.products
+            .filter(product =>
+              product.name.toLowerCase().includes(search.toLowerCase()),
+            )
+            .sort(sortByName)
+        : Array.from(state.products).sort(sortByName),
+    [state.products],
+  );
 
   return (
     <SafeAreaView style={styles.container}>

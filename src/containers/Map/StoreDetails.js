@@ -1,17 +1,37 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Platform, StyleSheet, Text, View, Linking } from 'react-native';
 import {
   Avatar,
   Button,
   Caption,
   DataTable,
+  Dialog,
   Divider,
+  Paragraph,
+  Portal,
   Subheading,
   TouchableRipple,
 } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/core';
 
 import { useStore } from '../../store/context';
 import { daysFull } from '../../constants';
+
+function ActionButton({ name, icon, onPress }) {
+  return (
+    <View>
+      <TouchableRipple
+        style={styles.actionRipple}
+        borderless
+        centered
+        onPress={onPress}
+        rippleColor="rgba(0, 0, 0, .25)">
+        <Avatar.Icon style={styles.action} size={45} icon={icon} />
+      </TouchableRipple>
+      <Caption>{name}</Caption>
+    </View>
+  );
+}
 
 function Schedules({ schedules }) {
   const days = schedules.reduce(
@@ -43,15 +63,21 @@ function Product({ product }) {
           <Text>{productDetail?.name || productName || 'Blonde'}</Text>
         </View>
         <View style={styles.productDetails}>
-          <View style={styles.productCell}>
-            <Text>{volume}cl</Text>
-          </View>
-          <View style={styles.productCell}>
-            <Text>{price}€</Text>
-          </View>
-          <View style={styles.productCell}>
-            <Text>{specialPrice}€</Text>
-          </View>
+          {volume && (
+            <View style={styles.productCell}>
+              <Text>{volume}cl</Text>
+            </View>
+          )}
+          {price && (
+            <View style={styles.productCell}>
+              <Text>{price}€</Text>
+            </View>
+          )}
+          {specialPrice && (
+            <View style={styles.productCell}>
+              <Text>{specialPrice}€</Text>
+            </View>
+          )}
         </View>
       </View>
       <Divider />
@@ -61,6 +87,8 @@ function Product({ product }) {
 
 const StoreDetails = ({ store }) => {
   const [state, actions] = useStore();
+  const navigation = useNavigation();
+  const [modalLogin, setModalLogin] = useState(false);
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
 
@@ -77,6 +105,7 @@ const StoreDetails = ({ store }) => {
 
   const toggleFavorite = () => {
     if (!state.user?.id) {
+      setModalLogin(true);
       return;
     }
     if (isFavorite()) {
@@ -97,38 +126,17 @@ const StoreDetails = ({ store }) => {
   return (
     <View>
       <View style={styles.actionsBar}>
-        <TouchableRipple
-          borderless
-          centered
+        <ActionButton
           onPress={() => openAddress()}
-          rippleColor="rgba(0, 0, 0, .25)">
-          <Fragment>
-            <Avatar.Icon style={styles.action} size={45} icon="google-maps" />
-            <Caption>Itinéraire</Caption>
-          </Fragment>
-        </TouchableRipple>
-        <View>
-          <Avatar.Icon style={styles.action} size={45} icon="share-variant" />
-          <Caption>Partager</Caption>
-        </View>
-        <TouchableRipple
-          borderless
-          centered
+          name="Itinéraire"
+          icon="google-maps"
+        />
+        <ActionButton onPress={() => {}} name="Partager" icon="share-variant" />
+        <ActionButton
           onPress={toggleFavorite}
-          rippleColor="rgba(0, 0, 0, .25)">
-          <View>
-            <Avatar.Icon
-              style={styles.action}
-              size={45}
-              icon={isFavorite() ? 'star' : 'star-outline'}
-            />
-            <Caption>Enregistrer</Caption>
-          </View>
-        </TouchableRipple>
-        {/* <View>
-          <Avatar.Icon style={styles.action} size={45} icon="phone" />
-          <Caption>Appeler</Caption>
-        </View> */}
+          name="Enregistrer"
+          icon={isFavorite() ? 'star' : 'star-outline'}
+        />
       </View>
       <Divider />
       <TouchableRipple
@@ -182,9 +190,7 @@ const StoreDetails = ({ store }) => {
         </View>
       </TouchableRipple>
       <Divider /> */}
-      <TouchableRipple
-        onPress={() => openAddress()}
-        rippleColor="rgba(0, 0, 0, .25)">
+      <TouchableRipple onPress={() => {}} rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.infoRow}>
           <Avatar.Icon
             style={styles.infoIcon}
@@ -242,6 +248,28 @@ const StoreDetails = ({ store }) => {
           onPress={() => console.log('Pressed')}
         />
       </View> */}
+      {modalLogin && (
+        <Portal>
+          <Dialog visible={true} onDismiss={() => setModalLogin(false)}>
+            <Dialog.Content>
+              <Paragraph>
+                Vous devez être connecté pour enregistrer ce bar dans vos
+                favoris
+              </Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={() => setModalLogin(false)}>Annuler</Button>
+              <Button
+                onPress={() => {
+                  setModalLogin(false);
+                  navigation.navigate('AccountTab');
+                }}>
+                Connexion
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      )}
     </View>
   );
 };
@@ -254,6 +282,14 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+  actionRipple: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   infoRow: {
     display: 'flex',
@@ -290,6 +326,7 @@ const styles = StyleSheet.create({
   productName: {
     display: 'flex',
     justifyContent: 'center',
+    width: '60%',
   },
   productDetails: {
     display: 'flex',
