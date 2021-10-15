@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
+import Geolocation from 'react-native-geolocation-service';
 
 import { useStore } from '../../store/context';
 
@@ -11,12 +12,29 @@ MapboxGL.setAccessToken(
 const CENTER = [2.341924, 48.860395];
 
 const Mapbox = ({ filters, onPress }) => {
+  const map = useRef();
   const [state, actions] = useStore();
+  const [position, setPosition] = useState(undefined);
   const [coordinates, setCoordinates] = useState({});
 
   useEffect(() => {
-    if (!state.loading && coordinates.northEast) {
-      actions.getStores(coordinates);
+    Geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setPosition([coords.longitude, coords.latitude]);
+      },
+      () => {
+        setPosition(CENTER);
+      },
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!state.loading) {
+      if (coordinates.northEast) {
+        actions.getStores(coordinates);
+      } else {
+        actions.getStores({ northEast: [3, 49], southWest: [2, 48] });
+      }
       if (!state.products.length) {
         actions.getProducts();
       }
@@ -38,6 +56,10 @@ const Mapbox = ({ filters, onPress }) => {
     [state.stores],
   );
 
+  if (!position) {
+    return <View />;
+  }
+
   const regionChanged = ({ properties }) => {
     const [northEast, southWest] = properties.visibleBounds;
     setCoordinates({ northEast, southWest });
@@ -45,14 +67,15 @@ const Mapbox = ({ filters, onPress }) => {
 
   return (
     <MapboxGL.MapView
+      ref={map}
       style={styles.absolute}
       localizeLabels={true}
       rotateEnabled={false}
       pitchEnabled={false}
       onRegionDidChange={regionChanged}
       onPress={() => onPress()}>
-      <MapboxGL.Camera zoomLevel={11} centerCoordinate={CENTER} />
-      <MapboxGL.UserLocation />
+      <MapboxGL.Camera zoomLevel={13} centerCoordinate={position} />
+      <MapboxGL.UserLocation minDisplacement={500} />
       <MapboxGL.ShapeSource
         id="earthquakes"
         shape={storesShape}
@@ -65,7 +88,7 @@ const Mapbox = ({ filters, onPress }) => {
         <MapboxGL.SymbolLayer
           id="singlePointCount"
           aboveLayerID="singlePoint"
-          filter={filters && ['all', ...filters]}
+          filter={['all', ['>', ['zoom'], 10.5], ...filters]}
           style={mapStyle.priceText}
         />
       </MapboxGL.ShapeSource>
@@ -76,11 +99,11 @@ const Mapbox = ({ filters, onPress }) => {
 const mapStyle = {
   pointCircle: {
     circleColor: 'green',
-    circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 5, 13, 10],
+    circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 10],
   },
   priceText: {
     textField: ['to-string', ['get', 'price']],
-    textSize: ['interpolate', ['linear'], ['zoom'], 10, 5, 13, 9],
+    textSize: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 9],
     textMaxWidth: 50,
     textColor: '#FFF',
     textAnchor: 'center',

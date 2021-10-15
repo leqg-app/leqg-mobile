@@ -59,8 +59,7 @@ const styles = StyleSheet.create({
 const MapStack = createNativeStackNavigator();
 
 export default () => (
-  <MapStack.Navigator
-    screenOptions={{ headerShown: false, safeAreaInsets: { top: 0 } }}>
+  <MapStack.Navigator screenOptions={{ headerShown: false }}>
     <MapStack.Screen name="MapScreen" component={Map} />
     <MapStack.Screen name="ProductFilter" component={ProductFilter} />
   </MapStack.Navigator>
