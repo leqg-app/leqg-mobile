@@ -51,7 +51,7 @@ export const actionCreators = (dispatch, state) => {
     },
     addStore: details => {
       dispatch({ type: 'ADD_STORE' });
-      addStore(details, { jwt: state.jwt })
+      addStore(details, { jwt: state.user.jwt })
         .then(store => dispatch({ type: 'ADD_STORE_SUCCESS', store }))
         .catch(err =>
           dispatch({ type: 'ADD_STORE_FAIL', message: err.message }),
