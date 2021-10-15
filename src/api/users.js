@@ -9,7 +9,7 @@ function signIn(data) {
 }
 
 function updateProfile(user, jwt) {
-  return put(`/users/me`, user, { Authorization: `Bearer ${jwt}` });
+  return put('/users/me', user, { Authorization: `Bearer ${jwt}` });
 }
 
 export { signUp, signIn, updateProfile };

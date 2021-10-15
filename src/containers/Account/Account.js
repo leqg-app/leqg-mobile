@@ -8,14 +8,12 @@ import Header from '../../components/Header';
 import { useStore } from '../../store/context';
 
 const Account = () => {
-  const [state, actions] = useStore();
-
   return (
     <SafeAreaView>
       <Header>
         <Appbar.Content title="Mon compte" />
       </Header>
-      <View style={styles.box}></View>
+      <View style={styles.box} />
     </SafeAreaView>
   );
 };

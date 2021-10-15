@@ -59,8 +59,6 @@ const Product = ({ product, onPress }) => {
 const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
 
-  console.log(state.storeEdition);
-
   const {
     name = '',
     address,
@@ -122,11 +120,11 @@ const EditStore = ({ route, navigation }) => {
           mode="contained"
           uppercase={false}
           onPress={() => navigation.navigate('EditAddress')}
-          style={{ marginTop: 20, zIndex: 0, position: 'relative' }}>
+          style={styles.addButton}>
           {validAddress ? 'Modifier' : 'Préciser'} l'adresse
         </Button>
 
-        <Title style={{ marginTop: 30 }}>Bières</Title>
+        <Title style={styles.title}>Bières</Title>
         {!products.length && (
           <Paragraph>Aucune bière renseignée pour le moment</Paragraph>
         )}
@@ -141,11 +139,11 @@ const EditStore = ({ route, navigation }) => {
           mode="contained"
           uppercase={false}
           onPress={() => navigation.navigate('SelectProduct')}
-          style={{ marginTop: 20, zIndex: 0, position: 'relative' }}>
+          style={styles.addButton}>
           Ajouter une bière
         </Button>
 
-        <Title style={{ marginTop: 30 }}>Horaires</Title>
+        <Title style={styles.title}>Horaires</Title>
         {!schedules.length ? (
           <Paragraph>Aucun horaire renseigné pour le moment</Paragraph>
         ) : (
@@ -185,6 +183,7 @@ const styles = StyleSheet.create({
   box: {
     paddingHorizontal: 20,
   },
+  title: { marginTop: 30 },
   beer: {
     paddingVertical: 10,
     borderBottomColor: '#999',
@@ -199,6 +198,7 @@ const styles = StyleSheet.create({
   editIcon: {
     backgroundColor: 'transparent',
   },
+  addButton: { marginTop: 20, zIndex: 0, position: 'relative' },
 });
 
 const AddStack = createNativeStackNavigator();
