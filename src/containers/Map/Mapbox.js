@@ -75,17 +75,17 @@ const Mapbox = ({ filters, onPress }) => {
       <MapboxGL.Camera zoomLevel={13} centerCoordinate={position} />
       <MapboxGL.UserLocation minDisplacement={500} />
       <MapboxGL.ShapeSource
-        id="earthquakes"
+        id="stores"
         shape={storesShape}
         onPress={e => onPress(e.features[0].properties)}>
         <MapboxGL.CircleLayer
-          id="singlePoint"
+          id="pointCircle"
           filter={filters && ['all', ...filters]}
           style={mapStyle.pointCircle}
         />
         <MapboxGL.SymbolLayer
-          id="singlePointCount"
-          aboveLayerID="singlePoint"
+          id="priceText"
+          aboveLayerID="pointCircle"
           filter={['all', ['>', ['zoom'], 10.5], ...filters]}
           style={mapStyle.priceText}
         />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Appbar, TouchableRipple } from 'react-native-paper';
 
@@ -13,12 +13,23 @@ const Row = ({ product, onSelect }) => (
   </TouchableRipple>
 );
 
+const ITEM_HEIGHT = 59.64;
+
+function sortByName(a, b) {
+  return a.name > b.name ? 1 : -1;
+}
+
 const ProductFilter = ({ navigation }) => {
   const [state] = useStore();
 
   const onSelect = productFilter => {
     navigation.navigate('MapScreen', { productFilter });
   };
+
+  const products = useMemo(
+    () => state.products.sort(sortByName),
+    [state.products],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -28,9 +39,14 @@ const ProductFilter = ({ navigation }) => {
       </Header>
       <View style={styles.container}>
         <FlatList
-          data={state.products}
+          data={products}
           renderItem={({ item }) => <Row product={item} onSelect={onSelect} />}
           keyExtractor={product => product.id}
+          getItemLayout={(_, index) => ({
+            length: ITEM_HEIGHT,
+            offset: ITEM_HEIGHT * index,
+            index,
+          })}
         />
       </View>
     </SafeAreaView>

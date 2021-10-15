@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Title } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -47,16 +47,20 @@ const StoreScreen = props => {
     }
     return (
       <View style={styles.sheetContent}>
-        <Animated.View style={{ marginTop: animatedTitlePosition }}>
-          <Title numberOfLines={1} style={styles.title}>
-            {store.name}
-          </Title>
-        </Animated.View>
-        <Animated.View
-          style={[styles.preview, { height: animatedDetailsHeight }]}>
-          <Text style={styles.previewSchedules}>Ouvert</Text>
-          <Text numberOfLines={1}>{store.address}</Text>
-        </Animated.View>
+        <Pressable onPress={() => props.sheetRef.current.snapTo(2)}>
+          <>
+            <Animated.View style={{ marginTop: animatedTitlePosition }}>
+              <Title numberOfLines={1} style={styles.title}>
+                {store.name}
+              </Title>
+            </Animated.View>
+            <Animated.View
+              style={[styles.preview, { height: animatedDetailsHeight }]}>
+              <Text style={styles.previewSchedules}>Ouvert</Text>
+              <Text numberOfLines={1}>{store.address}</Text>
+            </Animated.View>
+          </>
+        </Pressable>
         {store && <StoreDetails store={store} />}
       </View>
     );
