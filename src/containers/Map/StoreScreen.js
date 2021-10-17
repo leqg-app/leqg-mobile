@@ -1,8 +1,10 @@
 import React, { useMemo, useEffect } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
-import { ActivityIndicator, Title } from 'react-native-paper';
+import { ActivityIndicator, Appbar, Title } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
+
+import Header from '../../components/Header';
 
 import { useStore } from '../../store/context';
 import StoreDetails from './StoreDetails';
@@ -11,14 +13,14 @@ const StoreScreen = props => {
   const [state, actions] = useStore();
   const fall = new Animated.Value(1);
 
-  const animatedTitlePosition = Animated.interpolateNode(fall, {
+  const animatedTopbar = Animated.interpolateNode(fall, {
     inputRange: [0, 0.5],
-    outputRange: [50, 15],
+    outputRange: [0, -120],
     extrapolate: Animated.Extrapolate.CLAMP,
   });
-  const animatedDetailsHeight = Animated.interpolateNode(fall, {
+  const animatedDetails = Animated.interpolateNode(fall, {
     inputRange: [0, 0.5],
-    outputRange: [0, 50],
+    outputRange: [-70, 0],
     extrapolate: Animated.Extrapolate.CLAMP,
   });
 
@@ -38,9 +40,7 @@ const StoreScreen = props => {
     if (!store) {
       return (
         <View style={styles.sheetContent}>
-          <Animated.View style={{ marginTop: animatedTitlePosition }}>
-            <Title style={styles.title}>{props.store?.name}</Title>
-          </Animated.View>
+          <Title style={styles.title}>{props.store?.name}</Title>
           <ActivityIndicator style={styles.loading} />
         </View>
       );
@@ -48,39 +48,59 @@ const StoreScreen = props => {
     return (
       <View style={styles.sheetContent}>
         <Pressable onPress={() => props.sheetRef.current.snapTo(2)}>
-          <>
-            <Animated.View style={{ marginTop: animatedTitlePosition }}>
-              <Title numberOfLines={1} style={styles.title}>
-                {store.name}
-              </Title>
-            </Animated.View>
-            <Animated.View
-              style={[styles.preview, { height: animatedDetailsHeight }]}>
-              <Text style={styles.previewSchedules}>Ouvert</Text>
-              <Text numberOfLines={1}>{store.address}</Text>
-            </Animated.View>
-          </>
+          <Title numberOfLines={1} style={styles.title}>
+            {store.name}
+          </Title>
+          <View style={styles.preview}>
+            <Text style={styles.previewSchedules}>Ouvert</Text>
+            <Text numberOfLines={1}>{store.address}</Text>
+          </View>
         </Pressable>
-        {store && <StoreDetails store={store} />}
+        <Animated.View
+          style={{ top: animatedDetails, backgroundColor: 'white' }}>
+          {store ? <StoreDetails store={store} /> : ''}
+        </Animated.View>
       </View>
     );
   };
 
   return (
-    <BottomSheet
-      ref={props.sheetRef}
-      callbackNode={fall}
-      snapPoints={['0%', `${sheetSize}%`, '100%']}
-      borderRadius={10}
-      renderContent={renderContent}
-    />
+    <>
+      <Animated.View style={[styles.topBarWrapper, { top: animatedTopbar }]}>
+        <Header style={styles.topBar}>
+          <Appbar.Action
+            icon="chevron-down"
+            onPress={() => props.sheetRef.current.snapTo(1)}
+          />
+        </Header>
+      </Animated.View>
+      <BottomSheet
+        ref={props.sheetRef}
+        callbackNode={fall}
+        snapPoints={['0%', `${sheetSize}%`, '88%']}
+        borderRadius={10}
+        renderContent={renderContent}
+      />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  topBarWrapper: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 99,
+  },
+  topBar: {
+    backgroundColor: 'white',
+  },
   sheetContent: { backgroundColor: 'white', minHeight: '100%' },
   title: {
     fontWeight: 'bold',
+    marginTop: 15,
     marginHorizontal: 15,
     marginBottom: 10,
   },
