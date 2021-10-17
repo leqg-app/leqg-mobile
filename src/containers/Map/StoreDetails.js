@@ -277,8 +277,7 @@ const StoreDetails = ({ store }) => {
 const styles = StyleSheet.create({
   actionsBar: {
     marginHorizontal: 30,
-    marginTop: 20,
-    marginBottom: 10,
+    marginVertical: 10,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
