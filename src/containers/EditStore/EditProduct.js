@@ -1,101 +1,153 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { Appbar, RadioButton, TextInput, Title } from 'react-native-paper';
 
 import Header from '../../components/Header';
 import { useStore } from '../../store/context';
 
+const productTypes = [
+  {
+    label: 'Pression',
+    value: 'draft',
+  },
+  {
+    label: 'Bouteille',
+    value: 'bottle',
+  },
+];
+
 const EditProducts = ({ navigation, route }) => {
-  const [state] = useStore();
-  const [beer, setBeer] = useState({});
-  const [type, setType] = React.useState('draft');
-  const [volume, setVolume] = React.useState(50);
-  const [price, setPrice] = React.useState(undefined);
-  const [specialPrice, setSpecialPrice] = React.useState(undefined);
+  const [state, actions] = useStore();
+  const [storeProduct, setProduct] = useState({
+    product: {},
+    type: 'draft',
+    volume: 50,
+    price: '',
+    specialPrice: '',
+  });
 
   useEffect(() => {
     if (!route.params) {
-      // WTF
+      // WTF?
       return;
     }
-    const { productName, productId } = route.params;
+    const { product, productId, productName } = route.params;
+    if (product) {
+      setProduct({
+        ...storeProduct,
+        ...product,
+        product: product.product.id,
+      });
+      return;
+    }
     if (productId) {
-      setBeer(state.products.find(product => product.id === productId));
+      const found = state.products.find(product => product.id === productId);
+      if (found) {
+        setProduct({
+          ...storeProduct,
+          product: found.id,
+        });
+      }
       return;
     }
-    setBeer({
-      name: productName,
-    });
+    if (productName) {
+      setProduct({
+        ...storeProduct,
+        productName,
+      });
+      return;
+    }
+    // WTF?
   }, [route.params]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const changeType = type => {
-    setType(type);
-    if (type === 'draft') {
-      setVolume(50);
-    } else {
-      setVolume(33);
-    }
+    setProduct({
+      ...storeProduct,
+      type,
+      volume: type === 'draft' ? 50 : 33,
+    });
   };
+
+  const { product, productName, type, volume, price, specialPrice } =
+    storeProduct;
+  const validForm = (product || productName) && type && volume && price;
+
+  const save = () => {
+    if (!validForm) {
+      return;
+    }
+
+    // Replace beer if this one was already added on this store
+    const storeProducts = state.storeEdition?.products || [];
+    const products = storeProducts.filter(
+      storeProduct => storeProduct.product !== product,
+    );
+
+    products.push(storeProduct);
+    actions.setStoreEdition({
+      products,
+    });
+    navigation.navigate('EditStore');
+  };
+
+  const selectedProduct = state.products.find(({ id }) => id === product);
 
   return (
     <SafeAreaView>
       <Header>
         <Appbar.BackAction onPress={() => navigation.navigate('EditStore')} />
         <Appbar.Content title="Ajouter une bière" />
-        <Appbar.Action icon="content-save" />
+        <Appbar.Action
+          disabled={!validForm}
+          icon="content-save"
+          onPress={save}
+        />
       </Header>
       <View style={styles.box}>
-        <Title>{beer.name}</Title>
+        <Title>{selectedProduct?.name || productName}</Title>
         <View style={styles.typeGroup}>
           <RadioButton.Group onValueChange={changeType} value={type}>
-            <View style={styles.typeChoice}>
-              <RadioButton value="draft" color="green" />
-              <Text>Pression</Text>
-            </View>
-            <View style={styles.typeChoice}>
-              <RadioButton value="bottle" color="green" />
-              <Text>Bouteille</Text>
-            </View>
+            {productTypes.map(({ label, value }) => (
+              <RadioButton.Item
+                key={value}
+                color="green"
+                label={label}
+                value={value}
+              />
+            ))}
           </RadioButton.Group>
         </View>
         <TextInput
-          style={{
-            marginTop: 10,
-            marginBottom: 15,
-            backgroundColor: 'transparent',
-          }}
+          style={styles.textInput}
           label="Volume"
           mode="flat"
-          onChangeText={volume => setVolume(volume)}
-          value={volume}
+          onChangeText={volume => setProduct({ ...storeProduct, volume })}
+          value={String(volume)}
           keyboardType="numeric"
           returnKeyType="done"
+          right={<TextInput.Affix text="cl" />}
         />
         <TextInput
-          style={{
-            marginTop: 10,
-            marginBottom: 15,
-            backgroundColor: 'transparent',
-          }}
+          style={styles.textInput}
           label="Prix"
           mode="flat"
-          onChangeText={price => setPrice(price)}
-          value={price}
+          onChangeText={price => setProduct({ ...storeProduct, price })}
+          value={String(price)}
           keyboardType="decimal-pad"
           returnKeyType="done"
+          right={<TextInput.Affix text="€" />}
         />
         <TextInput
-          style={{
-            marginTop: 10,
-            marginBottom: 15,
-            backgroundColor: 'transparent',
-          }}
+          style={styles.textInput}
           label="Prix en Happy hour"
           mode="flat"
-          onChangeText={specialPrice => setSpecialPrice(specialPrice)}
-          value={specialPrice}
+          onChangeText={specialPrice =>
+            setProduct({ ...storeProduct, specialPrice })
+          }
+          value={String(specialPrice)}
           keyboardType="decimal-pad"
           returnKeyType="done"
+          right={<TextInput.Affix text="€" />}
         />
       </View>
     </SafeAreaView>
@@ -106,48 +158,13 @@ const styles = StyleSheet.create({
   box: {
     padding: 20,
   },
-  dayRow: {
-    flexDirection: 'row',
-    padding: 14,
-  },
-  editIcon: { backgroundColor: 'transparent' },
   typeGroup: {
     marginTop: 10,
   },
-  typeChoice: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  flex: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  flexCell: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  dayButtonEmpty: {
-    marginRight: 7,
-    borderWidth: 2,
-    borderColor: 'green',
+  textInput: {
+    marginTop: 10,
+    marginBottom: 15,
     backgroundColor: 'transparent',
-    color: 'green',
-  },
-  dayButtonFilled: {
-    marginRight: 7,
-    borderWidth: 2,
-    borderColor: 'green',
-    backgroundColor: 'green',
-    color: 'white',
-  },
-  buttonEditAll: {
-    marginTop: 30,
-  },
-  modalScroll: {
-    maxHeight: 300,
   },
 });
 
