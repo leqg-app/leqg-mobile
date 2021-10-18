@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Pressable,
-  StyleSheet,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
   View,
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -12,9 +12,7 @@ import {
   Avatar,
   Button,
   Caption,
-  Dialog,
   Paragraph,
-  Portal,
   Text,
   TextInput,
   Title,
@@ -28,35 +26,48 @@ import SelectProduct from './SelectProduct';
 import EditProduct from './EditProduct';
 
 const daysShort = ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'];
+const types = {
+  draft: 'Pression',
+  bottle: 'Bouteille',
+};
 
-const Product = ({ product, onPress }) => {
+const Product = ({ product, onPress, onRemove }) => {
   return (
     <Pressable onPress={onPress}>
       <View style={styles.beer}>
         <View>
-          <Text>{product.name}</Text>
-          <Caption>{product.type}</Caption>
+          <Text>{product.product?.name || product.productName}</Text>
+          <Caption>{types[product.type]}</Caption>
         </View>
         <View style={styles.prices}>
           <Text>{product.price}€</Text>
-          {product.discountPrice && (
-            <Text>happy hour {product.discountPrice}€</Text>
-          )}
+          {product.specialPrice && <Text>hh: {product.specialPrice}€</Text>}
         </View>
-        <View style={styles.prices}>
-          <Avatar.Icon
-            icon="pencil"
-            size={20}
-            color="#000"
-            style={styles.editIcon}
-          />
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <View style={styles.prices}>
+            <Avatar.Icon
+              icon="pencil"
+              size={30}
+              color="#000"
+              style={styles.editIcon}
+            />
+          </View>
+          <View style={styles.prices}>
+            <Avatar.Icon
+              icon="close"
+              size={30}
+              color="#000"
+              style={styles.editIcon}
+              onPress={onRemove}
+            />
+          </View>
         </View>
       </View>
     </Pressable>
   );
 };
 
-const EditStore = ({ route, navigation }) => {
+const EditStore = ({ navigation }) => {
   const [state, actions] = useStore();
   const [error, setError] = React.useState(false);
 
@@ -65,9 +76,16 @@ const EditStore = ({ route, navigation }) => {
     address,
     longitude,
     latitude,
-    products = [],
     schedules = [],
   } = state.storeEdition;
+
+  const products =
+    state.storeEdition?.products?.map(storeProduct => ({
+      ...storeProduct,
+      ...(storeProduct.product && {
+        product: state.products.find(({ id }) => id === storeProduct.product),
+      }),
+    })) || [];
 
   const validAddress = address && longitude && latitude;
   const validForm = name && validAddress;
@@ -79,12 +97,6 @@ const EditStore = ({ route, navigation }) => {
     }
     actions.addStore();
   };
-
-  const goToLogin = () =>
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Auth' }],
-    });
 
   if (!state.user.jwt) {
     return (
@@ -149,7 +161,8 @@ const EditStore = ({ route, navigation }) => {
           <Product
             key={i}
             product={product}
-            onPress={() => navigation.navigate('Products', { product })}
+            onPress={() => navigation.navigate('EditProduct', { product })}
+            onRemove={console.log}
           />
         ))}
         <Button
@@ -180,18 +193,6 @@ const EditStore = ({ route, navigation }) => {
           Modifier les horaires
         </Button>
       </ScrollView>
-      {route.name === 'AddStor' && !state.jwt && (
-        <Portal>
-          <Dialog visible={true} onDismiss={goToLogin}>
-            <Dialog.Content>
-              <Paragraph>Vous devez être connecté pour ajouter</Paragraph>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={goToLogin}>OK</Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
-      )}
     </SafeAreaView>
   );
 };
