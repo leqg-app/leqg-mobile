@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import Geolocation from 'react-native-geolocation-service';
+import circle from '@turf/circle';
 
 import { useStore } from '../../store/context';
 
@@ -73,7 +74,7 @@ const Mapbox = ({ filters, onPress }) => {
       onRegionDidChange={regionChanged}
       onPress={() => onPress()}>
       <MapboxGL.Camera zoomLevel={13} centerCoordinate={position} />
-      <MapboxGL.UserLocation minDisplacement={500} />
+      <MapboxGL.UserLocation minDisplacement={100} />
       <MapboxGL.ShapeSource
         id="stores"
         shape={storesShape}
@@ -81,20 +82,46 @@ const Mapbox = ({ filters, onPress }) => {
         <MapboxGL.CircleLayer
           id="pointCircle"
           filter={filters && ['all', ...filters]}
-          style={mapStyle.pointCircle}
+          style={layerStyles.pointCircle}
         />
         <MapboxGL.SymbolLayer
           id="priceText"
           aboveLayerID="pointCircle"
-          filter={['all', ['>', ['zoom'], 10.5], ...filters]}
-          style={mapStyle.priceText}
+          minZoomLevel={10.5}
+          filter={filters && ['all', ...filters]}
+          style={layerStyles.priceText}
+        />
+      </MapboxGL.ShapeSource>
+      <MapboxGL.ShapeSource
+        id="textSource"
+        shape={{
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [position[0], position[1] + 0.0095],
+            properties: {},
+          },
+        }}>
+        <MapboxGL.SymbolLayer
+          id="nearText"
+          minZoomLevel={12.5}
+          maxZoomLevel={13.5}
+          style={layerStyles.nearText}
+        />
+      </MapboxGL.ShapeSource>
+      <MapboxGL.ShapeSource id="lineSource" shape={circle(position, 1)}>
+        <MapboxGL.LineLayer
+          id="nearLine"
+          minZoomLevel={10.5}
+          style={layerStyles.nearLine}
+          belowLayerID="pointCircle"
         />
       </MapboxGL.ShapeSource>
     </MapboxGL.MapView>
   );
 };
 
-const mapStyle = {
+const layerStyles = {
   pointCircle: {
     circleColor: 'green',
     circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 10],
@@ -107,6 +134,19 @@ const mapStyle = {
     textAnchor: 'center',
     textTranslate: [0, 0],
     textAllowOverlap: true,
+  },
+  nearLine: {
+    lineColor: 'green',
+    lineWidth: 1.4,
+    lineOpacity: 0.84,
+    lineDasharray: [5, 5],
+  },
+  nearText: {
+    textField: '15min',
+    textSize: 13,
+    textColor: 'green',
+    textHaloColor: 'green',
+    textHaloWidth: 0.3,
   },
 };
 
