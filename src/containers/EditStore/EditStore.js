@@ -67,9 +67,15 @@ const Product = ({ product, onPress, onRemove }) => {
   );
 };
 
-const EditStore = ({ navigation }) => {
+const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
   const [error, setError] = React.useState(false);
+
+  useEffect(() => {
+    if (route.params?.store) {
+      actions.setStoreEdition(route.params?.store);
+    }
+  }, [route.params?.store]);
 
   const {
     name = '',
@@ -117,7 +123,7 @@ const EditStore = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <Header>
         <Appbar.Content title="Ajouter un bar" />
         <Appbar.Action
@@ -126,72 +132,76 @@ const EditStore = ({ navigation }) => {
           onPress={save}
         />
       </Header>
-      <ScrollView style={styles.box}>
-        <TextInput
-          style={{
-            marginTop: 10,
-            marginBottom: 15,
-            backgroundColor: 'transparent',
-          }}
-          label="Nom"
-          mode="flat"
-          textContentType="name"
-          onChangeText={name => actions.setStoreEdition({ name })}
-          value={name}
-          returnKeyType="done"
-        />
-
-        <Title style={{ marginTop: 10 }}>Adresse</Title>
-        <Text>
-          {validAddress ? address : 'Aucune adresse renseignée pour le moment'}
-        </Text>
-        <Button
-          mode="contained"
-          uppercase={false}
-          onPress={() => navigation.navigate('EditAddress')}
-          style={styles.addButton}>
-          {validAddress ? 'Modifier' : 'Préciser'} l'adresse
-        </Button>
-
-        <Title style={styles.title}>Bières</Title>
-        {!products.length && (
-          <Paragraph>Aucune bière renseignée pour le moment</Paragraph>
-        )}
-        {products.map((product, i) => (
-          <Product
-            key={i}
-            product={product}
-            onPress={() => navigation.navigate('EditProduct', { product })}
-            onRemove={console.log}
+      <ScrollView>
+        <View style={styles.box}>
+          <TextInput
+            style={{
+              marginTop: 10,
+              marginBottom: 15,
+              backgroundColor: 'transparent',
+            }}
+            label="Nom"
+            mode="flat"
+            textContentType="name"
+            onChangeText={name => actions.setStoreEdition({ name })}
+            value={name}
+            returnKeyType="done"
           />
-        ))}
-        <Button
-          mode="contained"
-          uppercase={false}
-          onPress={() => navigation.navigate('SelectProduct')}
-          style={styles.addButton}>
-          Ajouter une bière
-        </Button>
 
-        <Title style={styles.title}>Horaires</Title>
-        {!schedules.length ? (
-          <Paragraph>Aucun horaire renseigné pour le moment</Paragraph>
-        ) : (
+          <Title style={{ marginTop: 10 }}>Adresse</Title>
           <Text>
-            Ouvert le{' '}
-            {schedules
-              .filter(({ closed }) => !closed)
-              .map((_, i) => daysShort[i])
-              .join(', ')}
+            {validAddress
+              ? address
+              : 'Aucune adresse renseignée pour le moment'}
           </Text>
-        )}
-        <Button
-          mode="contained"
-          uppercase={false}
-          onPress={() => navigation.navigate('EditSchedules')}
-          style={{ marginTop: 20 }}>
-          Modifier les horaires
-        </Button>
+          <Button
+            mode="contained"
+            uppercase={false}
+            onPress={() => navigation.navigate('EditAddress')}
+            style={styles.addButton}>
+            {validAddress ? 'Modifier' : 'Préciser'} l'adresse
+          </Button>
+
+          <Title style={styles.title}>Bières</Title>
+          {!products.length && (
+            <Paragraph>Aucune bière renseignée pour le moment</Paragraph>
+          )}
+          {products.map((product, i) => (
+            <Product
+              key={i}
+              product={product}
+              onPress={() => navigation.navigate('EditProduct', { product })}
+              onRemove={console.log}
+            />
+          ))}
+          <Button
+            mode="contained"
+            uppercase={false}
+            onPress={() => navigation.navigate('SelectProduct')}
+            style={styles.addButton}>
+            Ajouter une bière
+          </Button>
+
+          <Title style={styles.title}>Horaires</Title>
+          {!schedules.length ? (
+            <Paragraph>Aucun horaire renseigné pour le moment</Paragraph>
+          ) : (
+            <Text>
+              Ouvert le{' '}
+              {schedules
+                .filter(({ closed }) => !closed)
+                .map((_, i) => daysShort[i])
+                .join(', ')}
+            </Text>
+          )}
+          <Button
+            mode="contained"
+            uppercase={false}
+            onPress={() => navigation.navigate('EditSchedules')}
+            style={{ marginTop: 20 }}>
+            Modifier les horaires
+          </Button>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -208,7 +218,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   box: {
+    flex: 1,
     paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   title: { marginTop: 30 },
   beer: {
