@@ -190,7 +190,9 @@ const StoreDetails = ({ store }) => {
         </View>
       </TouchableRipple>
       <Divider /> */}
-      <TouchableRipple onPress={() => {}} rippleColor="rgba(0, 0, 0, .25)">
+      <TouchableRipple
+        onPress={() => navigation.navigate('EditStoreScreen', { store })}
+        rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.infoRow}>
           <Avatar.Icon
             style={styles.infoIcon}
