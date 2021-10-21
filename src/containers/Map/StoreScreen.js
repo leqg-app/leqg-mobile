@@ -47,7 +47,7 @@ const StoreScreen = props => {
     }
     return (
       <View style={styles.sheetContent}>
-        <Pressable onPress={() => props.sheetRef.current.snapTo(2)}>
+        <Pressable onPress={() => props.sheet.current.snapTo(2)}>
           <Title numberOfLines={1} style={styles.title}>
             {store.name}
           </Title>
@@ -70,12 +70,12 @@ const StoreScreen = props => {
         <Header style={styles.topBar}>
           <Appbar.Action
             icon="chevron-down"
-            onPress={() => props.sheetRef.current.snapTo(1)}
+            onPress={() => props.sheet.current.snapTo(1)}
           />
         </Header>
       </Animated.View>
       <BottomSheet
-        ref={props.sheetRef}
+        ref={props.sheet}
         callbackNode={fall}
         snapPoints={['0%', `${sheetSize}%`, '88%']}
         borderRadius={10}
