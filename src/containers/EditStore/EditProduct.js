@@ -36,7 +36,7 @@ const EditProducts = ({ navigation, route }) => {
       setProduct({
         ...storeProduct,
         ...product,
-        product: product.product.id,
+        ...(product.product?.id && { product: product.product.id }),
       });
       return;
     }
