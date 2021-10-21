@@ -10,8 +10,7 @@ MapboxGL.setAccessToken('');
 
 const CENTER = [2.341924, 48.860395];
 
-const Mapbox = ({ filters, onPress }) => {
-  const map = useRef();
+const Mapbox = ({ map, filters, onPress }) => {
   const [state, actions] = useStore();
   const [position, setPosition] = useState(undefined);
   const [coordinates, setCoordinates] = useState({});

@@ -9,10 +9,11 @@ import Mapbox from './Mapbox';
 import StoreScreen from './StoreScreen';
 
 const Map = () => {
+  const map = useRef();
+  const sheet = useRef(null);
   const [text, onChangeText] = useState('');
   const [selectedStore, selectStore] = useState(false);
   const [filters, setFilters] = useState([]);
-  const sheetRef = useRef(null);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -22,10 +23,11 @@ const Map = () => {
         backgroundColor="transparent"
       />
       <Mapbox
+        map={map}
         filters={filters}
         onPress={store => {
           selectStore(store);
-          sheetRef.current.snapTo(store ? 1 : 0);
+          sheet.current.snapTo(store ? 1 : 0);
         }}
       />
       <Searchbar
@@ -33,9 +35,10 @@ const Map = () => {
         placeholder="Rechercher"
         onChangeText={onChangeText}
         value={text}
+        clearButtonMode="always"
       />
       <Filters onChange={filters => setFilters(filters)} />
-      <StoreScreen store={selectedStore} sheetRef={sheetRef} />
+      <StoreScreen sheet={sheet} store={selectedStore} />
     </SafeAreaView>
   );
 };
@@ -53,6 +56,8 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     height: 45,
     paddingLeft: 10,
+    borderColor: 'grey',
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });
 
