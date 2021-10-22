@@ -51,7 +51,7 @@ const Mapbox = ({ filters, onPress }) => {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [store.longitude, store.latitude],
+          coordinates: [store.lng, store.lat],
         },
         properties: store,
       })),
@@ -138,13 +138,29 @@ const Mapbox = ({ filters, onPress }) => {
   );
 };
 
+const date = new Date();
+const day = ['at', new Date().getDay() - 1, ['get', 's']];
+const time = date.getHours() * 3600 + date.getMinutes() * 60;
+const textField = [
+  'case',
+  [
+    'all',
+    ['has', 'specialPrice'],
+    ['has', 'os', day],
+    ['>', time, ['get', 'os', day]],
+    ['<', time, ['get', 'cs', day]],
+  ],
+  ['to-string', ['get', 'specialPrice']],
+  ['to-string', ['get', 'price']],
+];
+
 const layerStyles = {
   pointCircle: {
     circleColor: 'green',
     circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 10],
   },
   priceText: {
-    textField: ['to-string', ['get', 'price']],
+    textField,
     textSize: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 9],
     textMaxWidth: 50,
     textColor: '#FFF',
