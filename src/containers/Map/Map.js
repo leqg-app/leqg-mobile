@@ -9,7 +9,6 @@ import Mapbox from './Mapbox';
 import StoreScreen from './StoreScreen';
 
 const Map = () => {
-  const map = useRef();
   const sheet = useRef(null);
   const [text, onChangeText] = useState('');
   const [selectedStore, selectStore] = useState(false);
@@ -23,7 +22,6 @@ const Map = () => {
         backgroundColor="transparent"
       />
       <Mapbox
-        map={map}
         filters={filters}
         onPress={store => {
           selectStore(store);
