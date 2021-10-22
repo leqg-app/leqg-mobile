@@ -2,8 +2,8 @@ import React from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Appbar, Button, List, Paragraph } from 'react-native-paper';
 
-import Header from './components/Header';
-import { useStore } from './store/context';
+import Header from '../../components/Header';
+import { useStore } from '../../store/context';
 
 const AuthRequired = ({ navigation }) => (
   <>
