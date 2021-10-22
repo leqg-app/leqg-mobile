@@ -5,7 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Map from './containers/Map/Map';
-import Favorites from './Favorites';
+import Favorites from './containers/Favorites/Favorites';
 import Account from './containers/Account/Account';
 import EditStore from './containers/EditStore/EditStore';
 
