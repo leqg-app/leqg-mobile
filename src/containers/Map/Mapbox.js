@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import Geolocation from 'react-native-geolocation-service';
 import circle from '@turf/circle';
+import { FAB } from 'react-native-paper';
 
 import { useStore } from '../../store/context';
 
@@ -10,14 +11,17 @@ MapboxGL.setAccessToken('');
 
 const CENTER = [2.341924, 48.860395];
 
-const Mapbox = ({ map, filters, onPress }) => {
+const Mapbox = ({ filters, onPress }) => {
+  const camera = useRef();
   const [state, actions] = useStore();
+  const [geoloc, setGeoloc] = useState(false);
   const [position, setPosition] = useState(undefined);
   const [coordinates, setCoordinates] = useState({});
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
       ({ coords }) => {
+        setGeoloc(true);
         setPosition([coords.longitude, coords.latitude]);
       },
       () => {
@@ -31,7 +35,8 @@ const Mapbox = ({ map, filters, onPress }) => {
       if (coordinates.northEast) {
         actions.getStores(coordinates);
       } else {
-        actions.getStores({ northEast: [3, 49], southWest: [2, 48] });
+        // France
+        actions.getStores({ northEast: [9, 52], southWest: [-6, 42] });
       }
       if (!state.products.length) {
         actions.getProducts();
@@ -64,59 +69,72 @@ const Mapbox = ({ map, filters, onPress }) => {
   };
 
   return (
-    <MapboxGL.MapView
-      ref={map}
-      style={styles.absolute}
-      localizeLabels={true}
-      rotateEnabled={false}
-      pitchEnabled={false}
-      onRegionDidChange={regionChanged}
-      onPress={() => onPress()}>
-      <MapboxGL.Camera zoomLevel={13} centerCoordinate={position} />
-      <MapboxGL.UserLocation minDisplacement={100} />
-      <MapboxGL.ShapeSource
-        id="stores"
-        shape={storesShape}
-        onPress={e => onPress(e.features[0].properties)}>
-        <MapboxGL.CircleLayer
-          id="pointCircle"
-          filter={filters && ['all', ...filters]}
-          style={layerStyles.pointCircle}
+    <>
+      <MapboxGL.MapView
+        style={styles.absolute}
+        localizeLabels={true}
+        rotateEnabled={false}
+        pitchEnabled={false}
+        onRegionDidChange={regionChanged}
+        onPress={() => onPress()}>
+        <MapboxGL.Camera
+          ref={camera}
+          zoomLevel={13}
+          centerCoordinate={position}
         />
-        <MapboxGL.SymbolLayer
-          id="priceText"
-          aboveLayerID="pointCircle"
-          minZoomLevel={10.5}
-          filter={filters && ['all', ...filters]}
-          style={layerStyles.priceText}
+        <MapboxGL.UserLocation minDisplacement={100} />
+        <MapboxGL.ShapeSource
+          id="stores"
+          shape={storesShape}
+          onPress={e => onPress(e.features[0].properties)}>
+          <MapboxGL.CircleLayer
+            id="pointCircle"
+            filter={filters && ['all', ...filters]}
+            style={layerStyles.pointCircle}
+          />
+          <MapboxGL.SymbolLayer
+            id="priceText"
+            aboveLayerID="pointCircle"
+            minZoomLevel={10.5}
+            filter={filters && ['all', ...filters]}
+            style={layerStyles.priceText}
+          />
+        </MapboxGL.ShapeSource>
+        <MapboxGL.ShapeSource
+          id="textSource"
+          shape={{
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [position[0], position[1] + 0.0095],
+              properties: {},
+            },
+          }}>
+          <MapboxGL.SymbolLayer
+            id="nearText"
+            minZoomLevel={12.5}
+            maxZoomLevel={13.5}
+            style={layerStyles.nearText}
+          />
+        </MapboxGL.ShapeSource>
+        <MapboxGL.ShapeSource id="lineSource" shape={circle(position, 1)}>
+          <MapboxGL.LineLayer
+            id="nearLine"
+            minZoomLevel={10.5}
+            style={layerStyles.nearLine}
+            belowLayerID="pointCircle"
+          />
+        </MapboxGL.ShapeSource>
+      </MapboxGL.MapView>
+      {geoloc && (
+        <FAB
+          style={styles.fab}
+          icon="target"
+          color="green"
+          onPress={() => camera.current.flyTo(position)}
         />
-      </MapboxGL.ShapeSource>
-      <MapboxGL.ShapeSource
-        id="textSource"
-        shape={{
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [position[0], position[1] + 0.0095],
-            properties: {},
-          },
-        }}>
-        <MapboxGL.SymbolLayer
-          id="nearText"
-          minZoomLevel={12.5}
-          maxZoomLevel={13.5}
-          style={layerStyles.nearText}
-        />
-      </MapboxGL.ShapeSource>
-      <MapboxGL.ShapeSource id="lineSource" shape={circle(position, 1)}>
-        <MapboxGL.LineLayer
-          id="nearLine"
-          minZoomLevel={10.5}
-          style={layerStyles.nearLine}
-          belowLayerID="pointCircle"
-        />
-      </MapboxGL.ShapeSource>
-    </MapboxGL.MapView>
+      )}
+    </>
   );
 };
 
@@ -153,6 +171,14 @@ const styles = StyleSheet.create({
   absolute: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'white',
+    elevation: 0,
   },
 });
 
