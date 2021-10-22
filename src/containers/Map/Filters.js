@@ -13,6 +13,7 @@ const Filters = ({ onChange }) => {
   const [priceModal, setPriceModal] = useState(false);
   const [priceFilter, setPriceFilter] = useState(undefined);
   const [beerFilter, setBeerFilter] = useState(undefined);
+  const [openNow, setOpenFilter] = useState(false);
 
   useEffect(() => {
     const filters = [];
@@ -22,8 +23,18 @@ const Filters = ({ onChange }) => {
     if (beerFilter) {
       filters.push(['in', beerFilter, ['get', 'products']]);
     }
+    if (openNow) {
+      const date = new Date();
+      const day = ['at', date.getDay() - 1, ['get', 's']];
+      const time = date.getHours() * 3600 + date.getMinutes() * 60;
+      filters.push(
+        ['has', 'o', day],
+        ['>', time, ['get', 'o', day]],
+        ['<', time, ['get', 'c', day]],
+      );
+    }
     onChange(filters);
-  }, [priceFilter, beerFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [priceFilter, beerFilter, openNow]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (beerFilter !== route.params?.productFilter) {
@@ -51,6 +62,14 @@ const Filters = ({ onChange }) => {
           {beerFilter
             ? `Bière: ${state.products.find(p => p.id === beerFilter)?.name}`
             : 'Bière'}
+        </Chip>
+        <Chip
+          style={styles.filter}
+          icon="clock-outline"
+          onPress={() => setOpenFilter(true)}
+          onClose={openNow && (() => setOpenFilter(false))}
+          mode="outlined">
+          Ouvert
         </Chip>
       </View>
       {priceModal && (
