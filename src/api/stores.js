@@ -16,15 +16,15 @@ function getStores(coordinates) {
       },
     ],
   });
-  return get(`/stores?${params}`);
+  return get(`/v1/stores?${params}`);
 }
 
 function getStore(id) {
-  return get(`/stores/${id}`);
+  return get(`/v1/stores/${id}`);
 }
 
 function addStore(data, { jwt }) {
-  return post('/stores', data, { Authorization: `bearer ${jwt}` });
+  return post('/v1/stores', data, { Authorization: `bearer ${jwt}` });
 }
 
 export { getStores, getStore, addStore };

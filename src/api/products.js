@@ -1,7 +1,7 @@
 import { get } from './index';
 
 function getProducts() {
-  return get('/products?_limit=-1');
+  return get('/v1/products?_limit=-1');
 }
 
 export { getProducts };
