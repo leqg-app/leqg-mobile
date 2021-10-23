@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProductFilter from './ProductFilter';
 import Filters from './Filters';
 import Mapbox from './Mapbox';
-import StoreScreen from './StoreScreen';
+import StoreSheet from './StoreSheet';
 
 const Map = () => {
   const sheet = useRef(null);
@@ -36,7 +36,7 @@ const Map = () => {
         clearButtonMode="always"
       />
       <Filters onChange={filters => setFilters(filters)} />
-      <StoreScreen sheet={sheet} store={selectedStore} />
+      <StoreSheet sheet={sheet} store={selectedStore} />
     </SafeAreaView>
   );
 };

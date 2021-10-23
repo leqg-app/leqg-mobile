@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { PermissionsAndroid, StyleSheet, View } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import Geolocation from 'react-native-geolocation-service';
 import circle from '@turf/circle';
@@ -9,6 +9,10 @@ import { useStore } from '../../store/context';
 
 MapboxGL.setAccessToken(
   'pk.eyJ1IjoibmljbzJjaGUiLCJhIjoiY2lzYm5zcHAzMDAxNDJvbWtwb3dyY2ZuYiJ9.eSWQhgnzx-RQWqSx5ltXcg',
+);
+// TODO: better handle
+PermissionsAndroid.request(
+  PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
 );
 
 const CENTER = [2.341924, 48.860395];
@@ -30,7 +34,7 @@ const Mapbox = ({ filters, onPress }) => {
         setPosition(CENTER);
       },
     );
-  }, []);
+  }, [PermissionsAndroid.RESULTS]);
 
   useEffect(() => {
     if (!state.loading) {
@@ -204,6 +208,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'white',
     elevation: 0,
+    borderColor: 'grey',
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });
 

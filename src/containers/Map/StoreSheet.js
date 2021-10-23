@@ -9,7 +9,7 @@ import Header from '../../components/Header';
 import { useStore } from '../../store/context';
 import StoreDetails from './StoreDetails';
 
-const StoreScreen = props => {
+const StoreSheet = props => {
   const [state, actions] = useStore();
   const fall = new Animated.Value(1);
 
@@ -35,34 +35,37 @@ const StoreScreen = props => {
     [],
   );
 
-  const renderContent = () => {
-    const store = state.storesDetails[props.store?.id];
-    if (!store) {
+  const renderContent = useMemo(
+    () => () => {
+      const store = state.storesDetails[props.store?.id];
+      if (!store) {
+        return (
+          <View style={styles.sheetContent}>
+            <Title style={styles.title}>{props.store?.name}</Title>
+            <ActivityIndicator style={styles.loading} />
+          </View>
+        );
+      }
       return (
         <View style={styles.sheetContent}>
-          <Title style={styles.title}>{props.store?.name}</Title>
-          <ActivityIndicator style={styles.loading} />
+          <Pressable onPress={() => props.sheet.current.snapTo(2)}>
+            <Title numberOfLines={1} style={styles.title}>
+              {store.name}
+            </Title>
+            <View style={styles.preview}>
+              <Text style={styles.previewSchedules}>Ouvert</Text>
+              <Text numberOfLines={1}>{store.address}</Text>
+            </View>
+          </Pressable>
+          <Animated.View
+            style={{ top: animatedDetails, backgroundColor: 'white' }}>
+            {store ? <StoreDetails store={store} /> : ''}
+          </Animated.View>
         </View>
       );
-    }
-    return (
-      <View style={styles.sheetContent}>
-        <Pressable onPress={() => props.sheet.current.snapTo(2)}>
-          <Title numberOfLines={1} style={styles.title}>
-            {store.name}
-          </Title>
-          <View style={styles.preview}>
-            <Text style={styles.previewSchedules}>Ouvert</Text>
-            <Text numberOfLines={1}>{store.address}</Text>
-          </View>
-        </Pressable>
-        <Animated.View
-          style={{ top: animatedDetails, backgroundColor: 'white' }}>
-          {store ? <StoreDetails store={store} /> : ''}
-        </Animated.View>
-      </View>
-    );
-  };
+    },
+    [],
+  );
 
   return (
     <>
@@ -116,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StoreScreen;
+export default StoreSheet;
