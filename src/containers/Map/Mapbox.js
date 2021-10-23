@@ -146,9 +146,16 @@ const textField = [
   [
     'all',
     ['has', 'specialPrice'],
-    ['has', 'os', day],
-    ['>', time, ['get', 'os', day]],
-    ['<', time, ['get', 'cs', day]],
+    [
+      'any',
+      [
+        'all',
+        ['has', 'os', day],
+        ['>', time, ['get', 'os', day]],
+        ['<', time, ['get', 'cs', day]],
+      ],
+      ['!', ['to-boolean', ['get', 'price']]],
+    ],
   ],
   ['to-string', ['get', 'specialPrice']],
   ['to-string', ['get', 'price']],
