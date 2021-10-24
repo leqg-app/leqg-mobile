@@ -30,10 +30,12 @@ const StoreSheet = props => {
     }
   }, [props.store?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const sheetSize = useMemo(
-    () => (120 / Dimensions.get('window').height) * 100,
-    [],
-  );
+  const sheetSize = (() => {
+    const { height } = Dimensions.get('window');
+    const two = (120 / height) * 100;
+    const three = 100 - 8000 / height;
+    return ['0%', `${two}%`, `${three}%`];
+  })();
 
   const renderContent = useMemo(
     () => () => {
@@ -80,7 +82,7 @@ const StoreSheet = props => {
       <BottomSheet
         ref={props.sheet}
         callbackNode={fall}
-        snapPoints={['0%', `${sheetSize}%`, '88%']}
+        snapPoints={sheetSize}
         borderRadius={10}
         renderContent={renderContent}
       />

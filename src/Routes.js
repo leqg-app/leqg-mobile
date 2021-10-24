@@ -14,25 +14,44 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       initialRouteName="MapTab"
-      screenOptions={{ headerShown: false }}>
+      screenOptions={({ route }) => ({
+        headerStyle: {
+          backgroundColor: 'green',
+        },
+        headerTintColor: '#fff',
+
+        tabBarActiveTintColor: 'green',
+        tabBarIcon: ({ color, size }) => {
+          const icons = {
+            MapTab: 'map',
+            EditStoreTab: 'plus',
+            FavoritesTab: 'bookmark-outline',
+            AccountTab: 'account',
+          };
+
+          return (
+            <MaterialCommunityIcons
+              name={icons[route.name]}
+              color={color}
+              size={size}
+            />
+          );
+        },
+      })}>
       <Tab.Screen
         name="MapTab"
         component={Map}
         options={{
+          headerShown: false,
           title: 'Carte',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="map" color={color} size={size} />
-          ),
         }}
       />
       <Tab.Screen
         name="EditStoreTab"
         component={EditStore}
         options={{
-          title: 'Contribuer',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="plus" color={color} size={size} />
-          ),
+          headerShown: false,
+          title: 'Ajouter',
         }}
       />
       <Tab.Screen
@@ -40,23 +59,14 @@ const TabNavigator = () => {
         component={Favorites}
         options={{
           title: 'Enregistrés',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="bookmark-outline"
-              color={color}
-              size={size}
-            />
-          ),
         }}
       />
       <Tab.Screen
         name="AccountTab"
         component={Account}
         options={{
+          headerShown: false,
           title: 'Compte',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account" color={color} size={size} />
-          ),
         }}
       />
     </Tab.Navigator>
@@ -68,8 +78,8 @@ const Routes = () => {
   return (
     <NavigationContainer>
       <Main.Navigator
-        initialRouteName="TabNavigator"
-        screenOptions={{ headerShown: false }}>
+        screenOptions={{ headerShown: false }}
+        initialRouteName="TabNavigator">
         <Main.Screen name="TabNavigator" component={TabNavigator} />
         <Main.Screen name="EditStoreScreen" component={EditStore} />
       </Main.Navigator>

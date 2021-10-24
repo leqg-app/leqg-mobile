@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Appbar, Searchbar, TouchableRipple } from 'react-native-paper';
+import { Searchbar, TouchableRipple } from 'react-native-paper';
 
-import Header from '../../components/Header';
 import { useStore } from '../../store/context';
 
 const ProductRow = ({ product, onSelect }) => (
@@ -44,36 +43,30 @@ const SelectProduct = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Ajouter une bière" />
-      </Header>
-      <View style={styles.container}>
-        <Searchbar
-          placeholder="Nommer ou rechercher une bière"
-          style={styles.searchBar}
-          onChangeText={setSearch}
-        />
-        {search ? (
-          <TouchableRipple onPress={() => onSelect()}>
-            <View style={styles.productRow}>
-              <Text style={styles.customName}>Ajouter "{search}"</Text>
-            </View>
-          </TouchableRipple>
-        ) : null}
-        <FlatList
-          data={products}
-          renderItem={({ item }) => (
-            <ProductRow product={item} onSelect={onSelect} />
-          )}
-          keyExtractor={product => product.id}
-          getItemLayout={(_, index) => ({
-            length: ITEM_HEIGHT,
-            offset: ITEM_HEIGHT * index,
-            index,
-          })}
-        />
-      </View>
+      <Searchbar
+        placeholder="Nommer ou rechercher une bière"
+        style={styles.searchBar}
+        onChangeText={setSearch}
+      />
+      {search ? (
+        <TouchableRipple onPress={() => onSelect()}>
+          <View style={styles.productRow}>
+            <Text style={styles.customName}>Ajouter "{search}"</Text>
+          </View>
+        </TouchableRipple>
+      ) : null}
+      <FlatList
+        data={products}
+        renderItem={({ item }) => (
+          <ProductRow product={item} onSelect={onSelect} />
+        )}
+        keyExtractor={product => product.id}
+        getItemLayout={(_, index) => ({
+          length: ITEM_HEIGHT,
+          offset: ITEM_HEIGHT * index,
+          index,
+        })}
+      />
     </SafeAreaView>
   );
 };
