@@ -64,7 +64,7 @@ const StoreSheet = props => {
         </View>
       );
     },
-    [],
+    [state.storesDetails],
   );
 
   return (
