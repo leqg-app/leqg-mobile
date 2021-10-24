@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -12,6 +12,7 @@ import {
   Avatar,
   Button,
   Caption,
+  IconButton,
   Paragraph,
   Text,
   TextInput,
@@ -19,7 +20,6 @@ import {
 } from 'react-native-paper';
 
 import { useStore } from '../../store/context';
-import Header from '../../components/Header';
 import EditSchedules from './EditSchedules';
 import EditAddress from './EditAddress';
 import SelectProduct from './SelectProduct';
@@ -71,6 +71,14 @@ const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
   const [error, setError] = React.useState(false);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton disabled={!validForm} icon="content-save" onPress={save} />
+      ),
+    });
+  }, [navigation]);
+
   useEffect(() => {
     if (route.params?.store) {
       actions.setStoreEdition(route.params?.store);
@@ -107,9 +115,6 @@ const EditStore = ({ route, navigation }) => {
   if (!state.user.jwt) {
     return (
       <SafeAreaView style={styles.container}>
-        <Header>
-          <Appbar.Content title="Ajouter un bar" />
-        </Header>
         <View style={styles.center}>
           <View>
             <Paragraph>Veuillez vous connecter pour contribuer</Paragraph>
@@ -124,14 +129,6 @@ const EditStore = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header>
-        <Appbar.Content title="Ajouter un bar" />
-        <Appbar.Action
-          disabled={!validForm || state.loading}
-          icon="send"
-          onPress={save}
-        />
-      </Header>
       <ScrollView>
         <View style={styles.box}>
           <TextInput
@@ -243,11 +240,37 @@ const styles = StyleSheet.create({
 const AddStack = createNativeStackNavigator();
 
 export default () => (
-  <AddStack.Navigator screenOptions={{ headerShown: false }}>
-    <AddStack.Screen name="EditStore" component={EditStore} />
-    <AddStack.Screen name="EditAddress" component={EditAddress} />
-    <AddStack.Screen name="EditSchedules" component={EditSchedules} />
-    <AddStack.Screen name="SelectProduct" component={SelectProduct} />
-    <AddStack.Screen name="EditProduct" component={EditProduct} />
+  <AddStack.Navigator
+    screenOptions={{
+      headerStyle: {
+        backgroundColor: 'green',
+      },
+      headerTintColor: '#fff',
+    }}>
+    <AddStack.Screen
+      options={{ title: 'Ajouter un bar' }}
+      name="EditStore"
+      component={EditStore}
+    />
+    <AddStack.Screen
+      options={{ title: "Modifier l'adresse" }}
+      name="EditAddress"
+      component={EditAddress}
+    />
+    <AddStack.Screen
+      options={{ title: 'Modifier les horaires' }}
+      name="EditSchedules"
+      component={EditSchedules}
+    />
+    <AddStack.Screen
+      options={{ title: 'Ajouter un produit' }}
+      name="SelectProduct"
+      component={SelectProduct}
+    />
+    <AddStack.Screen
+      options={{ title: 'Modifier un produit' }}
+      name="EditProduct"
+      component={EditProduct}
+    />
   </AddStack.Navigator>
 );

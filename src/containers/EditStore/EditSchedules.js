@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   Pressable,
   Text,
@@ -14,6 +14,7 @@ import {
   Button,
   Checkbox,
   Dialog,
+  IconButton,
   Portal,
   TextInput,
 } from 'react-native-paper';
@@ -22,7 +23,6 @@ import { TimePickerModal } from 'react-native-paper-dates';
 import { useStore } from '../../store/context';
 import formatHour from '../../utils/formatHour';
 import { daysFull, daysShort } from '../../constants';
-import Header from '../../components/Header';
 
 const newTime = () => ({
   start: { hours: 17, minutes: 0 },
@@ -206,13 +206,14 @@ const EditSchedules = ({ navigation }) => {
     navigation.goBack();
   };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <IconButton icon="check" onPress={save} />,
+    });
+  }, [navigation]);
+
   return (
     <SafeAreaView>
-      <Header>
-        <Appbar.BackAction onPress={goBack} />
-        <Appbar.Content title="Horaires" />
-        <Appbar.Action icon="check" onPress={save} />
-      </Header>
       <View style={styles.box}>
         {daysFull.map((day, i) => {
           return (

@@ -1,8 +1,7 @@
 import React from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-import { Appbar, Button, List, Paragraph } from 'react-native-paper';
+import { Button, List, Paragraph } from 'react-native-paper';
 
-import Header from '../../components/Header';
 import { useStore } from '../../store/context';
 
 const AuthRequired = ({ navigation }) => (
@@ -34,9 +33,6 @@ const Favorites = ({ navigation }) => {
   const [{ user }, actions] = useStore();
   return (
     <SafeAreaView style={styles.container}>
-      <Header>
-        <Appbar.Content title="Enregistrés" />
-      </Header>
       {user.jwt ? (
         user.favorites.length ? (
           <View style={styles.container}>

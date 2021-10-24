@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
-import { Appbar, RadioButton, TextInput, Title } from 'react-native-paper';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import {
+  Appbar,
+  IconButton,
+  RadioButton,
+  TextInput,
+  Title,
+} from 'react-native-paper';
 
-import Header from '../../components/Header';
 import { useStore } from '../../store/context';
 
 const productTypes = [
@@ -25,6 +30,17 @@ const EditProducts = ({ navigation, route }) => {
     price: '',
     specialPrice: '',
   });
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <Appbar.BackAction onPress={() => navigation.navigate('EditStore')} />
+      ),
+      headerRight: () => (
+        <IconButton disabled={!validForm} icon="content-save" onPress={save} />
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {
     if (!route.params) {
@@ -93,64 +109,53 @@ const EditProducts = ({ navigation, route }) => {
   const selectedProduct = state.products.find(({ id }) => id === product);
 
   return (
-    <SafeAreaView>
-      <Header>
-        <Appbar.BackAction onPress={() => navigation.navigate('EditStore')} />
-        <Appbar.Content title="Ajouter une bière" />
-        <Appbar.Action
-          disabled={!validForm}
-          icon="content-save"
-          onPress={save}
-        />
-      </Header>
-      <View style={styles.box}>
-        <Title>{selectedProduct?.name || productName}</Title>
-        <View style={styles.typeGroup}>
-          <RadioButton.Group onValueChange={changeType} value={type}>
-            {productTypes.map(({ label, value }) => (
-              <RadioButton.Item
-                key={value}
-                color="green"
-                label={label}
-                value={value}
-              />
-            ))}
-          </RadioButton.Group>
-        </View>
-        <TextInput
-          style={styles.textInput}
-          label="Volume"
-          mode="flat"
-          onChangeText={volume => setProduct({ ...storeProduct, volume })}
-          value={String(volume)}
-          keyboardType="numeric"
-          returnKeyType="done"
-          right={<TextInput.Affix text="cl" />}
-        />
-        <TextInput
-          style={styles.textInput}
-          label="Prix"
-          mode="flat"
-          onChangeText={price => setProduct({ ...storeProduct, price })}
-          value={String(price)}
-          keyboardType="decimal-pad"
-          returnKeyType="done"
-          right={<TextInput.Affix text="€" />}
-        />
-        <TextInput
-          style={styles.textInput}
-          label="Prix en Happy hour"
-          mode="flat"
-          onChangeText={specialPrice =>
-            setProduct({ ...storeProduct, specialPrice })
-          }
-          value={String(specialPrice)}
-          keyboardType="decimal-pad"
-          returnKeyType="done"
-          right={<TextInput.Affix text="€" />}
-        />
+    <View style={styles.box}>
+      <Title>{selectedProduct?.name || productName}</Title>
+      <View style={styles.typeGroup}>
+        <RadioButton.Group onValueChange={changeType} value={type}>
+          {productTypes.map(({ label, value }) => (
+            <RadioButton.Item
+              key={value}
+              color="green"
+              label={label}
+              value={value}
+            />
+          ))}
+        </RadioButton.Group>
       </View>
-    </SafeAreaView>
+      <TextInput
+        style={styles.textInput}
+        label="Volume"
+        mode="flat"
+        onChangeText={volume => setProduct({ ...storeProduct, volume })}
+        value={String(volume)}
+        keyboardType="numeric"
+        returnKeyType="done"
+        right={<TextInput.Affix text="cl" />}
+      />
+      <TextInput
+        style={styles.textInput}
+        label="Prix"
+        mode="flat"
+        onChangeText={price => setProduct({ ...storeProduct, price })}
+        value={String(price)}
+        keyboardType="decimal-pad"
+        returnKeyType="done"
+        right={<TextInput.Affix text="€" />}
+      />
+      <TextInput
+        style={styles.textInput}
+        label="Prix en Happy hour"
+        mode="flat"
+        onChangeText={specialPrice =>
+          setProduct({ ...storeProduct, specialPrice })
+        }
+        value={String(specialPrice)}
+        keyboardType="decimal-pad"
+        returnKeyType="done"
+        right={<TextInput.Affix text="€" />}
+      />
+    </View>
   );
 };
 

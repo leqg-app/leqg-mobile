@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import { StyleSheet, StatusBar, View } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -15,7 +15,7 @@ const Map = () => {
   const [filters, setFilters] = useState([]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar
         barStyle="dark-content"
         translucent={true}
@@ -37,7 +37,7 @@ const Map = () => {
       />
       <Filters onChange={filters => setFilters(filters)} />
       <StoreSheet sheet={sheet} store={selectedStore} />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -62,8 +62,23 @@ const styles = StyleSheet.create({
 const MapStack = createNativeStackNavigator();
 
 export default () => (
-  <MapStack.Navigator screenOptions={{ headerShown: false }}>
-    <MapStack.Screen name="MapScreen" component={Map} />
-    <MapStack.Screen name="ProductFilter" component={ProductFilter} />
+  <MapStack.Navigator
+    screenOptions={{
+      presentation: 'modal',
+      headerStyle: {
+        backgroundColor: 'green',
+      },
+      headerTintColor: '#fff',
+    }}>
+    <MapStack.Screen
+      name="MapScreen"
+      component={Map}
+      options={{ headerShown: false }}
+    />
+    <MapStack.Screen
+      options={{ title: 'Filtrer par bière' }}
+      name="ProductFilter"
+      component={ProductFilter}
+    />
   </MapStack.Navigator>
 );

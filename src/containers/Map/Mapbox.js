@@ -31,6 +31,9 @@ const Mapbox = ({ filters, onPress }) => {
       () => {
         setPosition(CENTER);
       },
+      {
+        timeout: 2000,
+      },
     );
   }, [PermissionsAndroid.RESULTS]);
 

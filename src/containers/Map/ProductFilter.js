@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Appbar, TouchableRipple } from 'react-native-paper';
+import { TouchableRipple } from 'react-native-paper';
 
-import Header from '../../components/Header';
 import { useStore } from '../../store/context';
 
 const Row = ({ product, onSelect }) => (
@@ -33,22 +32,16 @@ const ProductFilter = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Filtrer par bière" />
-      </Header>
-      <View style={styles.container}>
-        <FlatList
-          data={products}
-          renderItem={({ item }) => <Row product={item} onSelect={onSelect} />}
-          keyExtractor={product => product.id}
-          getItemLayout={(_, index) => ({
-            length: ITEM_HEIGHT,
-            offset: ITEM_HEIGHT * index,
-            index,
-          })}
-        />
-      </View>
+      <FlatList
+        data={products}
+        renderItem={({ item }) => <Row product={item} onSelect={onSelect} />}
+        keyExtractor={product => product.id}
+        getItemLayout={(_, index) => ({
+          length: ITEM_HEIGHT,
+          offset: ITEM_HEIGHT * index,
+          index,
+        })}
+      />
     </SafeAreaView>
   );
 };
