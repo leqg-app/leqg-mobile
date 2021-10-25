@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
-  Appbar,
   Avatar,
   Button,
   Caption,
@@ -77,13 +76,21 @@ const EditStore = ({ route, navigation }) => {
         <IconButton disabled={!validForm} icon="content-save" onPress={save} />
       ),
     });
-  }, [navigation]);
+  }, []);
 
   useEffect(() => {
     if (route.params?.store) {
+      navigation.setOptions({
+        title: 'Modifier un bar',
+      });
       actions.setStoreEdition(route.params?.store);
+    } else {
+      navigation.setOptions({
+        title: 'Ajouter un bar',
+      });
+      actions.setStoreEdition({});
     }
-  }, [route.params?.store]);
+  }, [route.params]);
 
   const {
     name = '',

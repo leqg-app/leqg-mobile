@@ -37,9 +37,17 @@ export default () => {
         headerTintColor: '#fff',
       }}>
       {state.user.jwt ? (
-        <AccountStack.Screen name="Account" component={Account} />
+        <AccountStack.Screen
+          options={{ title: 'Mon compte' }}
+          name="Account"
+          component={Account}
+        />
       ) : (
-        <AccountStack.Screen name="Auth" component={Auth} />
+        <AccountStack.Screen
+          options={{ title: 'Inscription' }}
+          name="Auth"
+          component={Auth}
+        />
       )}
     </AccountStack.Navigator>
   );

@@ -208,7 +208,9 @@ const EditSchedules = ({ navigation }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <IconButton icon="check" onPress={save} />,
+      headerRight: () => (
+        <IconButton color="white" icon="check" onPress={save} />
+      ),
     });
   }, [navigation]);
 
