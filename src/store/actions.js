@@ -49,6 +49,7 @@ export const actionCreators = (dispatch, state) => {
           dispatch({ type: 'GET_STORES_FAIL', message: err.message }),
         );
     },
+    setStores: stores => dispatch({ type: 'SET_STORES', stores }),
     addStore: details => {
       dispatch({ type: 'ADD_STORE' });
       addStore(details, { jwt: state.user.jwt })

@@ -10,10 +10,6 @@ import { useStore } from '../../store/context';
 MapboxGL.setAccessToken(
   'pk.eyJ1IjoibmljbzJjaGUiLCJhIjoiY2lzYm5zcHAzMDAxNDJvbWtwb3dyY2ZuYiJ9.eSWQhgnzx-RQWqSx5ltXcg',
 );
-// TODO: better handle
-PermissionsAndroid.request(
-  PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-);
 
 const CENTER = [2.341924, 48.860395];
 

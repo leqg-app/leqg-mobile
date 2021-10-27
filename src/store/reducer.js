@@ -30,6 +30,9 @@ export const reducer = (state, action) => {
       };
     }
 
+    case 'SET_STORES': {
+      return { ...state, stores: action.stores };
+    }
     case 'GET_STORES': {
       return { ...state, error: undefined, loading: true };
     }
