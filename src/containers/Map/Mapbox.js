@@ -8,10 +8,6 @@ import { FAB } from 'react-native-paper';
 import { useStore } from '../../store/context';
 
 MapboxGL.setAccessToken('');
-// TODO: better handle
-PermissionsAndroid.request(
-  PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-);
 
 const CENTER = [2.341924, 48.860395];
 

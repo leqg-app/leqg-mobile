@@ -23,8 +23,12 @@ function getStore(id) {
   return get(`/v1/stores/${id}`);
 }
 
+function getVersion() {
+  return get(`/v1/version`).then(({ v }) => v);
+}
+
 function addStore(data, { jwt }) {
   return post('/v1/stores', data, { Authorization: `bearer ${jwt}` });
 }
 
-export { getStores, getStore, addStore };
+export { getVersion, getStores, getStore, addStore };

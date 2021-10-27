@@ -1,18 +1,45 @@
-import React, { useRef, useState } from 'react';
-import { StyleSheet, StatusBar, View } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { StyleSheet, StatusBar, View, PermissionsAndroid } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import RNBootSplash from 'react-native-bootsplash';
 
 import ProductFilter from './ProductFilter';
 import Filters from './Filters';
 import Mapbox from './Mapbox';
 import StoreSheet from './StoreSheet';
+import { storage } from '../../store/storage';
+import { getVersion } from '../../api/stores';
+import { useStore } from '../../store/context';
 
 const Map = () => {
+  const [, actions] = useStore();
   const sheet = useRef(null);
   const [text, onChangeText] = useState('');
   const [selectedStore, selectStore] = useState(false);
   const [filters, setFilters] = useState([]);
+
+  useEffect(() => {
+    const init = async () => {
+      const apiVersion = await getVersion();
+      const version = await storage.getIntAsync('version');
+      console.log({ apiVersion, version });
+      if (apiVersion === version) {
+        const stores = await storage.getArrayAsync('stores');
+        actions.setStores(stores);
+        console.log('set storeees', stores.length);
+      }
+
+      // TODO: better handle
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      );
+    };
+
+    init().finally(async () => {
+      await RNBootSplash.hide({ fade: true });
+    });
+  }, []);
 
   return (
     <View style={styles.container}>
