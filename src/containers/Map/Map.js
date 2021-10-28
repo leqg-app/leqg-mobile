@@ -19,8 +19,11 @@ const Map = () => {
 
   useEffect(() => {
     const init = async () => {
-      await actions.getStores();
-      await actions.getProducts();
+      await Promise.all([
+        actions.getStores(),
+        actions.getProducts(),
+        actions.getUser(),
+      ]);
 
       // TODO: better handle
       PermissionsAndroid.request(

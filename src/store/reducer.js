@@ -4,8 +4,7 @@ export const reducer = (state, action) => {
       return { ...state, user: {} };
     }
     case 'AUTH_SUCCESS': {
-      const { jwt, user } = action;
-      return { ...state, user: { jwt, ...user } };
+      return { ...state, user: action.user };
     }
 
     case 'GET_STORE': {

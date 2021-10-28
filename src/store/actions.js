@@ -1,6 +1,6 @@
 import { getProducts } from '../api/products';
 import { getStores, getStore, addStore, getVersion } from '../api/stores';
-import { signIn, signUp, updateProfile } from '../api/users';
+import { signIn, signUp, getProfile, updateProfile } from '../api/users';
 import { storage } from './storage';
 
 export const actionCreators = (dispatch, state) => {
@@ -16,16 +16,35 @@ export const actionCreators = (dispatch, state) => {
         })
         .catch(({ message }) => message);
     },
-    signIn: body => {
+    signIn: async body => {
       dispatch({ type: 'AUTH' });
-      return signIn(body)
-        .then(({ jwt, user, data, error }) => {
-          if (error) {
-            return data[0].messages[0].id;
-          }
-          dispatch({ type: 'AUTH_SUCCESS', jwt, user });
-        })
-        .catch(({ message }) => message);
+      try {
+        const { jwt, user, data, error } = await signIn(body);
+        if (error) {
+          return data[0].messages[0].id;
+        }
+        await storage.setStringAsync('jwt', jwt);
+        user.jwt = jwt;
+        dispatch({ type: 'AUTH_SUCCESS', user });
+      } catch (err) {
+        return err.message;
+      }
+    },
+    getUser: async () => {
+      try {
+        const jwt = await storage.getStringAsync('jwt');
+        if (!jwt) {
+          return;
+        }
+        const { data, error, ...user } = await getProfile(jwt);
+        if (error) {
+          return data[0].messages[0].id;
+        }
+        user.jwt = jwt;
+        dispatch({ type: 'AUTH_SUCCESS', user });
+      } catch (err) {
+        return { error: err.message };
+      }
     },
 
     getStore: id => {
@@ -107,7 +126,7 @@ export const actionCreators = (dispatch, state) => {
       const { user } = state;
       // Add store and get ids
       const favorites = [...user.favorites, store].map(store => store.id);
-      updateProfile({ favorites }, user.jwt).catch(() =>
+      updateProfile(user.jwt, { favorites }).catch(() =>
         dispatch({ type: 'REMOVE_FAVORITE', store }),
       );
     },
@@ -121,7 +140,7 @@ export const actionCreators = (dispatch, state) => {
       const favorites = user.favorites
         .filter(favorite => favorite.id !== store.id)
         .map(store => store.id);
-      updateProfile({ favorites }, user.jwt).catch(() =>
+      updateProfile(user.jwt, { favorites }).catch(() =>
         dispatch({ type: 'ADD_FAVORITE', store }),
       );
     },
