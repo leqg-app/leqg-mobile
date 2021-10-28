@@ -6,6 +6,7 @@ import {
   RadioButton,
   TextInput,
   Title,
+  useTheme,
 } from 'react-native-paper';
 
 import { useStore } from '../../store/context';
@@ -23,6 +24,7 @@ const productTypes = [
 
 const EditProducts = ({ navigation, route }) => {
   const [state, actions] = useStore();
+  const { colors } = useTheme();
   const [storeProduct, setProduct] = useState({
     product: {},
     type: 'draft',
@@ -116,7 +118,7 @@ const EditProducts = ({ navigation, route }) => {
           {productTypes.map(({ label, value }) => (
             <RadioButton.Item
               key={value}
-              color="green"
+              color={colors.primary}
               label={label}
               value={value}
             />

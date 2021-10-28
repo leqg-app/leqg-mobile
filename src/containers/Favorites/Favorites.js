@@ -2,6 +2,7 @@ import React from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Button, List, Paragraph } from 'react-native-paper';
 
+import { theme } from '../../constants';
 import { useStore } from '../../store/context';
 
 const AuthRequired = ({ navigation }) => (
@@ -22,7 +23,7 @@ const Row =
           <List.Icon
             {...props}
             icon="star"
-            color="green"
+            color={theme.colors.primary}
             onPress={() => actions.removeFavorite(item)}
           />
         )}

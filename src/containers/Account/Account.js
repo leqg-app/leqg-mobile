@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Subheading, Title } from 'react-native-paper';
+import { Subheading, Title, useTheme } from 'react-native-paper';
 
 import Auth from './Auth';
 import { useStore } from '../../store/context';
@@ -28,11 +28,12 @@ const AccountStack = createNativeStackNavigator();
 
 export default () => {
   const [state] = useStore();
+  const { colors } = useTheme();
   return (
     <AccountStack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: 'green',
+          backgroundColor: colors.primary,
         },
         headerTintColor: '#fff',
       }}>

@@ -8,7 +8,6 @@ import {
   View,
 } from 'react-native';
 import {
-  Appbar,
   Avatar,
   Badge,
   Button,
@@ -17,12 +16,13 @@ import {
   IconButton,
   Portal,
   TextInput,
+  useTheme,
 } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
 
 import { useStore } from '../../store/context';
 import formatHour from '../../utils/formatHour';
-import { daysFull, daysShort } from '../../constants';
+import { daysFull, daysShort, theme } from '../../constants';
 
 const newTime = () => ({
   start: { hours: 17, minutes: 0 },
@@ -49,6 +49,7 @@ const DaySchedule = ({ schedule }) => {
 };
 
 const EditSchedulesModal = props => {
+  const { colors } = useTheme();
   const { schedule, editingDay, onEdited, onDismiss } = props;
   const current = schedule || newSchedule();
 
@@ -91,7 +92,7 @@ const EditSchedulesModal = props => {
             <View style={styles.flexCell}>
               <Checkbox
                 status={closed ? 'checked' : 'unchecked'}
-                color="green"
+                color={colors.primary}
                 onPress={() => setClosed(!closed)}
               />
               <Text>Fermé</Text>
@@ -100,7 +101,7 @@ const EditSchedulesModal = props => {
               <View style={styles.flexCell}>
                 <Checkbox
                   status={alwaysOpen ? 'checked' : 'unchecked'}
-                  color="green"
+                  color={colors.primary}
                   onPress={() => setAlwaysOpen(!alwaysOpen)}
                 />
                 <Text>Ouvert 24h/24</Text>
@@ -287,15 +288,15 @@ const styles = StyleSheet.create({
   dayButtonEmpty: {
     marginRight: 7,
     borderWidth: 2,
-    borderColor: 'green',
+    borderColor: theme.colors.primary,
     backgroundColor: 'transparent',
-    color: 'green',
+    color: theme.colors.primary,
   },
   dayButtonFilled: {
     marginRight: 7,
     borderWidth: 2,
-    borderColor: 'green',
-    backgroundColor: 'green',
+    borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary,
     color: 'white',
   },
   buttonEditAll: {

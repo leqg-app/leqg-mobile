@@ -11,6 +11,7 @@ import {
   Portal,
   Subheading,
   TouchableRipple,
+  useTheme,
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 
@@ -87,6 +88,7 @@ function Product({ product }) {
 
 const StoreDetails = ({ store }) => {
   const [state, actions] = useStore();
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const [modalLogin, setModalLogin] = useState(false);
 
@@ -147,7 +149,7 @@ const StoreDetails = ({ store }) => {
             style={styles.infoIcon}
             size={40}
             icon="map-marker"
-            color="green"
+            color={colors.primary}
           />
           <Text style={styles.infoText}>{store.address}</Text>
         </View>
@@ -161,7 +163,7 @@ const StoreDetails = ({ store }) => {
             style={styles.infoIcon}
             size={40}
             icon="clock"
-            color="green"
+            color={colors.primary}
           />
           {!expandSchedules ? (
             <Text style={styles.infoText}>Ouvert </Text>
@@ -184,21 +186,24 @@ const StoreDetails = ({ store }) => {
             style={styles.infoIcon}
             size={40}
             icon="earth"
-            color="green"
+            color={colors.primary}
           />
           <Text style={styles.infoText}>https://google.com/</Text>
         </View>
       </TouchableRipple>
       <Divider /> */}
       <TouchableRipple
-        onPress={() => navigation.navigate('EditStoreScreen', { store })}
+        onPress={() => {
+          actions.setStoreEdition(store);
+          navigation.navigate('EditStoreScreen');
+        }}
         rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.infoRow}>
           <Avatar.Icon
             style={styles.infoIcon}
             size={40}
             icon="pencil"
-            color="green"
+            color={colors.primary}
           />
           <Text style={styles.infoText}>Suggérer une modification</Text>
         </View>
@@ -221,31 +226,31 @@ const StoreDetails = ({ store }) => {
       <View style={styles.infoRow}>
         <IconButton
           icon="star-outline"
-          color="green"
+          color={colors.primary}
           size={30}
           onPress={() => console.log('Pressed')}
         />
         <IconButton
           icon="star-outline"
-          color="green"
+          color={colors.primary}
           size={30}
           onPress={() => console.log('Pressed')}
         />
         <IconButton
           icon="star-outline"
-          color="green"
+          color={colors.primary}
           size={30}
           onPress={() => console.log('Pressed')}
         />
         <IconButton
           icon="star-outline"
-          color="green"
+          color={colors.primary}
           size={30}
           onPress={() => console.log('Pressed')}
         />
         <IconButton
           icon="star-outline"
-          color="green"
+          color={colors.primary}
           size={30}
           onPress={() => console.log('Pressed')}
         />
