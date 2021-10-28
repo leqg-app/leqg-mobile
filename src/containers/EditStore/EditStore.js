@@ -18,6 +18,7 @@ import {
   Title,
 } from 'react-native-paper';
 
+import { theme } from '../../constants';
 import { useStore } from '../../store/context';
 import EditSchedules from './EditSchedules';
 import EditAddress from './EditAddress';
@@ -66,31 +67,19 @@ const Product = ({ product, onPress, onRemove }) => {
   );
 };
 
-const EditStore = ({ route, navigation }) => {
+const EditStore = ({ navigation }) => {
   const [state, actions] = useStore();
   const [error, setError] = React.useState(false);
 
   useLayoutEffect(() => {
+    const title = state.setStoreEdition ? 'Modifier' : 'Ajouter';
     navigation.setOptions({
+      title: `${title} un bar`,
       headerRight: () => (
         <IconButton disabled={!validForm} icon="content-save" onPress={save} />
       ),
     });
   }, []);
-
-  useEffect(() => {
-    if (route.params?.store) {
-      navigation.setOptions({
-        title: 'Modifier un bar',
-      });
-      actions.setStoreEdition(route.params?.store);
-    } else {
-      navigation.setOptions({
-        title: 'Ajouter un bar',
-      });
-      actions.setStoreEdition({});
-    }
-  }, [route.params]);
 
   const {
     name = '',
@@ -250,7 +239,7 @@ export default () => (
   <AddStack.Navigator
     screenOptions={{
       headerStyle: {
-        backgroundColor: 'green',
+        backgroundColor: theme.colors.primary,
       },
       headerTintColor: '#fff',
     }}>

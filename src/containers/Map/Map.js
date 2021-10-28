@@ -4,6 +4,7 @@ import { Searchbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNBootSplash from 'react-native-bootsplash';
 
+import { theme } from '../../constants';
 import ProductFilter from './ProductFilter';
 import Filters from './Filters';
 import Mapbox from './Mapbox';
@@ -88,7 +89,7 @@ export default () => (
     screenOptions={{
       presentation: 'modal',
       headerStyle: {
-        backgroundColor: 'green',
+        backgroundColor: theme.colors.primary,
       },
       headerTintColor: '#fff',
     }}>

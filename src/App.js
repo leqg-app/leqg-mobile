@@ -1,19 +1,11 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { StoreProvider } from './store/context';
 import Routes from './Routes';
-
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'green',
-    accent: 'yellow',
-  },
-};
+import { theme } from './constants';
 
 const App = () => {
   return (

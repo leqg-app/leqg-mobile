@@ -3,8 +3,9 @@ import { PermissionsAndroid, StyleSheet, View } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import Geolocation from 'react-native-geolocation-service';
 import circle from '@turf/circle';
-import { FAB } from 'react-native-paper';
+import { FAB, useTheme } from 'react-native-paper';
 
+import { theme } from '../../constants';
 import { useStore } from '../../store/context';
 
 MapboxGL.setAccessToken('');
@@ -14,6 +15,7 @@ const CENTER = [2.341924, 48.860395];
 const Mapbox = ({ filters, onPress }) => {
   const camera = useRef();
   const [state] = useStore();
+  const { colors } = useTheme();
   const [geoloc, setGeoloc] = useState(false);
   const [position, setPosition] = useState(undefined);
 
@@ -112,7 +114,7 @@ const Mapbox = ({ filters, onPress }) => {
         <FAB
           style={styles.fab}
           icon="target"
-          color="green"
+          color={colors.primary}
           onPress={() => camera.current.flyTo(position)}
         />
       )}
@@ -145,7 +147,7 @@ const textField = [
 
 const layerStyles = {
   pointCircle: {
-    circleColor: 'green',
+    circleColor: theme.colors.primary,
     circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 10],
   },
   priceText: {
@@ -158,7 +160,7 @@ const layerStyles = {
     textAllowOverlap: true,
   },
   nearLine: {
-    lineColor: 'green',
+    lineColor: theme.colors.primary,
     lineWidth: 1.4,
     lineOpacity: 0.84,
     lineDasharray: [5, 5],
@@ -166,8 +168,8 @@ const layerStyles = {
   nearText: {
     textField: '15min',
     textSize: 13,
-    textColor: 'green',
-    textHaloColor: 'green',
+    textColor: theme.colors.primary,
+    textHaloColor: theme.colors.primary,
     textHaloWidth: 0.3,
   },
 };
