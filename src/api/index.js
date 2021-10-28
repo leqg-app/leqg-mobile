@@ -1,7 +1,9 @@
 import { api as apiEndpoint } from '../../app.json';
 
-function get(path) {
-  return fetch(`${apiEndpoint}${path}`).then(res => res.json());
+function get(path, headers = {}) {
+  return fetch(`${apiEndpoint}${path}`, {
+    headers,
+  }).then(res => res.json());
 }
 
 function post(path, data, headers = {}) {
