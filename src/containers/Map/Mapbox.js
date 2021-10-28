@@ -13,10 +13,9 @@ const CENTER = [2.341924, 48.860395];
 
 const Mapbox = ({ filters, onPress }) => {
   const camera = useRef();
-  const [state, actions] = useStore();
+  const [state] = useStore();
   const [geoloc, setGeoloc] = useState(false);
   const [position, setPosition] = useState(undefined);
-  const [coordinates, setCoordinates] = useState({});
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -32,20 +31,6 @@ const Mapbox = ({ filters, onPress }) => {
       },
     );
   }, [PermissionsAndroid.RESULTS]);
-
-  useEffect(() => {
-    if (!state.loading) {
-      if (coordinates.northEast) {
-        actions.getStores(coordinates);
-      } else {
-        // France
-        actions.getStores({ northEast: [9, 52], southWest: [-6, 42] });
-      }
-      if (!state.products.length) {
-        actions.getProducts();
-      }
-    }
-  }, [coordinates]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const storesShape = useMemo(
     () => ({
@@ -66,11 +51,6 @@ const Mapbox = ({ filters, onPress }) => {
     return <View />;
   }
 
-  const regionChanged = ({ properties }) => {
-    const [northEast, southWest] = properties.visibleBounds;
-    setCoordinates({ northEast, southWest });
-  };
-
   return (
     <>
       <MapboxGL.MapView
@@ -78,7 +58,6 @@ const Mapbox = ({ filters, onPress }) => {
         localizeLabels={true}
         rotateEnabled={false}
         pitchEnabled={false}
-        onRegionDidChange={regionChanged}
         onPress={() => onPress()}>
         <MapboxGL.Camera
           ref={camera}

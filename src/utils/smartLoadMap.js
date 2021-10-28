@@ -9,7 +9,7 @@ function inCoordinates(referer, subject) {
     northEast: [slngE, slatN],
     southWest: [slngW, slatS],
   } = subject;
-  return rlngE > slngE && rlatN > slatN && rlngW < slngW && rlatS < slatS;
+  return rlngE >= slngE && rlatN >= slatN && rlngW <= slngW && rlatS <= slatS;
 }
 
 function groupStores(newStores, coordinates) {

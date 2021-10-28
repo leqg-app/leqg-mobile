@@ -8,8 +8,6 @@ import ProductFilter from './ProductFilter';
 import Filters from './Filters';
 import Mapbox from './Mapbox';
 import StoreSheet from './StoreSheet';
-import { storage } from '../../store/storage';
-import { getVersion } from '../../api/stores';
 import { useStore } from '../../store/context';
 
 const Map = () => {
@@ -21,14 +19,8 @@ const Map = () => {
 
   useEffect(() => {
     const init = async () => {
-      const apiVersion = await getVersion();
-      const version = await storage.getIntAsync('version');
-      console.log({ apiVersion, version });
-      if (apiVersion === version) {
-        const stores = await storage.getArrayAsync('stores');
-        actions.setStores(stores);
-        console.log('set storeees', stores.length);
-      }
+      await actions.getStores();
+      await actions.getProducts();
 
       // TODO: better handle
       PermissionsAndroid.request(

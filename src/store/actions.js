@@ -1,7 +1,7 @@
 import { getProducts } from '../api/products';
-import { getStores, getStore, addStore } from '../api/stores';
+import { getStores, getStore, addStore, getVersion } from '../api/stores';
 import { signIn, signUp, updateProfile } from '../api/users';
-import { alreadyLoaded } from '../utils/smartLoadMap';
+import { storage } from './storage';
 
 export const actionCreators = (dispatch, state) => {
   return {
@@ -36,18 +36,29 @@ export const actionCreators = (dispatch, state) => {
           dispatch({ type: 'GET_STORE_FAIL', message: err.message }),
         );
     },
-    getStores: coordinates => {
-      if (alreadyLoaded(coordinates)) {
-        return;
+    getStores: async () => {
+      // Compare API version and storage version to use stores from API or storage
+      const apiVersions = await getVersion();
+      const versions = (await storage.getMapAsync('versions')) || {};
+      if (versions.stores === apiVersions?.stores) {
+        const stores = await storage.getArrayAsync('stores');
+        if (stores?.length) {
+          dispatch({ type: 'GET_STORES_SUCCESS', stores });
+          return;
+        }
       }
       dispatch({ type: 'GET_STORES' });
-      getStores(coordinates)
-        .then(stores =>
-          dispatch({ type: 'GET_STORES_SUCCESS', stores, coordinates }),
-        )
-        .catch(err =>
-          dispatch({ type: 'GET_STORES_FAIL', message: err.message }),
-        );
+      try {
+        const stores = await getStores();
+        await storage.setArrayAsync('stores', stores);
+        await storage.setMapAsync('versions', {
+          ...versions,
+          stores: apiVersions.stores,
+        });
+        dispatch({ type: 'GET_STORES_SUCCESS', stores });
+      } catch (err) {
+        dispatch({ type: 'GET_STORES_FAIL', message: err.message });
+      }
     },
     setStores: stores => dispatch({ type: 'SET_STORES', stores }),
     addStore: details => {
@@ -59,13 +70,29 @@ export const actionCreators = (dispatch, state) => {
         );
     },
 
-    getProducts: () => {
+    getProducts: async () => {
+      // Compare API version and storage version to use products from API or storage
+      const apiVersions = await getVersion();
+      const versions = (await storage.getMapAsync('versions')) || {};
+      if (versions.products === apiVersions?.products) {
+        const products = await storage.getArrayAsync('products');
+        if (products?.length) {
+          dispatch({ type: 'GET_PRODUCTS_SUCCESS', products });
+          return;
+        }
+      }
       dispatch({ type: 'GET_PRODUCTS' });
-      getProducts()
-        .then(products => dispatch({ type: 'GET_PRODUCTS_SUCCESS', products }))
-        .catch(err =>
-          dispatch({ type: 'GET_PRODUCTS_FAIL', message: err.message }),
-        );
+      try {
+        const products = await getProducts();
+        await storage.setArrayAsync('products', products);
+        await storage.setMapAsync('versions', {
+          ...versions,
+          products: apiVersions.products,
+        });
+        dispatch({ type: 'GET_PRODUCTS_SUCCESS', products });
+      } catch (err) {
+        dispatch({ type: 'GET_PRODUCTS_FAIL', message: err.message });
+      }
     },
 
     setStoreEdition: store => {
