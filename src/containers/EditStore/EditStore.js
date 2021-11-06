@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
+  Appbar,
   Avatar,
   Button,
   Caption,
@@ -67,19 +68,9 @@ const Product = ({ product, onPress, onRemove }) => {
   );
 };
 
-const EditStore = ({ navigation }) => {
+const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
   const [error, setError] = React.useState(false);
-
-  useLayoutEffect(() => {
-    const title = state.setStoreEdition ? 'Modifier' : 'Ajouter';
-    navigation.setOptions({
-      title: `${title} un bar`,
-      headerRight: () => (
-        <IconButton disabled={!validForm} icon="content-save" onPress={save} />
-      ),
-    });
-  }, []);
 
   const {
     name = '',
@@ -100,6 +91,12 @@ const EditStore = ({ navigation }) => {
   const validAddress = address && longitude && latitude;
   const validForm = name && validAddress;
 
+  const back = () => {
+    // TODO: confirmation if data was edited
+    actions.resetStoreEdition();
+    navigation.goBack();
+  };
+
   const save = async () => {
     if (!validForm) {
       setError('Missing field');
@@ -107,6 +104,23 @@ const EditStore = ({ navigation }) => {
     }
     actions.addStore();
   };
+
+  useEffect(() => {
+    const title = route.params?.store ? 'Modifier' : 'Ajouter';
+    navigation.setOptions({
+      title: `${title} un bar`,
+      headerLeft: () =>
+        route.params?.store && (
+          <Appbar.BackAction color="white" onPress={back} />
+        ),
+      headerRight: () => (
+        <IconButton disabled={!validForm} icon="check" onPress={save} />
+      ),
+    });
+    if (route.params?.store) {
+      actions.setStoreEdition(route.params?.store);
+    }
+  }, [route.params]);
 
   if (!state.user.jwt) {
     return (
@@ -246,7 +260,7 @@ export default () => (
     <AddStack.Screen
       options={{ title: 'Ajouter un bar' }}
       name="EditStore"
-      component={EditStore}
+      component={React.memo(EditStore)}
     />
     <AddStack.Screen
       options={{ title: "Modifier l'adresse" }}

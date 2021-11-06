@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import {
+  Appbar,
   Avatar,
   Badge,
   Button,
@@ -21,7 +22,7 @@ import {
 import { TimePickerModal } from 'react-native-paper-dates';
 
 import { useStore } from '../../store/context';
-import formatHour from '../../utils/formatHour';
+import { formatHour } from '../../utils/time';
 import { daysFull, daysShort, theme } from '../../constants';
 
 const newTime = () => ({
@@ -73,19 +74,19 @@ const EditSchedulesModal = props => {
       <Dialog.Title>Sélectionner des jours et des horaires</Dialog.Title>
       <Dialog.Content>
         <ScrollView style={styles.modalScroll}>
-          <View style={styles.flex}>
+          <View style={styles.dayButtons}>
             {daysShort.map((day, i) => (
-              <Pressable key={i} onPress={() => onPressDay(i)}>
-                <Badge
-                  size={35}
-                  style={
-                    daysSelected.includes(i)
-                      ? styles.dayButtonFilled
-                      : styles.dayButtonEmpty
-                  }>
-                  {day}
-                </Badge>
-              </Pressable>
+              <Badge
+                key={i}
+                onPress={() => onPressDay(i)}
+                size={35}
+                style={
+                  daysSelected.includes(i)
+                    ? styles.dayButtonFilled
+                    : styles.dayButtonEmpty
+                }>
+                {day}
+              </Badge>
             ))}
           </View>
           <View style={styles.flex}>
@@ -209,6 +210,7 @@ const EditSchedules = ({ navigation }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerLeft: () => <Appbar.BackAction color="white" onPress={goBack} />,
       headerRight: () => (
         <IconButton color="white" icon="check" onPress={save} />
       ),
@@ -285,15 +287,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
+  dayButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   dayButtonEmpty: {
-    marginRight: 7,
     borderWidth: 2,
     borderColor: theme.colors.primary,
     backgroundColor: 'transparent',
     color: theme.colors.primary,
   },
   dayButtonFilled: {
-    marginRight: 7,
     borderWidth: 2,
     borderColor: theme.colors.primary,
     backgroundColor: theme.colors.primary,

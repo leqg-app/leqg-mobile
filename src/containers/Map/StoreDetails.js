@@ -17,6 +17,48 @@ import { useNavigation } from '@react-navigation/core';
 
 import { useStore } from '../../store/context';
 import { daysFull } from '../../constants';
+import { secondToTime } from '../../utils/time';
+
+function getSchedule(day) {
+  const { closed, opening, closing, openingSpecial, closingSpecial } = day;
+  if (closed) {
+    return <Text>Fermé</Text>;
+  }
+  const normal = opening && closing;
+  const special = openingSpecial && closingSpecial;
+  if (normal && special) {
+    return (
+      <View>
+        <Text>
+          {secondToTime(opening)} - {secondToTime(closing)}
+        </Text>
+        <Text>
+          Happy Hour: {secondToTime(openingSpecial)} -{' '}
+          {secondToTime(closingSpecial)}
+        </Text>
+      </View>
+    );
+  }
+  if (normal) {
+    return (
+      <Text>
+        {secondToTime(opening)} - {secondToTime(closing)}
+      </Text>
+    );
+  }
+  if (special) {
+    return (
+      <View>
+        <Text>Horaires inconnus</Text>
+        <Text>
+          Happy Hour: {secondToTime(openingSpecial)} -{' '}
+          {secondToTime(closingSpecial)}
+        </Text>
+      </View>
+    );
+  }
+  return <Text>Ouvert</Text>;
+}
 
 function ActionButton({ name, icon, onPress }) {
   return (
@@ -44,9 +86,7 @@ function Schedules({ schedules }) {
       {daysFull.map((day, i) => (
         <View key={day} style={styles.scheduleRow}>
           <Text style={styles.scheduleRowDay}>{day}</Text>
-          <Text style={styles.scheduleRowDay}>
-            {days[i + 1]?.alwaysOpen ? 'Ouvert' : 'Fermé'}
-          </Text>
+          {getSchedule(days[i + 1])}
         </View>
       ))}
     </View>
@@ -129,7 +169,7 @@ const StoreDetails = ({ store }) => {
     <View>
       <View style={styles.actionsBar}>
         <ActionButton
-          onPress={() => openAddress()}
+          onPress={openAddress}
           name="Itinéraire"
           icon="google-maps"
         />
@@ -141,9 +181,7 @@ const StoreDetails = ({ store }) => {
         />
       </View>
       <Divider />
-      <TouchableRipple
-        onPress={() => openAddress()}
-        rippleColor="rgba(0, 0, 0, .25)">
+      <TouchableRipple onPress={openAddress} rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.infoRow}>
           <Avatar.Icon
             style={styles.infoIcon}
@@ -179,7 +217,7 @@ const StoreDetails = ({ store }) => {
       )}
       <Divider />
       {/* <TouchableRipple
-        onPress={() => openAddress()}
+        onPress={openAddress}
         rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.infoRow}>
           <Avatar.Icon
@@ -193,10 +231,12 @@ const StoreDetails = ({ store }) => {
       </TouchableRipple>
       <Divider /> */}
       <TouchableRipple
-        onPress={() => {
-          actions.setStoreEdition(store);
-          navigation.navigate('EditStoreScreen');
-        }}
+        onPress={() =>
+          navigation.navigate('EditStoreScreen', {
+            screen: 'EditStore',
+            params: { store },
+          })
+        }
         rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.infoRow}>
           <Avatar.Icon
@@ -315,7 +355,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   scheduleRowDay: {
-    width: '50%',
+    width: '40%',
   },
   subtitle: {
     marginLeft: 15,
