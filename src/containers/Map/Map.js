@@ -46,6 +46,7 @@ const Map = () => {
       />
       <Mapbox
         filters={filters}
+        selectedStore={selectedStore}
         onPress={store => {
           selectStore(store);
           sheet.current.snapTo(store ? 1 : 0);
