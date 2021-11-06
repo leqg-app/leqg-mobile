@@ -5,10 +5,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { theme } from './constants';
+import { useStorage } from './store/storage';
 import Map from './containers/Map/Map';
 import Favorites from './containers/Favorites/Favorites';
 import Account from './containers/Account/Account';
 import EditStore from './containers/EditStore/EditStore';
+import Splash from './Splash';
 
 const Tab = createBottomTabNavigator();
 const TabNavigator = () => (
@@ -74,6 +76,12 @@ const TabNavigator = () => (
 
 const Main = createNativeStackNavigator();
 const Routes = () => {
+  const [firstOpen] = useStorage('firstOpen', false);
+
+  if (!firstOpen) {
+    return <Splash />;
+  }
+
   return (
     <NavigationContainer>
       <Main.Navigator
