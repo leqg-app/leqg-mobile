@@ -5,7 +5,6 @@ import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 
 import Header from '../../components/Header';
-
 import { useStore } from '../../store/context';
 import StoreDetails from './StoreDetails';
 
@@ -37,37 +36,34 @@ const StoreSheet = props => {
     return ['0%', `${two}%`, `${three}%`];
   })();
 
-  const renderContent = useMemo(
-    () => () => {
-      const store = state.storesDetails[props.store?.id];
-      if (!store) {
-        return (
-          <View style={styles.sheetContent}>
-            <Title style={styles.title}>{props.store?.name}</Title>
-            <ActivityIndicator style={styles.loading} />
-          </View>
-        );
-      }
+  const renderContent = () => {
+    const store = state.storesDetails[props.store?.id];
+    if (!store) {
       return (
         <View style={styles.sheetContent}>
-          <Pressable onPress={() => props.sheet.current.snapTo(2)}>
-            <Title numberOfLines={1} style={styles.title}>
-              {store.name}
-            </Title>
-            <View style={styles.preview}>
-              <Text style={styles.previewSchedules}>Ouvert</Text>
-              <Text numberOfLines={1}>{store.address}</Text>
-            </View>
-          </Pressable>
-          <Animated.View
-            style={{ top: animatedDetails, backgroundColor: 'white' }}>
-            {store ? <StoreDetails store={store} /> : ''}
-          </Animated.View>
+          <Title style={styles.title}>{props.store?.name}</Title>
+          <ActivityIndicator style={styles.loading} />
         </View>
       );
-    },
-    [state.storesDetails],
-  );
+    }
+    return (
+      <View style={styles.sheetContent}>
+        <Pressable onPress={() => props.sheet.current.snapTo(2)}>
+          <Title numberOfLines={1} style={styles.title}>
+            {store.name}
+          </Title>
+          <View style={styles.preview}>
+            <Text style={styles.previewSchedules}>Ouvert</Text>
+            <Text numberOfLines={1}>{store.address}</Text>
+          </View>
+        </Pressable>
+        <Animated.View
+          style={{ top: animatedDetails, backgroundColor: 'white' }}>
+          {store ? <StoreDetails store={store} /> : ''}
+        </Animated.View>
+      </View>
+    );
+  };
 
   return (
     <>

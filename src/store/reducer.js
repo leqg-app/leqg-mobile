@@ -98,6 +98,12 @@ export const reducer = (state, action) => {
         },
       };
     }
+    case 'RESET_STORE_EDITION': {
+      return {
+        ...state,
+        storeEdition: {},
+      };
+    }
 
     case 'ADD_FAVORITE': {
       return {

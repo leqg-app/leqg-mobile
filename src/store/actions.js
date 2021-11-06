@@ -114,6 +114,9 @@ export const actionCreators = (dispatch, state) => {
       }
     },
 
+    resetStoreEdition: () => {
+      dispatch({ type: 'RESET_STORE_EDITION' });
+    },
     setStoreEdition: store => {
       dispatch({ type: 'SET_STORE_EDITION', store });
     },
