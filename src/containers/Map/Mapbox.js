@@ -12,7 +12,7 @@ MapboxGL.setAccessToken('');
 
 const CENTER = [2.341924, 48.860395];
 
-const Mapbox = ({ filters, onPress }) => {
+const Mapbox = ({ filters, onPress, selectedStore }) => {
   const camera = useRef();
   const [state] = useStore();
   const { colors } = useTheme();
@@ -53,6 +53,18 @@ const Mapbox = ({ filters, onPress }) => {
     return <View />;
   }
 
+  const pointCircle = {
+    circleColor: selectedStore
+      ? [
+          'case',
+          ['==', selectedStore.id, ['get', 'id']],
+          theme.colors.accent,
+          theme.colors.bright,
+        ]
+      : theme.colors.bright,
+    circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 10],
+  };
+
   return (
     <>
       <MapboxGL.MapView
@@ -74,12 +86,12 @@ const Mapbox = ({ filters, onPress }) => {
           <MapboxGL.CircleLayer
             id="pointCircle"
             filter={filters && ['all', ...filters]}
-            style={layerStyles.pointCircle}
+            style={pointCircle}
           />
           <MapboxGL.SymbolLayer
             id="priceText"
             aboveLayerID="pointCircle"
-            minZoomLevel={10.5}
+            minZoomLevel={12}
             filter={filters && ['all', ...filters]}
             style={layerStyles.priceText}
           />
@@ -146,10 +158,6 @@ const textField = [
 ];
 
 const layerStyles = {
-  pointCircle: {
-    circleColor: theme.colors.primary,
-    circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 10],
-  },
   priceText: {
     textField,
     textSize: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 9],

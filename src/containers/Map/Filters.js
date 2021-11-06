@@ -85,6 +85,7 @@ const Filters = ({ onChange }) => {
 
 const styles = StyleSheet.create({
   filters: {
+    height: 33,
     zIndex: 1,
     display: 'flex',
     flexDirection: 'row',
