@@ -7,6 +7,7 @@ import {
   DataTable,
   Dialog,
   Divider,
+  IconButton,
   Paragraph,
   Portal,
   Subheading,
@@ -17,47 +18,101 @@ import { useNavigation } from '@react-navigation/core';
 
 import { useStore } from '../../store/context';
 import { daysFull } from '../../constants';
-import { secondToTime } from '../../utils/time';
+import { inHours, secondToTime } from '../../utils/time';
+
+function Open({ day }) {
+  const { closing, openingSpecial, closingSpecial } = day;
+  return (
+    <View style={styles.infoScheduleState}>
+      <View>
+        <Text style={styles.scheduleOpen}>Ouvert</Text>
+      </View>
+      <View style={{ marginLeft: 20 }}>
+        {closing && <Text>Ferme à {secondToTime(closing)}</Text>}
+        {openingSpecial && (
+          <Text>
+            Happy hour de {secondToTime(openingSpecial)} à{' '}
+            {secondToTime(closingSpecial)}
+          </Text>
+        )}
+      </View>
+    </View>
+  );
+}
+
+function Closed({ day }) {
+  const { opening } = day;
+  return (
+    <View style={styles.infoScheduleState}>
+      <Text style={styles.scheduleClosed}>Fermé</Text>
+      {opening && <Text>&bull; Ouvre à {secondToTime(opening)}</Text>}
+    </View>
+  );
+}
+
+function TodaySchedule({ schedules }) {
+  const date = new Date();
+  const today = date.getDay() || 7;
+  const now = date.getHours() * 3600 + date.getMinutes() * 60;
+  const day = schedules.find(schedule => schedule.dayOfWeek === today);
+  const { closed, opening, closing, openingSpecial } = day;
+
+  if (closed) {
+    return <Closed day={day} />;
+  }
+  if (opening) {
+    if (inHours(opening, closing)) {
+      return <Open day={day} />;
+    }
+    if (now < opening) {
+      return <Closed day={day} />;
+    }
+    // TODO: find next day
+    return <Closed day={day} />;
+  }
+  return <Open day={day} />;
+}
 
 function getSchedule(day) {
   const { closed, opening, closing, openingSpecial, closingSpecial } = day;
   if (closed) {
-    return <Text>Fermé</Text>;
+    return <Text style={styles.scheduleStateCell}>Fermé</Text>;
   }
   const normal = opening && closing;
   const special = openingSpecial && closingSpecial;
   if (normal && special) {
     return (
-      <View>
-        <Text>
-          {secondToTime(opening)} - {secondToTime(closing)}
+      <View style={styles.scheduleHourRow}>
+        <Text style={styles.scheduleHourCell}>
+          {secondToTime(opening)}-{secondToTime(closing)}
         </Text>
-        <Text>
-          Happy Hour: {secondToTime(openingSpecial)} -{' '}
-          {secondToTime(closingSpecial)}
+        <Text style={styles.scheduleHourCell}>
+          {secondToTime(openingSpecial)}-{secondToTime(closingSpecial)}
         </Text>
       </View>
     );
   }
   if (normal) {
     return (
-      <Text>
-        {secondToTime(opening)} - {secondToTime(closing)}
-      </Text>
+      <View style={styles.scheduleHourRow}>
+        <Text style={styles.scheduleHourCell}>
+          {secondToTime(opening)}-{secondToTime(closing)}
+        </Text>
+        <Text style={styles.scheduleHourCell}>-</Text>
+      </View>
     );
   }
   if (special) {
     return (
-      <View>
-        <Text>Horaires inconnus</Text>
-        <Text>
-          Happy Hour: {secondToTime(openingSpecial)} -{' '}
-          {secondToTime(closingSpecial)}
+      <View style={styles.scheduleHourRow}>
+        <Text style={styles.scheduleHourCell}>-</Text>
+        <Text style={styles.scheduleHourCell}>
+          {secondToTime(openingSpecial)}-{secondToTime(closingSpecial)}
         </Text>
       </View>
     );
   }
-  return <Text>Ouvert</Text>;
+  return <Text style={styles.scheduleStateCell}>Ouvert</Text>;
 }
 
 function ActionButton({ name, icon, onPress }) {
@@ -77,18 +132,35 @@ function ActionButton({ name, icon, onPress }) {
 }
 
 function Schedules({ schedules }) {
-  const days = schedules.reduce(
-    (days, schedule) => ((days[schedule.dayOfWeek] = schedule), days),
-    {},
+  const today = new Date().getDay();
+  const day = today ? today - 1 : 6;
+  const ordered = schedules.reduce(
+    (days, schedule) => ((days[schedule.dayOfWeek - 1] = schedule), days),
+    [],
   );
+  const days = ordered.slice(day).concat(ordered.slice(0, day));
   return (
-    <View style={styles.infoText}>
-      {daysFull.map((day, i) => (
-        <View key={day} style={styles.scheduleRow}>
-          <Text style={styles.scheduleRowDay}>{day}</Text>
-          {getSchedule(days[i + 1])}
-        </View>
-      ))}
+    <View style={{ display: 'flex', flex: 1 }}>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          marginTop: 20,
+        }}>
+        <View style={{ width: '40%' }} />
+        <Text style={styles.scheduleHourCell}>Ouverture</Text>
+        <Text style={styles.scheduleHourCell}>Happy Hour</Text>
+      </View>
+      <View style={styles.infoText}>
+        {days.map(day => (
+          <View key={day.dayOfWeek} style={styles.scheduleDayRow}>
+            <Text style={styles.scheduleDayCell}>
+              {daysFull[day.dayOfWeek - 1]}
+            </Text>
+            {getSchedule(day)}
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
@@ -196,18 +268,27 @@ const StoreDetails = ({ store }) => {
       <TouchableRipple
         onPress={() => setExpandSchedules(!expandSchedules)}
         rippleColor="rgba(0, 0, 0, .25)">
-        <View style={styles.infoRow}>
-          <Avatar.Icon
-            style={styles.infoIcon}
-            size={40}
-            icon="clock"
-            color={colors.primary}
-          />
-          {!expandSchedules ? (
-            <Text style={styles.infoText}>Ouvert </Text>
-          ) : (
-            <Schedules schedules={store.schedules} />
-          )}
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <View style={styles.infoRow}>
+            <Avatar.Icon
+              style={styles.infoIcon}
+              size={40}
+              icon="clock"
+              color={colors.primary}
+            />
+            {!expandSchedules ? (
+              <TodaySchedule schedules={store.schedules} />
+            ) : (
+              <Schedules schedules={store.schedules} />
+            )}
+          </View>
+          {!expandSchedules && <IconButton icon="chevron-down" color="grey" />}
         </View>
       </TouchableRipple>
       {expandSchedules && (
@@ -349,13 +430,39 @@ const styles = StyleSheet.create({
   infoText: {
     marginVertical: 20,
   },
-  scheduleRow: {
+  infoScheduleState: {
+    marginVertical: 20,
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  scheduleOpen: {
+    color: 'green',
+  },
+  scheduleClosed: {
+    color: '#ff586b',
+  },
+  scheduleDayRow: {
     display: 'flex',
     flexDirection: 'row',
     marginBottom: 10,
   },
-  scheduleRowDay: {
+  scheduleDayCell: {
     width: '40%',
+  },
+  scheduleHourRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    flex: 1,
+  },
+  scheduleHourCell: {
+    width: 90,
+    textAlign: 'center',
+  },
+  scheduleStateCell: {
+    display: 'flex',
+    flexDirection: 'row',
+    flex: 1,
+    textAlign: 'center',
   },
   subtitle: {
     marginLeft: 15,
