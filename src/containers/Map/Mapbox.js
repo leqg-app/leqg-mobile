@@ -135,7 +135,8 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
 };
 
 const date = new Date();
-const day = ['at', new Date().getDay() - 1, ['get', 's']];
+const today = date.getDay() ? date.getDay() - 1 : 6;
+const day = ['at', today, ['get', 's']];
 const time = date.getHours() * 3600 + date.getMinutes() * 60;
 const textField = [
   'case',
