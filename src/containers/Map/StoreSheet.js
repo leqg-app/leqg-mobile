@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Appbar, Title } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
@@ -6,7 +6,8 @@ import BottomSheet from 'reanimated-bottom-sheet';
 
 import Header from '../../components/Header';
 import { useStore } from '../../store/context';
-import StoreDetails from './StoreDetails';
+import SchedulesPreview from '../Store/SchedulesPreview';
+import Store from '../Store/Store';
 
 const StoreSheet = props => {
   const [state, actions] = useStore();
@@ -41,7 +42,9 @@ const StoreSheet = props => {
     if (!store) {
       return (
         <View style={styles.sheetContent}>
-          <Title style={styles.title}>{props.store?.name}</Title>
+          <Title numberOfLines={1} style={styles.title}>
+            {props.store?.name}
+          </Title>
           <ActivityIndicator style={styles.loading} />
         </View>
       );
@@ -50,16 +53,22 @@ const StoreSheet = props => {
       <View style={styles.sheetContent}>
         <Pressable onPress={() => props.sheet.current.snapTo(2)}>
           <Title numberOfLines={1} style={styles.title}>
-            {store.name}
+            {props.store?.name}
           </Title>
-          <View style={styles.preview}>
-            <Text style={styles.previewSchedules}>Ouvert</Text>
-            <Text numberOfLines={1}>{store.address}</Text>
-          </View>
+          {store ? (
+            <View style={styles.preview}>
+              <View style={styles.previewSchedules}>
+                <SchedulesPreview schedules={store.schedules} />
+              </View>
+              <Text numberOfLines={1}>{store.address}</Text>
+            </View>
+          ) : (
+            <ActivityIndicator style={styles.loading} />
+          )}
         </Pressable>
         <Animated.View
           style={{ top: animatedDetails, backgroundColor: 'white' }}>
-          {store ? <StoreDetails store={store} /> : ''}
+          {store ? <Store store={store} /> : ''}
         </Animated.View>
       </View>
     );
