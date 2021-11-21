@@ -1,12 +1,5 @@
-import React, { useLayoutEffect } from 'react';
-import {
-  Pressable,
-  Text,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import React, { useLayoutEffect, useState } from 'react';
+import { Text, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import {
   Appbar,
   Avatar,
@@ -17,49 +10,57 @@ import {
   IconButton,
   Portal,
   TextInput,
+  TouchableRipple,
   useTheme,
 } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
 
 import { useStore } from '../../store/context';
-import { formatHour } from '../../utils/time';
+import {
+  secondToHour,
+  secondToTime,
+  toHours,
+  toMinutes,
+} from '../../utils/time';
 import { daysFull, daysShort, theme } from '../../constants';
 
-const newTime = () => ({
-  start: { hours: 17, minutes: 0 },
-  end: { hours: 2, minutes: 0 },
-});
 const newSchedule = () => ({
   closed: true,
-  alwaysOpen: false,
-  schedules: [newTime()],
+  opening: 17 * 3600,
+  closing: 23 * 3600,
+  openingSpecial: null,
+  closingSpecial: null,
 });
+
+function Time({ schedule }) {
+  const [open, close] = schedule;
+  return !open ? '-' : `${secondToTime(open)}-${secondToTime(close)}`;
+}
 
 const DaySchedule = ({ schedule }) => {
   if (!schedule || schedule.closed) {
-    return <Text>Fermé</Text>;
+    return <Text style={styles.hourCell}>Fermé</Text>;
   }
-  if (schedule.alwaysOpen) {
-    return <Text>24h/24</Text>;
-  }
-  return schedule.schedules.map((s, i) => (
-    <Text key={i}>
-      {formatHour(s.start)} - {formatHour(s.end)}
-    </Text>
-  ));
+  const { opening, closing, openingSpecial, closingSpecial } = schedule;
+  return (
+    <>
+      <Text style={styles.hourCell}>
+        <Time schedule={[opening, closing]} />
+      </Text>
+      <Text style={styles.hourCell}>
+        <Time schedule={[openingSpecial, closingSpecial]} />
+      </Text>
+    </>
+  );
 };
 
 const EditSchedulesModal = props => {
   const { colors } = useTheme();
-  const { schedule, editingDay, onEdited, onDismiss } = props;
-  const current = schedule || newSchedule();
+  const { editingDay, onEdited, onDismiss } = props;
 
-  const [daysSelected, selectDays] = React.useState([editingDay]);
-  const [timePicker, setTimePicker] = React.useState(false);
-
-  const [closed, setClosed] = React.useState(current.closed);
-  const [alwaysOpen, setAlwaysOpen] = React.useState(current.alwaysOpen);
-  const [schedules, setSchedules] = React.useState(current.schedules);
+  const [daysSelected, selectDays] = useState([editingDay]);
+  const [timePicker, setTimePicker] = useState(false);
+  const [schedule, setSchedule] = useState(props.schedule || newSchedule());
 
   const onPressDay = day => {
     if (daysSelected.includes(day)) {
@@ -68,6 +69,8 @@ const EditSchedulesModal = props => {
       selectDays([...daysSelected, day]);
     }
   };
+
+  const { closed, opening, closing, openingSpecial, closingSpecial } = schedule;
 
   return (
     <Dialog visible={true} onDismiss={onDismiss}>
@@ -94,72 +97,63 @@ const EditSchedulesModal = props => {
               <Checkbox
                 status={closed ? 'checked' : 'unchecked'}
                 color={colors.primary}
-                onPress={() => setClosed(!closed)}
+                onPress={() => setSchedule({ ...schedule, closed: !closed })}
               />
               <Text>Fermé</Text>
             </View>
-            {!closed && (
-              <View style={styles.flexCell}>
-                <Checkbox
-                  status={alwaysOpen ? 'checked' : 'unchecked'}
-                  color={colors.primary}
-                  onPress={() => setAlwaysOpen(!alwaysOpen)}
-                />
-                <Text>Ouvert 24h/24</Text>
-              </View>
-            )}
           </View>
-          {!closed && !alwaysOpen && (
+          {!closed && (
             <View>
-              {schedules.map((schedule, i) => (
-                <View key={i} style={styles.flex}>
-                  <TextInput
-                    mode="outlined"
-                    label="Ouverture"
-                    value={formatHour(schedule.start)}
-                    onTouchStart={() => setTimePicker({ type: 'start', i })}
-                    showSoftInputOnFocus={false}
-                    style={{
-                      flex: 1,
-                      marginRight: 5,
-                      backgroundColor: 'white',
-                    }}
-                  />
-                  <TextInput
-                    mode="outlined"
-                    label="Fermeture"
-                    value={formatHour(schedule.end)}
-                    onTouchStart={() => setTimePicker({ type: 'end', i })}
-                    showSoftInputOnFocus={false}
-                    style={{
-                      flex: 1,
-                      marginLeft: 5,
-                      backgroundColor: 'white',
-                    }}
-                  />
-                  <Pressable
-                    onPress={() =>
-                      setSchedules([
-                        ...schedules.slice(0, i),
-                        ...schedules.slice(i + 1),
-                      ])
-                    }>
-                    <Text style={styles.removeSchedule}>x</Text>
-                  </Pressable>
-                </View>
-              ))}
+              <View style={styles.flex}>
+                <TextInput
+                  mode="outlined"
+                  label="Ouverture"
+                  value={secondToHour(opening)}
+                  onTouchStart={() => setTimePicker('opening')}
+                  showSoftInputOnFocus={false}
+                  style={styles.scheduleHourLeft}
+                />
+                <TextInput
+                  mode="outlined"
+                  label="Fermeture"
+                  value={secondToHour(closing)}
+                  onTouchStart={() => setTimePicker('closing')}
+                  showSoftInputOnFocus={false}
+                  style={styles.scheduleHourRight}
+                />
+              </View>
+              <View style={styles.flex}>
+                <TextInput
+                  mode="outlined"
+                  label="Début happy h"
+                  value={secondToHour(openingSpecial)}
+                  onTouchStart={() => setTimePicker('openingSpecial')}
+                  showSoftInputOnFocus={false}
+                  style={styles.scheduleHourLeft}
+                />
+                <TextInput
+                  mode="outlined"
+                  label="Fin happy hour"
+                  value={secondToHour(closingSpecial)}
+                  onTouchStart={() => setTimePicker('closingSpecial')}
+                  showSoftInputOnFocus={false}
+                  style={styles.scheduleHourRight}
+                />
+              </View>
               {timePicker && (
                 <TimePickerModal
                   visible={!!timePicker}
                   onDismiss={() => setTimePicker(false)}
                   onConfirm={time => {
-                    const { i, type } = timePicker;
-                    schedules[i] = { ...schedules[i], [type]: time };
-                    setSchedules([...schedules]);
+                    const seconds = time.hours * 3600 + time.minutes * 60;
+                    setSchedule({
+                      ...schedule,
+                      [timePicker]: seconds,
+                    });
                     setTimePicker(false);
                   }}
-                  hours={schedules[timePicker.i][timePicker.type].hours}
-                  minutes={schedules[timePicker.i][timePicker.type].minutes}
+                  hours={toHours(schedule[timePicker])}
+                  minutes={toMinutes(schedule[timePicker])}
                   locale="fr"
                   label=""
                   cancelLabel="Annuler"
@@ -167,25 +161,13 @@ const EditSchedulesModal = props => {
                   animationType="fade"
                 />
               )}
-              <Button onPress={() => setSchedules([...schedules, newTime()])}>
-                Ajouter un horaire
-              </Button>
             </View>
           )}
         </ScrollView>
       </Dialog.Content>
       <Dialog.Actions>
         <Button onPress={onDismiss}>Annuler</Button>
-        <Button
-          onPress={() =>
-            onEdited(daysSelected, {
-              closed,
-              alwaysOpen,
-              schedules,
-            })
-          }>
-          OK
-        </Button>
+        <Button onPress={() => onEdited(daysSelected, schedule)}>OK</Button>
       </Dialog.Actions>
     </Dialog>
   );
@@ -218,36 +200,35 @@ const EditSchedules = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <SafeAreaView>
-      <View style={styles.box}>
-        {daysFull.map((day, i) => {
-          return (
-            <View key={day} style={styles.dayRow}>
+    <SafeAreaView style={styles.container}>
+      {daysFull.map((day, i) => {
+        return (
+          <TouchableRipple
+            key={day}
+            onPress={() => setEditingDay(i)}
+            rippleColor="#000">
+            <View style={styles.dayRow}>
               <Text style={{ flex: 1 }}>{day}</Text>
-              <View style={{ flex: 1 }}>
-                <DaySchedule schedule={schedules[i]} />
-              </View>
-              <Pressable onPress={() => setEditingDay(i)}>
-                <Avatar.Icon
-                  icon="pencil"
-                  size={20}
-                  color="#000"
-                  style={styles.editIcon}
-                />
-              </Pressable>
+              <DaySchedule schedule={schedules[i]} />
+              <Avatar.Icon
+                icon="pencil"
+                size={20}
+                color="#000"
+                style={styles.editIcon}
+              />
             </View>
-          );
-        })}
-        <Button
-          mode="contained"
-          compact={true}
-          icon="pencil"
-          uppercase={false}
-          style={styles.buttonEditAll}
-          onPress={() => setEditingDay(0)}>
-          Tout modifier
-        </Button>
-      </View>
+          </TouchableRipple>
+        );
+      })}
+      <Button
+        mode="contained"
+        compact={true}
+        icon="pencil"
+        uppercase={false}
+        style={styles.buttonEditAll}
+        onPress={() => setEditingDay(0)}>
+        Tout modifier
+      </Button>
       {editingDay !== false && (
         <Portal>
           <EditSchedulesModal
@@ -269,12 +250,20 @@ const EditSchedules = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   box: {
     padding: 20,
   },
   dayRow: {
+    height: 55,
+    paddingHorizontal: 25,
+    display: 'flex',
+    alignItems: 'center',
     flexDirection: 'row',
-    padding: 14,
+    borderBottomColor: '#ddd',
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   editIcon: { backgroundColor: 'transparent' },
   flex: {
@@ -286,6 +275,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 10,
+  },
+  hourCell: {
+    width: 90,
+    textAlign: 'center',
   },
   dayButtons: {
     flexDirection: 'row',
@@ -304,8 +297,18 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     color: 'white',
   },
+  scheduleHourLeft: {
+    flex: 1,
+    marginRight: 5,
+    backgroundColor: 'white',
+  },
+  scheduleHourRight: {
+    flex: 1,
+    marginLeft: 5,
+    backgroundColor: 'white',
+  },
   buttonEditAll: {
-    marginTop: 30,
+    margin: 30,
   },
   modalScroll: {
     maxHeight: 300,
