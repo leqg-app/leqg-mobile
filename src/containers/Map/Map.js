@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, StatusBar, View, PermissionsAndroid } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useIsFocused } from '@react-navigation/core';
 import RNBootSplash from 'react-native-bootsplash';
 
 import { theme } from '../../constants';
@@ -13,6 +14,7 @@ import { useStore } from '../../store/context';
 
 const Map = () => {
   const [, actions] = useStore();
+  const isFocused = useIsFocused();
   const sheet = useRef(null);
   const [text, onChangeText] = useState('');
   const [selectedStore, selectStore] = useState(false);
@@ -39,11 +41,13 @@ const Map = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent={true}
-        backgroundColor="transparent"
-      />
+      {isFocused && (
+        <StatusBar
+          barStyle="dark-content"
+          translucent={true}
+          backgroundColor="transparent"
+        />
+      )}
       <Mapbox
         filters={filters}
         selectedStore={selectedStore}
