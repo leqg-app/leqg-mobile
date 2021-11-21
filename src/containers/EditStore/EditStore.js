@@ -3,6 +3,7 @@ import {
   Pressable,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   View,
 } from 'react-native';
@@ -125,6 +126,11 @@ const EditStore = ({ route, navigation }) => {
   if (!state.user.jwt) {
     return (
       <SafeAreaView style={styles.container}>
+        <StatusBar
+          barStyle="light-content"
+          translucent={true}
+          backgroundColor="transparent"
+        />
         <View style={styles.center}>
           <View>
             <Paragraph>Veuillez vous connecter pour contribuer</Paragraph>
@@ -139,6 +145,11 @@ const EditStore = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar
+        barStyle="light-content"
+        translucent={true}
+        backgroundColor="transparent"
+      />
       <ScrollView>
         <View style={styles.box}>
           <TextInput
