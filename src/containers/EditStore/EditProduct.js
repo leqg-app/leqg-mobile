@@ -33,17 +33,6 @@ const EditProducts = ({ navigation, route }) => {
     specialPrice: '',
   });
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <Appbar.BackAction onPress={() => navigation.navigate('EditStore')} />
-      ),
-      headerRight: () => (
-        <IconButton disabled={!validForm} icon="content-save" onPress={save} />
-      ),
-    });
-  }, [navigation]);
-
   useEffect(() => {
     if (!route.params) {
       // WTF?
@@ -88,7 +77,28 @@ const EditProducts = ({ navigation, route }) => {
 
   const { product, productName, type, volume, price, specialPrice } =
     storeProduct;
-  const validForm = (product || productName) && type && volume && price;
+  const validForm = Boolean(
+    (product || productName) && type && volume && price,
+  );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <Appbar.BackAction
+          color="white"
+          onPress={() => navigation.navigate('EditStore')}
+        />
+      ),
+      headerRight: () => (
+        <IconButton
+          color="white"
+          disabled={!validForm}
+          icon="check"
+          onPress={save}
+        />
+      ),
+    });
+  }, [navigation, validForm]);
 
   const save = () => {
     if (!validForm) {
@@ -140,7 +150,7 @@ const EditProducts = ({ navigation, route }) => {
         label="Prix"
         mode="flat"
         onChangeText={price => setProduct({ ...storeProduct, price })}
-        value={String(price)}
+        value={price ? String(price) : ''}
         keyboardType="decimal-pad"
         returnKeyType="done"
         right={<TextInput.Affix text="€" />}
@@ -152,7 +162,7 @@ const EditProducts = ({ navigation, route }) => {
         onChangeText={specialPrice =>
           setProduct({ ...storeProduct, specialPrice })
         }
-        value={String(specialPrice)}
+        value={specialPrice ? String(specialPrice) : ''}
         keyboardType="decimal-pad"
         returnKeyType="done"
         right={<TextInput.Affix text="€" />}

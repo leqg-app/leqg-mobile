@@ -28,11 +28,13 @@ function Open({ day }) {
 }
 
 function Closed({ day }) {
-  const { opening } = day;
+  const { opening, closing } = day;
   return (
     <View style={styles.infoScheduleState}>
       <Text style={styles.scheduleClosed}>Fermé</Text>
-      {opening && <Text>&bull; Ouvre à {secondToTime(opening)}</Text>}
+      {opening && opening < closing && (
+        <Text> - Ouvre à {secondToTime(opening)}</Text>
+      )}
     </View>
   );
 }

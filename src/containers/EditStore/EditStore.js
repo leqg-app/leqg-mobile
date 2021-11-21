@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
-  Appbar,
   Avatar,
   Button,
   Caption,
@@ -18,6 +17,7 @@ import {
   Text,
   TextInput,
   Title,
+  TouchableRipple,
 } from 'react-native-paper';
 
 import { theme } from '../../constants';
@@ -34,38 +34,53 @@ const types = {
 };
 
 const Product = ({ product, onPress, onRemove }) => {
+  const { price, specialPrice, productName, type, volume } = product;
   return (
-    <Pressable onPress={onPress}>
-      <View style={styles.beer}>
-        <View>
-          <Text>{product.product?.name || product.productName}</Text>
-          <Caption>{types[product.type]}</Caption>
-        </View>
-        <View style={styles.prices}>
-          <Text>{product.price}€</Text>
-          {product.specialPrice && <Text>hh: {product.specialPrice}€</Text>}
-        </View>
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
-          <View style={styles.prices}>
-            <Avatar.Icon
-              icon="pencil"
-              size={30}
-              color="#000"
-              style={styles.editIcon}
-            />
+    <View style={styles.productRow}>
+      <TouchableRipple
+        onPress={onPress}
+        rippleColor="#000"
+        style={styles.productDetails}>
+        <View style={styles.flex}>
+          <View>
+            <Text numberOfLines={1}>
+              {product.product?.name || productName}
+            </Text>
+            <Caption>
+              {types[type]}
+              {volume && ` - ${volume}cl`}
+            </Caption>
           </View>
-          <View style={styles.prices}>
-            <Avatar.Icon
-              icon="close"
-              size={30}
-              color="#000"
-              style={styles.editIcon}
-              onPress={onRemove}
-            />
+          <View style={styles.flex}>
+            <View style={styles.prices}>
+              <Text style={styles.price}>{price ? `${price}€` : '-'}</Text>
+              {specialPrice && (
+                <Text style={styles.price}>{specialPrice}€</Text>
+              )}
+            </View>
+            <View style={styles.editButton}>
+              <Avatar.Icon
+                icon="pencil"
+                size={30}
+                color="#000"
+                style={styles.transparentIcon}
+              />
+            </View>
           </View>
         </View>
-      </View>
-    </Pressable>
+      </TouchableRipple>
+      <TouchableRipple
+        style={styles.removeButton}
+        rippleColor="#000"
+        onPress={onRemove}>
+        <Avatar.Icon
+          icon="trash-can-outline"
+          size={30}
+          color="#000"
+          style={styles.transparentIcon}
+        />
+      </TouchableRipple>
+    </View>
   );
 };
 
@@ -81,22 +96,8 @@ const EditStore = ({ route, navigation }) => {
     schedules = [],
   } = state.storeEdition;
 
-  const products =
-    state.storeEdition?.products?.map(storeProduct => ({
-      ...storeProduct,
-      ...(storeProduct.product && {
-        product: state.products.find(({ id }) => id === storeProduct.product),
-      }),
-    })) || [];
-
   const validAddress = address && longitude && latitude;
   const validForm = name && validAddress;
-
-  const back = () => {
-    // TODO: confirmation if data was edited
-    actions.resetStoreEdition();
-    navigation.goBack();
-  };
 
   const save = async () => {
     if (!validForm) {
@@ -107,20 +108,23 @@ const EditStore = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    const title = route.params?.store ? 'Modifier' : 'Ajouter';
-    navigation.setOptions({
-      title: `${title} un bar`,
-      headerLeft: () =>
-        route.params?.store && (
-          <Appbar.BackAction color="white" onPress={back} />
-        ),
-      headerRight: () => (
-        <IconButton disabled={!validForm} icon="check" onPress={save} />
-      ),
-    });
     if (route.params?.store) {
       actions.setStoreEdition(route.params?.store);
     }
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          color="white"
+          disabled={!validForm}
+          icon="check"
+          onPress={save}
+        />
+      ),
+    });
+    return navigation.addListener('beforeRemove', function () {
+      // TODO: confirmation if data was edited
+      actions.resetStoreEdition();
+    });
   }, [route.params]);
 
   if (!state.user.jwt) {
@@ -143,6 +147,16 @@ const EditStore = ({ route, navigation }) => {
     );
   }
 
+  const products =
+    state.storeEdition?.products?.map(storeProduct => ({
+      ...storeProduct,
+      ...(storeProduct.product && {
+        product: state.products.find(({ id }) => id === storeProduct.product),
+      }),
+    })) || [];
+
+  const hasHH = products.some(product => product.specialPrice);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
@@ -151,38 +165,44 @@ const EditStore = ({ route, navigation }) => {
         backgroundColor="transparent"
       />
       <ScrollView>
-        <View style={styles.box}>
-          <TextInput
-            style={{
-              marginTop: 10,
-              marginBottom: 15,
-              backgroundColor: 'transparent',
-            }}
-            label="Nom"
-            mode="flat"
-            textContentType="name"
-            onChangeText={name => actions.setStoreEdition({ name })}
-            value={name}
-            returnKeyType="done"
-          />
+        <View style={styles.scrollView}>
+          <View style={styles.horizontalMargin}>
+            <TextInput
+              style={styles.fieldName}
+              label="Nom"
+              mode="flat"
+              textContentType="name"
+              onChangeText={name => actions.setStoreEdition({ name })}
+              value={name}
+              returnKeyType="done"
+            />
 
-          <Title style={{ marginTop: 10 }}>Adresse</Title>
-          <Text>
-            {validAddress
-              ? address
-              : 'Aucune adresse renseignée pour le moment'}
-          </Text>
-          <Button
-            mode="contained"
-            uppercase={false}
-            onPress={() => navigation.navigate('EditAddress')}
-            style={styles.addButton}>
-            {validAddress ? 'Modifier' : 'Préciser'} l'adresse
-          </Button>
+            <Title style={{ marginTop: 10 }}>Adresse</Title>
+            <Text>
+              {validAddress
+                ? address
+                : 'Aucune adresse renseignée pour le moment'}
+            </Text>
+            <Button
+              mode="contained"
+              uppercase={false}
+              onPress={() => navigation.navigate('EditAddress')}
+              style={styles.addButton}>
+              {validAddress ? 'Modifier' : 'Préciser'} l'adresse
+            </Button>
 
-          <Title style={styles.title}>Bières</Title>
-          {!products.length && (
-            <Paragraph>Aucune bière renseignée pour le moment</Paragraph>
+            <Title style={styles.title}>Bières</Title>
+          </View>
+
+          {!products.length ? (
+            <Paragraph style={styles.horizontalMargin}>
+              Aucune bière renseignée pour le moment
+            </Paragraph>
+          ) : (
+            <View style={styles.headRow}>
+              <Text style={styles.price}>Prix</Text>
+              {hasHH && <Text style={styles.price}>HH.</Text>}
+            </View>
           )}
           {products.map((product, i) => (
             <Product
@@ -192,33 +212,36 @@ const EditStore = ({ route, navigation }) => {
               onRemove={console.log}
             />
           ))}
-          <Button
-            mode="contained"
-            uppercase={false}
-            onPress={() => navigation.navigate('SelectProduct')}
-            style={styles.addButton}>
-            Ajouter une bière
-          </Button>
 
-          <Title style={styles.title}>Horaires</Title>
-          {!schedules.length ? (
-            <Paragraph>Aucun horaire renseigné pour le moment</Paragraph>
-          ) : (
-            <Text>
-              Ouvert le{' '}
-              {schedules
-                .filter(({ closed }) => !closed)
-                .map((_, i) => daysShort[i])
-                .join(', ')}
-            </Text>
-          )}
-          <Button
-            mode="contained"
-            uppercase={false}
-            onPress={() => navigation.navigate('EditSchedules')}
-            style={{ marginTop: 20 }}>
-            Modifier les horaires
-          </Button>
+          <View style={styles.horizontalMargin}>
+            <Button
+              mode="contained"
+              uppercase={false}
+              onPress={() => navigation.navigate('SelectProduct')}
+              style={styles.addButton}>
+              Ajouter une bière
+            </Button>
+
+            <Title style={styles.title}>Horaires</Title>
+            {!schedules.length ? (
+              <Paragraph>Aucun horaire renseigné pour le moment</Paragraph>
+            ) : (
+              <Text>
+                Ouvert le{' '}
+                {schedules
+                  .filter(({ closed }) => !closed)
+                  .map((_, i) => daysShort[i])
+                  .join(', ')}
+              </Text>
+            )}
+            <Button
+              mode="contained"
+              uppercase={false}
+              onPress={() => navigation.navigate('EditSchedules')}
+              style={{ marginTop: 20 }}>
+              Modifier les horaires
+            </Button>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -235,24 +258,61 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  box: {
+  fieldName: {
+    marginTop: 10,
+    marginBottom: 15,
+    backgroundColor: 'transparent',
+  },
+  scrollView: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 100,
+  },
+  horizontalMargin: {
+    marginHorizontal: 20,
   },
   title: { marginTop: 30 },
-  beer: {
-    paddingVertical: 10,
-    borderBottomColor: '#999',
-    borderBottomWidth: 0.5,
+  headRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
+    marginRight: 80,
+    height: 25,
+  },
+  productRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    borderColor: '#ddd',
+    borderWidth: 0.5,
+  },
+  productDetails: {
+    flex: 1,
+    paddingVertical: 7,
+    paddingLeft: 20,
+  },
+  flex: {
+    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  removeButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
+    borderLeftColor: '#ddd',
+    borderLeftWidth: StyleSheet.hairlineWidth,
   },
   prices: {
-    justifyContent: 'flex-end',
-    flexDirection: 'column',
+    display: 'flex',
+    flexDirection: 'row',
   },
-  editIcon: {
+  price: {
+    width: 40,
+    textAlign: 'center',
+  },
+  transparentIcon: {
     backgroundColor: 'transparent',
   },
   addButton: { marginTop: 20, zIndex: 0, position: 'relative' },
@@ -269,7 +329,9 @@ export default () => (
       headerTintColor: '#fff',
     }}>
     <AddStack.Screen
-      options={{ title: 'Ajouter un bar' }}
+      options={({ route }) => ({
+        title: route.params?.store ? 'Modifier un bar' : 'Ajouter un bar',
+      })}
       name="EditStore"
       component={React.memo(EditStore)}
     />

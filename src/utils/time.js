@@ -12,7 +12,27 @@ function toHour(hour, minute) {
 }
 
 export function secondToTime(seconds) {
+  if (!seconds) {
+    return '-';
+  }
   return toHour(Math.floor(seconds / 3600), Math.floor((seconds % 3600) / 60));
+}
+
+export function secondToHour(seconds) {
+  if (!seconds) {
+    return '00:00';
+  }
+  return `${pad2(Math.floor(seconds / 3600))}:${pad2(
+    Math.floor((seconds % 3600) / 60),
+  )}`;
+}
+
+export function toHours(seconds) {
+  return pad2(Math.floor(seconds / 3600));
+}
+
+export function toMinutes(seconds) {
+  return pad2(Math.floor((seconds % 3600) / 60));
 }
 
 export function inHours(start, end) {

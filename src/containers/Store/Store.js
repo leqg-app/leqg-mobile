@@ -4,13 +4,11 @@ import {
   Avatar,
   Button,
   Caption,
-  DataTable,
   Dialog,
   Divider,
   IconButton,
   Paragraph,
   Portal,
-  Subheading,
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
@@ -18,7 +16,7 @@ import { useNavigation } from '@react-navigation/core';
 
 import { useStore } from '../../store/context';
 
-import Product from './Product';
+import StoreProducts from './StoreProducts';
 import SchedulesPreview from './SchedulesPreview';
 import Schedules from './Schedules';
 
@@ -94,27 +92,24 @@ const StoreDetails = ({ store }) => {
       </View>
       <Divider />
       <TouchableRipple onPress={openAddress} rippleColor="rgba(0, 0, 0, .25)">
-        <View style={styles.infoRow}>
-          <Avatar.Icon
-            style={styles.infoIcon}
-            size={40}
-            icon="map-marker"
-            color={colors.primary}
-          />
-          <Text style={styles.infoText}>{store.address}</Text>
+        <View style={styles.row}>
+          <View style={styles.infoRow}>
+            <Avatar.Icon
+              style={styles.infoIcon}
+              size={40}
+              icon="map-marker"
+              color={colors.primary}
+            />
+            <Text style={styles.infoText}>{store.address}</Text>
+          </View>
+          <IconButton icon="chevron-right" color="grey" />
         </View>
       </TouchableRipple>
       <Divider />
       <TouchableRipple
         onPress={() => setExpandSchedules(!expandSchedules)}
         rippleColor="rgba(0, 0, 0, .25)">
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
+        <View style={styles.row}>
           <View style={styles.infoRow}>
             <Avatar.Icon
               style={styles.infoIcon}
@@ -172,13 +167,7 @@ const StoreDetails = ({ store }) => {
         </View>
       </TouchableRipple>
       <Divider />
-      <Subheading style={styles.subtitle}>Bières</Subheading>
-      <DataTable>
-        <DataTable.Header />
-        {store.products.map(product => (
-          <Product key={product.id} product={product} />
-        ))}
-      </DataTable>
+      <StoreProducts products={store.products} />
       {/* <Subheading>Résumé des avis</Subheading>
       <Divider />
       <Subheading>Donner une note et un avis</Subheading>
@@ -264,6 +253,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   infoIcon: {
     marginHorizontal: 10,
     marginTop: 10,
@@ -271,12 +266,6 @@ const styles = StyleSheet.create({
   },
   infoText: {
     marginVertical: 20,
-  },
-  subtitle: {
-    marginLeft: 15,
-    marginTop: 15,
-    marginBottom: -35,
-    fontWeight: 'bold',
   },
 });
 

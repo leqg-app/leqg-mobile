@@ -39,16 +39,6 @@ const StoreSheet = props => {
 
   const renderContent = () => {
     const store = state.storesDetails[props.store?.id];
-    if (!store) {
-      return (
-        <View style={styles.sheetContent}>
-          <Title numberOfLines={1} style={styles.title}>
-            {props.store?.name}
-          </Title>
-          <ActivityIndicator style={styles.loading} />
-        </View>
-      );
-    }
     return (
       <View style={styles.sheetContent}>
         <Pressable onPress={() => props.sheet.current.snapTo(2)}>
@@ -68,7 +58,7 @@ const StoreSheet = props => {
         </Pressable>
         <Animated.View
           style={{ top: animatedDetails, backgroundColor: 'white' }}>
-          {store ? <Store store={store} /> : ''}
+          {store && <Store store={store} />}
         </Animated.View>
       </View>
     );
