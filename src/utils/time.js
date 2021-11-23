@@ -7,28 +7,26 @@ function pad2(n) {
   return String(n).padStart(2, '0');
 }
 
-function toHour(hour, minute) {
-  return `${pad2(hour)}h${minute ? pad2(minute) : ''}`;
-}
-
 export function secondToTime(seconds) {
   if (!seconds) {
     return '00h';
   }
-  return toHour(Math.floor(seconds / 3600), Math.floor((seconds % 3600) / 60));
+  const hour = Math.floor(seconds / 3600);
+  const minute = Math.floor((seconds % 3600) / 60);
+  return `${hour}h${minute ? pad2(minute) : ''}`;
 }
 
 export function secondToHour(seconds) {
   if (!seconds) {
     return '00:00';
   }
-  return `${pad2(Math.floor(seconds / 3600))}:${pad2(
+  return `${Math.floor(seconds / 3600)}:${pad2(
     Math.floor((seconds % 3600) / 60),
   )}`;
 }
 
 export function toHours(seconds) {
-  return pad2(Math.floor(seconds / 3600));
+  return Math.floor(seconds / 3600);
 }
 
 export function toMinutes(seconds) {
