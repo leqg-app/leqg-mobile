@@ -83,12 +83,6 @@ const EditProducts = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => (
-        <Appbar.BackAction
-          color="white"
-          onPress={() => navigation.navigate('EditStore')}
-        />
-      ),
       headerRight: () => (
         <IconButton
           color="white"
@@ -115,7 +109,7 @@ const EditProducts = ({ navigation, route }) => {
     actions.setStoreEdition({
       products,
     });
-    navigation.navigate('EditStore');
+    navigation.goBack();
   };
 
   const selectedProduct = state.products.find(({ id }) => id === product);
@@ -150,7 +144,7 @@ const EditProducts = ({ navigation, route }) => {
         label="Prix"
         mode="flat"
         onChangeText={price => setProduct({ ...storeProduct, price })}
-        value={price ? String(price) : ''}
+        value={price ? String(price) : null}
         keyboardType="decimal-pad"
         returnKeyType="done"
         right={<TextInput.Affix text="€" />}
@@ -162,7 +156,7 @@ const EditProducts = ({ navigation, route }) => {
         onChangeText={specialPrice =>
           setProduct({ ...storeProduct, specialPrice })
         }
-        value={specialPrice ? String(specialPrice) : ''}
+        value={specialPrice ? String(specialPrice) : null}
         keyboardType="decimal-pad"
         returnKeyType="done"
         right={<TextInput.Affix text="€" />}

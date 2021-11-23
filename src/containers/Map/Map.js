@@ -42,6 +42,8 @@ const Map = ({ navigation, route }) => {
 
   useEffect(() => {
     if (isFocused) {
+      StatusBar.setBackgroundColor('transparent');
+      StatusBar.setTranslucent(true);
       StatusBar.setBarStyle('dark-content');
     } else {
       StatusBar.setBarStyle('light-content');
