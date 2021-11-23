@@ -26,8 +26,8 @@ import EditSchedules from './EditSchedules';
 import EditAddress from './EditAddress';
 import SelectProduct from './SelectProduct';
 import EditProduct from './EditProduct';
+import Schedules from '../Store/Schedules';
 
-const daysShort = ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'];
 const types = {
   draft: 'Pression',
   bottle: 'Bouteille',
@@ -87,6 +87,7 @@ const Product = ({ product, onPress, onRemove }) => {
 const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
   const [error, setError] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const {
     name = '',
@@ -100,11 +101,17 @@ const EditStore = ({ route, navigation }) => {
   const validForm = name && validAddress;
 
   const save = async () => {
+    setLoading(true);
     if (!validForm) {
       setError('Missing field');
       return;
     }
-    actions.addStore();
+    if (state.storeEdition.id) {
+      await actions.editStore(state.storeEdition.id, state.storeEdition);
+    } else {
+      await actions.addStore(state.storeEdition);
+    }
+    navigation.navigate('MapScreen', { edited: true });
   };
 
   useEffect(() => {
@@ -125,7 +132,7 @@ const EditStore = ({ route, navigation }) => {
       // TODO: confirmation if data was edited
       actions.resetStoreEdition();
     });
-  }, [route.params]);
+  }, [route.params, validForm]);
 
   if (!state.user.jwt) {
     return (
@@ -226,13 +233,7 @@ const EditStore = ({ route, navigation }) => {
             {!schedules.length ? (
               <Paragraph>Aucun horaire renseigné pour le moment</Paragraph>
             ) : (
-              <Text>
-                Ouvert le{' '}
-                {schedules
-                  .filter(({ closed }) => !closed)
-                  .map((_, i) => daysShort[i])
-                  .join(', ')}
-              </Text>
+              <Schedules schedules={schedules} />
             )}
             <Button
               mode="contained"

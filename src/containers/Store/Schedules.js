@@ -12,7 +12,7 @@ function Time({ schedule }) {
 function DaySchedule({ day }) {
   const { closed, opening, closing, openingSpecial, closingSpecial } = day;
 
-  const style = [styles.scheduleHourCell];
+  const style = [styles.hoursCell];
   const today = new Date().getDay() ? new Date().getDay() : 7;
   if (today === day.dayOfWeek) {
     style.push(styles.boldText);
@@ -45,17 +45,12 @@ function Schedules({ schedules }) {
   const today = new Date().getDay() ? new Date().getDay() : 7;
 
   return (
-    <View style={{ display: 'flex', flex: 1 }}>
+    <View style={styles.table}>
       {head && (
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            marginTop: 20,
-          }}>
-          <View style={{ width: '40%' }} />
-          <Text style={styles.scheduleHourCell}>Ouverture</Text>
-          <Text style={styles.scheduleHourCell}>Happy Hour</Text>
+        <View style={styles.flexRow}>
+          <View style={styles.dayCell} />
+          <Text style={styles.hoursCell}>Ouverture</Text>
+          <Text style={styles.hoursCell}>Happy Hour</Text>
         </View>
       )}
       <View style={styles.infoText}>
@@ -63,12 +58,12 @@ function Schedules({ schedules }) {
           <View key={day.dayOfWeek} style={styles.scheduleDayRow}>
             <Text
               style={[
-                styles.scheduleDayCell,
+                styles.dayCell,
                 today === day.dayOfWeek && styles.boldText,
               ]}>
               {daysFull[day.dayOfWeek - 1]}
             </Text>
-            <View style={styles.scheduleHoursCell}>
+            <View style={styles.flexRow}>
               <DaySchedule day={day} />
             </View>
           </View>
@@ -79,6 +74,7 @@ function Schedules({ schedules }) {
 }
 
 const styles = StyleSheet.create({
+  table: { display: 'flex', flex: 1 },
   infoText: {
     marginVertical: 20,
   },
@@ -87,15 +83,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 10,
   },
-  scheduleDayCell: {
-    width: '40%',
-  },
-  scheduleHoursCell: {
+  flexRow: {
     display: 'flex',
     flexDirection: 'row',
     flex: 1,
   },
-  scheduleHourCell: {
+  dayCell: {
+    width: '40%',
+  },
+  hoursCell: {
     width: 90,
     textAlign: 'center',
   },

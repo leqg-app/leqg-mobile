@@ -88,6 +88,17 @@ export const reducer = (state, action) => {
       };
     }
 
+    case 'SET_STORE': {
+      const { id, details } = action;
+      return {
+        ...state,
+        storesDetails: {
+          ...state.storesDetails,
+          [id]: details,
+        },
+      };
+    }
+
     case 'SET_STORE_EDITION': {
       const { store } = action;
       return {

@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, StatusBar, View, PermissionsAndroid } from 'react-native';
-import { Searchbar } from 'react-native-paper';
+import { Searchbar, Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/core';
 import RNBootSplash from 'react-native-bootsplash';
@@ -12,7 +12,7 @@ import Mapbox from './Mapbox';
 import StoreSheet from './StoreSheet';
 import { useStore } from '../../store/context';
 
-const Map = () => {
+const Map = ({ navigation, route }) => {
   const [, actions] = useStore();
   const isFocused = useIsFocused();
   const sheet = useRef(null);
@@ -65,6 +65,11 @@ const Map = () => {
       />
       <Filters onChange={filters => setFilters(filters)} />
       <StoreSheet sheet={sheet} store={selectedStore} />
+      <Snackbar
+        visible={route.params?.edited}
+        onDismiss={() => navigation.setParams({ edited: false })}>
+        Merci pour votre contribution !
+      </Snackbar>
     </View>
   );
 };

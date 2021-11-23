@@ -56,9 +56,9 @@ const DaySchedule = ({ schedule }) => {
 
 const EditSchedulesModal = props => {
   const { colors } = useTheme();
-  const { editingDay, onEdited, onDismiss } = props;
+  const { editingDays, onEdited, onDismiss } = props;
 
-  const [daysSelected, selectDays] = useState([editingDay]);
+  const [daysSelected, selectDays] = useState(editingDays);
   const [timePicker, setTimePicker] = useState(false);
   const [schedule, setSchedule] = useState(props.schedule || newSchedule());
 
@@ -179,7 +179,7 @@ const EditSchedules = ({ navigation }) => {
     state.storeEdition.schedules ||
       new Array(7).fill().map(() => newSchedule()),
   );
-  const [editingDay, setEditingDay] = React.useState(false);
+  const [editingDays, setEditingDay] = React.useState(false);
 
   const save = () => {
     actions.setStoreEdition({ schedules });
@@ -205,7 +205,7 @@ const EditSchedules = ({ navigation }) => {
         return (
           <TouchableRipple
             key={day}
-            onPress={() => setEditingDay(i)}
+            onPress={() => setEditingDay([i])}
             rippleColor="#000">
             <View style={styles.dayRow}>
               <Text style={{ flex: 1 }}>{day}</Text>
@@ -226,17 +226,30 @@ const EditSchedules = ({ navigation }) => {
         icon="pencil"
         uppercase={false}
         style={styles.buttonEditAll}
-        onPress={() => setEditingDay(0)}>
+        onPress={() => setEditingDay(new Array(7).fill().map((_, i) => i))}>
         Tout modifier
       </Button>
-      {editingDay !== false && (
+      {editingDays !== false && (
         <Portal>
           <EditSchedulesModal
-            schedule={schedules[editingDay]}
-            editingDay={editingDay}
+            schedule={schedules[editingDays[0]]}
+            editingDays={editingDays}
             onEdited={(editedDays, schedule) => {
+              const {
+                closed,
+                opening,
+                closing,
+                openingSpecial,
+                closingSpecial,
+              } = schedule;
               for (const editedDay of editedDays) {
-                schedules[editedDay] = schedule;
+                Object.assign(schedules[editedDay], {
+                  closed,
+                  opening,
+                  closing,
+                  openingSpecial,
+                  closingSpecial,
+                });
               }
               setEditingDay(false);
               setSchedules([...schedules]);
