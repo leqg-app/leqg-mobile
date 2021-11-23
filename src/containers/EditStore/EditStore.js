@@ -54,9 +54,9 @@ const Product = ({ product, onPress, onRemove }) => {
           <View style={styles.flex}>
             <View style={styles.prices}>
               <Text style={styles.price}>{price ? `${price}€` : '-'}</Text>
-              {specialPrice && (
-                <Text style={styles.price}>{specialPrice}€</Text>
-              )}
+              <Text style={styles.price}>
+                {specialPrice ? `${specialPrice}€` : ' '}
+              </Text>
             </View>
             <View style={styles.editButton}>
               <Avatar.Icon
@@ -72,7 +72,7 @@ const Product = ({ product, onPress, onRemove }) => {
       <TouchableRipple
         style={styles.removeButton}
         rippleColor="#000"
-        onPress={onRemove}>
+        onPress={() => onRemove(product)}>
         <Avatar.Icon
           icon="trash-can-outline"
           size={30}
@@ -164,6 +164,13 @@ const EditStore = ({ route, navigation }) => {
 
   const hasHH = products.some(product => product.specialPrice);
 
+  const removeProduct = product => {
+    const index = products.indexOf(product);
+    actions.setStoreEdition({
+      products: products.slice(0, index).concat(products.slice(index + 1)),
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
@@ -216,7 +223,7 @@ const EditStore = ({ route, navigation }) => {
               key={i}
               product={product}
               onPress={() => navigation.navigate('EditProduct', { product })}
-              onRemove={console.log}
+              onRemove={removeProduct}
             />
           ))}
 
@@ -334,7 +341,7 @@ export default () => (
         title: route.params?.store ? 'Modifier un bar' : 'Ajouter un bar',
       })}
       name="EditStore"
-      component={React.memo(EditStore)}
+      component={EditStore}
     />
     <AddStack.Screen
       options={{ title: "Modifier l'adresse" }}

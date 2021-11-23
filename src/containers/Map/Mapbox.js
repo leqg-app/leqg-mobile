@@ -37,7 +37,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
   }, [PermissionsAndroid.RESULTS]);
 
   useEffect(() => {
-    if (camera.current) {
+    if (selectedStore && camera.current) {
       camera.current.flyTo([selectedStore.lng, selectedStore.lat]);
     }
   }, [selectedStore]);
