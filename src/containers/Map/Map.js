@@ -39,15 +39,16 @@ const Map = ({ navigation, route }) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (isFocused) {
+      StatusBar.setBarStyle('dark-content');
+    } else {
+      StatusBar.setBarStyle('light-content');
+    }
+  }, [isFocused]);
+
   return (
     <View style={styles.container}>
-      {isFocused && (
-        <StatusBar
-          barStyle="dark-content"
-          translucent={true}
-          backgroundColor="transparent"
-        />
-      )}
       <Mapbox
         filters={filters}
         selectedStore={selectedStore}
