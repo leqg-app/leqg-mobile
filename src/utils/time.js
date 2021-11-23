@@ -13,7 +13,7 @@ function toHour(hour, minute) {
 
 export function secondToTime(seconds) {
   if (!seconds) {
-    return '-';
+    return '00h';
   }
   return toHour(Math.floor(seconds / 3600), Math.floor((seconds % 3600) / 60));
 }

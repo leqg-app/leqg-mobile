@@ -75,6 +75,12 @@ const StoreDetails = ({ store }) => {
     return favorites.some(favorite => favorite.id === store.id);
   };
 
+  const editStore = () =>
+    navigation.navigate('EditStoreScreen', {
+      screen: 'EditStore',
+      params: { store },
+    });
+
   return (
     <View>
       <View style={styles.actionsBar}>
@@ -129,7 +135,7 @@ const StoreDetails = ({ store }) => {
         </View>
       </TouchableRipple>
       {expandSchedules && (
-        <Button mode="text" uppercase={false}>
+        <Button onPress={editStore} mode="text" uppercase={false}>
           Ajouter ou modifier ces horaires
         </Button>
       )}
@@ -148,14 +154,7 @@ const StoreDetails = ({ store }) => {
         </View>
       </TouchableRipple>
       <Divider /> */}
-      <TouchableRipple
-        onPress={() =>
-          navigation.navigate('EditStoreScreen', {
-            screen: 'EditStore',
-            params: { store },
-          })
-        }
-        rippleColor="rgba(0, 0, 0, .25)">
+      <TouchableRipple onPress={editStore} rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.infoRow}>
           <Avatar.Icon
             style={styles.infoIcon}
@@ -163,7 +162,7 @@ const StoreDetails = ({ store }) => {
             icon="pencil"
             color={colors.primary}
           />
-          <Text style={styles.infoText}>Suggérer une modification</Text>
+          <Text style={styles.infoTextItalic}>Suggérer une modification</Text>
         </View>
       </TouchableRipple>
       <Divider />
@@ -266,6 +265,10 @@ const styles = StyleSheet.create({
   },
   infoText: {
     marginVertical: 20,
+  },
+  infoTextItalic: {
+    marginVertical: 20,
+    fontStyle: 'italic',
   },
 });
 

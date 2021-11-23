@@ -1,5 +1,11 @@
 import { getProducts } from '../api/products';
-import { getStores, getStore, addStore, getVersion } from '../api/stores';
+import {
+  getStores,
+  getStore,
+  addStore,
+  editStore,
+  getVersion,
+} from '../api/stores';
 import { signIn, signUp, getProfile, updateProfile } from '../api/users';
 import { storage } from './storage';
 
@@ -68,7 +74,7 @@ export const actionCreators = (dispatch, state) => {
       }
       dispatch({ type: 'GET_STORES' });
       try {
-        const stores = await getStores();
+        const stores = await getStores(apiVersions?.stores);
         await storage.setArrayAsync('stores', stores);
         await storage.setMapAsync('versions', {
           ...versions,
@@ -80,6 +86,18 @@ export const actionCreators = (dispatch, state) => {
       }
     },
     setStores: stores => dispatch({ type: 'SET_STORES', stores }),
+
+    editStore: async (id, details) => {
+      if (!state.user.jwt) {
+        return;
+      }
+      try {
+        await editStore(id, details, { jwt: state.user.jwt });
+        dispatch({ type: 'SET_STORE', id, details });
+      } catch (err) {
+        return { error: err.message };
+      }
+    },
     addStore: details => {
       dispatch({ type: 'ADD_STORE' });
       addStore(details, { jwt: state.user.jwt })
