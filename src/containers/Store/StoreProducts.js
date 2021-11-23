@@ -24,12 +24,14 @@ function StoreProducts({ products }) {
       </View>
       {products.map((product, i) => {
         const { volume, price, specialPrice, productName } = product;
-        const productDetail = state.products[product.product];
+        const productDetail = state.products.find(
+          ({ id }) => id === product.product,
+        );
         return (
           <View key={i} style={styles.row}>
             <View style={{ flex: 1 }}>
               <Text numberOfLines={1}>
-                {productDetail?.name || productName || 'Blonde'}
+                {productDetail?.name || productName || 'Bière'}
               </Text>
               <Caption>
                 {types[product.type]}
