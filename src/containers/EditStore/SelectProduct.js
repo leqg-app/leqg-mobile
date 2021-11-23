@@ -38,7 +38,7 @@ const SelectProduct = ({ navigation }) => {
             )
             .sort(sortByName)
         : Array.from(state.products).sort(sortByName),
-    [state.products],
+    [state.products, search],
   );
 
   return (
