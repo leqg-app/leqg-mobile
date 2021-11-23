@@ -1,6 +1,6 @@
 import React from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-import { Button, List, Paragraph } from 'react-native-paper';
+import { Button, IconButton, List, Paragraph } from 'react-native-paper';
 
 import { theme } from '../../constants';
 import { useStore } from '../../store/context';
@@ -12,26 +12,33 @@ const AuthRequired = ({ navigation }) => (
   </>
 );
 
-const Row =
-  actions =>
-  ({ item }) =>
-    (
-      <List.Item
-        title={item.name}
-        description={item.address}
-        right={props => (
-          <List.Icon
-            {...props}
-            icon="star"
-            color={theme.colors.primary}
-            onPress={() => actions.removeFavorite(item)}
-          />
-        )}
+const Row = ({ store, onPress, onRemove }) => (
+  <List.Item
+    title={store.name}
+    description={store.address}
+    onPress={() => onPress(store)}
+    right={props => (
+      <IconButton
+        {...props}
+        icon="star"
+        color={theme.colors.primary}
+        onPress={() => onRemove(store)}
       />
-    );
+    )}
+  />
+);
 
 const Favorites = ({ navigation }) => {
   const [{ user }, actions] = useStore();
+
+  const navigate = store => {
+    const { id, name, longitude: lng, latitude: lat } = store;
+    navigation.navigate('MapTab', {
+      screen: 'MapScreen',
+      params: { focusStore: { id, name, lng, lat } },
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {user.jwt ? (
@@ -39,7 +46,13 @@ const Favorites = ({ navigation }) => {
           <View style={styles.container}>
             <FlatList
               data={user.favorites}
-              renderItem={Row(actions)}
+              renderItem={({ item }) => (
+                <Row
+                  store={item}
+                  onPress={navigate}
+                  onRemove={actions.removeFavorite}
+                />
+              )}
               keyExtractor={favorite => favorite.id}
             />
           </View>
