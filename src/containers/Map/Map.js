@@ -19,6 +19,7 @@ const Map = ({ navigation, route }) => {
   const [text, onChangeText] = useState('');
   const [selectedStore, selectStore] = useState(false);
   const [filters, setFilters] = useState([]);
+  const { params } = route;
 
   useEffect(() => {
     const init = async () => {
@@ -47,6 +48,13 @@ const Map = ({ navigation, route }) => {
     }
   }, [isFocused]);
 
+  useEffect(() => {
+    if (params?.focusStore) {
+      selectStore(params?.focusStore);
+      sheet.current.snapTo(1);
+    }
+  }, [params?.focusStore]);
+
   return (
     <View style={styles.container}>
       <Mapbox
@@ -67,7 +75,7 @@ const Map = ({ navigation, route }) => {
       <Filters onChange={filters => setFilters(filters)} />
       <StoreSheet sheet={sheet} store={selectedStore} />
       <Snackbar
-        visible={route.params?.edited}
+        visible={params?.edited}
         onDismiss={() => navigation.setParams({ edited: false })}>
         Merci pour votre contribution !
       </Snackbar>
