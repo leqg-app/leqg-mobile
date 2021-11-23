@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Appbar, Title } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
@@ -11,7 +11,7 @@ import Store from '../Store/Store';
 
 const StoreSheet = props => {
   const [state, actions] = useStore();
-  const fall = new Animated.Value(1);
+  const fall = useRef(new Animated.Value(1)).current;
 
   const animatedTopbar = Animated.interpolateNode(fall, {
     inputRange: [0, 0.5],
