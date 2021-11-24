@@ -25,12 +25,32 @@ const Filters = ({ onChange }) => {
     }
     if (openNow) {
       const date = new Date();
-      const day = ['at', date.getDay() - 1, ['get', 's']];
+      const today = date.getDay() ? date.getDay() - 1 : 6;
+      const day = ['at', today, ['get', 's']];
       const time = date.getHours() * 3600 + date.getMinutes() * 60;
       filters.push(
-        ['has', 'o', day],
-        ['>', time, ['get', 'o', day]],
-        ['<', time, ['get', 'c', day]],
+        ['!', ['get', 'cd', day]],
+        [
+          'any',
+          ['!', ['has', 'o', day]], // if no schedule
+          // else
+          [
+            'case',
+            ['<', ['get', 'o', day], ['get', 'c', day]],
+            // if open < close (classic)
+            [
+              'all',
+              ['>', time, ['get', 'o', day]], // time > open
+              ['<', time, ['get', 'c', day]], // AND time < close
+            ],
+            // else open > close (reverted)
+            [
+              'any',
+              ['<', time, ['get', 'c', day]], // time < close
+              ['>', time, ['get', 'o', day]], // OR time > open
+            ],
+          ],
+        ],
       );
     }
     onChange(filters);
