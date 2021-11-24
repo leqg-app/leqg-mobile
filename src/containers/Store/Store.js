@@ -20,7 +20,7 @@ import StoreProducts from './StoreProducts';
 import SchedulesPreview from './SchedulesPreview';
 import Schedules from './Schedules';
 
-function ActionButton({ name, icon, onPress }) {
+function ActionButton({ name, icon, onPress, color = 'white' }) {
   return (
     <View>
       <TouchableRipple
@@ -29,7 +29,12 @@ function ActionButton({ name, icon, onPress }) {
         centered
         onPress={onPress}
         rippleColor="rgba(0, 0, 0, .25)">
-        <Avatar.Icon style={styles.action} size={45} icon={icon} />
+        <Avatar.Icon
+          style={styles.action}
+          size={45}
+          icon={icon}
+          color={color}
+        />
       </TouchableRipple>
       <Caption>{name}</Caption>
     </View>
@@ -87,12 +92,13 @@ const StoreDetails = ({ store }) => {
         <ActionButton
           onPress={openAddress}
           name="Itinéraire"
-          icon="google-maps"
+          icon="directions"
         />
         <ActionButton onPress={() => {}} name="Partager" icon="share-variant" />
         <ActionButton
           onPress={toggleFavorite}
           name="Enregistrer"
+          color={isFavorite() ? 'gold' : 'white'}
           icon={isFavorite() ? 'star' : 'star-outline'}
         />
       </View>
@@ -264,6 +270,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   infoText: {
+    flex: 1,
     marginVertical: 20,
   },
   infoTextItalic: {
