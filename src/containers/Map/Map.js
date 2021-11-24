@@ -77,8 +77,9 @@ const Map = ({ navigation, route }) => {
       <Filters onChange={filters => setFilters(filters)} />
       <StoreSheet sheet={sheet} store={selectedStore} />
       <Snackbar
-        visible={params?.edited}
-        onDismiss={() => navigation.setParams({ edited: false })}>
+        visible={params?.contribute}
+        duration={2000}
+        onDismiss={() => navigation.setParams({ contribute: false })}>
         Merci pour votre contribution !
       </Snackbar>
     </View>

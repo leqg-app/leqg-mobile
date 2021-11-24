@@ -58,7 +58,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         properties: store,
       })),
     }),
-    [state.stores],
+    [state.stores.length],
   );
 
   if (!position) {
@@ -148,25 +148,29 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
 
 const date = new Date();
 const today = date.getDay() ? date.getDay() - 1 : 6;
-const day = ['at', today, ['get', 's']];
+const day = ['object', ['at', today, ['get', 's']]];
 const time = date.getHours() * 3600 + date.getMinutes() * 60;
 const textField = [
   'case',
   [
     'all',
-    ['has', 'specialPrice'],
+    ['has', 'specialPrice'], // if has special price AND
     [
       'any',
       [
         'all',
         ['has', 'os', day],
-        ['>', time, ['get', 'os', day]],
-        ['<', time, ['get', 'cs', day]],
+        // TODO: case of reverted special schedule
+        ['>', time, ['get', 'os', day]], // AND time > special open
+        ['<', time, ['get', 'cs', day]], // AND time < special close
       ],
+      // OR don't has regular price
       ['!', ['to-boolean', ['get', 'price']]],
     ],
   ],
+  // then display special price
   ['to-string', ['get', 'specialPrice']],
+  // else display price
   ['to-string', ['get', 'price']],
 ];
 

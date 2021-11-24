@@ -87,7 +87,6 @@ const Product = ({ product, onPress, onRemove }) => {
 const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
   const [error, setError] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
 
   const {
     name = '',
@@ -101,17 +100,18 @@ const EditStore = ({ route, navigation }) => {
   const validForm = name && validAddress;
 
   const save = async () => {
-    setLoading(true);
+    // TODO: display loading info
     if (!validForm) {
       setError('Missing field');
       return;
     }
     if (state.storeEdition.id) {
       await actions.editStore(state.storeEdition.id, state.storeEdition);
+      navigation.navigate('MapScreen', { contribute: true });
     } else {
-      await actions.addStore(state.storeEdition);
+      const focusStore = await actions.addStore(state.storeEdition);
+      navigation.navigate('MapScreen', { contribute: true, focusStore });
     }
-    navigation.navigate('MapScreen', { edited: true });
   };
 
   useEffect(() => {

@@ -9,7 +9,13 @@ export const initialState = {
     jwt: undefined,
   },
   stores: [],
-  storeEdition: {},
+  storeEdition: {
+    name: '',
+    products: [],
+    schedules: new Array(7)
+      .fill()
+      .map((_, i) => ({ dayOfWeek: i + 1, closed: true })),
+  },
   storesDetails: {},
   products: [],
 };

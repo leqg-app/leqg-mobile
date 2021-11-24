@@ -7,6 +7,7 @@ import {
   getVersion,
 } from '../api/stores';
 import { signIn, signUp, getProfile, updateProfile } from '../api/users';
+import { storeToMap } from '../utils/formatStore';
 import { storage } from './storage';
 
 export const actionCreators = (dispatch, state) => {
@@ -87,24 +88,31 @@ export const actionCreators = (dispatch, state) => {
     },
     setStores: stores => dispatch({ type: 'SET_STORES', stores }),
 
-    editStore: async (id, details) => {
+    editStore: async (id, store) => {
       if (!state.user.jwt) {
         return;
       }
       try {
-        await editStore(id, details, { jwt: state.user.jwt });
-        dispatch({ type: 'SET_STORE', id, details });
+        await editStore(id, store, { jwt: state.user.jwt });
+        dispatch({ type: 'SET_STORE', id, store });
       } catch (err) {
         return { error: err.message };
       }
     },
-    addStore: details => {
-      dispatch({ type: 'ADD_STORE' });
-      addStore(details, { jwt: state.user.jwt })
-        .then(store => dispatch({ type: 'ADD_STORE_SUCCESS', store }))
-        .catch(err =>
-          dispatch({ type: 'ADD_STORE_FAIL', message: err.message }),
-        );
+    addStore: async details => {
+      if (!state.user.jwt) {
+        return;
+      }
+      try {
+        const store = await addStore(details, { jwt: state.user.jwt });
+        if (store.error) {
+          return store.message;
+        }
+        dispatch({ type: 'SET_STORE', store });
+        return storeToMap(store);
+      } catch (err) {
+        return { error: err.message };
+      }
     },
 
     getProducts: async () => {
