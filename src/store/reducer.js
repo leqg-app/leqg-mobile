@@ -1,3 +1,6 @@
+import { storeToMap } from '../utils/formatStore';
+import { initialState } from './context';
+
 export const reducer = (state, action) => {
   switch (action.type) {
     case 'AUTH': {
@@ -68,34 +71,18 @@ export const reducer = (state, action) => {
       };
     }
 
-    case 'ADD_STORE': {
-      return { ...state, error: undefined, loading: true };
-    }
-
-    case 'ADD_STORE_SUCCESS': {
-      return {
-        ...state,
-        error: undefined,
-        loading: false,
-      };
-    }
-
-    case 'ADD_STORE_FAIL': {
-      return {
-        ...state,
-        error: action.message,
-        loading: false,
-      };
-    }
-
     case 'SET_STORE': {
-      const { id, details } = action;
+      const { id, store } = action;
+      const stores = id ? state.stores.filter(s => id !== s.id) : state.stores;
+      stores.push(storeToMap(store));
       return {
         ...state,
+        stores,
         storesDetails: {
           ...state.storesDetails,
-          [id]: details,
+          [id || store.id]: store,
         },
+        storeEdition: {},
       };
     }
 
@@ -112,7 +99,7 @@ export const reducer = (state, action) => {
     case 'RESET_STORE_EDITION': {
       return {
         ...state,
-        storeEdition: {},
+        storeEdition: initialState.storeEdition,
       };
     }
 
