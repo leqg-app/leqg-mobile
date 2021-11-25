@@ -56,7 +56,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         properties: store,
       })),
     }),
-    [state.stores.length],
+    [state.stores],
   );
 
   if (!position) {

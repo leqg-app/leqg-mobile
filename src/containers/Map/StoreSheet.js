@@ -43,7 +43,7 @@ const StoreSheet = props => {
       <View style={styles.sheetContent}>
         <Pressable onPress={() => props.sheet.current.snapTo(2)}>
           <Title numberOfLines={1} style={styles.title}>
-            {props.store?.name}
+            {store?.name || props.store?.name}
           </Title>
           {store ? (
             <View style={styles.preview}>
