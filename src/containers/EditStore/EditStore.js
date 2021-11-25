@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import {
-  Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -9,10 +8,11 @@ import {
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
+  ActivityIndicator,
+  Appbar,
   Avatar,
   Button,
   Caption,
-  IconButton,
   Paragraph,
   Text,
   TextInput,
@@ -87,6 +87,7 @@ const Product = ({ product, onPress, onRemove }) => {
 const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
   const [error, setError] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const {
     name = '',
@@ -100,7 +101,7 @@ const EditStore = ({ route, navigation }) => {
   const validForm = name && validAddress;
 
   const save = async () => {
-    // TODO: display loading info
+    setLoading(false);
     if (!validForm) {
       setError('Missing field');
       return;
@@ -115,24 +116,42 @@ const EditStore = ({ route, navigation }) => {
   };
 
   useEffect(() => {
+    setLoading(false);
     if (route.params?.store) {
       actions.setStoreEdition(route.params?.store);
     }
-    navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          color="white"
-          disabled={!validForm}
-          icon="check"
-          onPress={save}
-        />
-      ),
-    });
     return navigation.addListener('beforeRemove', function () {
       // TODO: confirmation if data was edited
       actions.resetStoreEdition();
     });
-  }, [route.params, validForm]);
+  }, [route.params]);
+
+  const headerRight = () => (
+    <Appbar.Action
+      color="white"
+      icon="check"
+      disabled={!validForm || loading}
+      onPress={save}
+    />
+  );
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight,
+    });
+  }, [loading, validForm]);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.center}>
+          <View>
+            <ActivityIndicator />
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if (!state.user.jwt) {
     return (
@@ -164,12 +183,10 @@ const EditStore = ({ route, navigation }) => {
 
   const hasHH = products.some(product => product.specialPrice);
 
-  const removeProduct = product => {
-    const index = products.indexOf(product);
+  const removeProduct = product =>
     actions.setStoreEdition({
-      products: products.slice(0, index).concat(products.slice(index + 1)),
+      products: products.filter(p => p !== product),
     });
-  };
 
   return (
     <SafeAreaView style={styles.container}>

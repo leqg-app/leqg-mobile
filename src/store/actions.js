@@ -55,6 +55,9 @@ export const actionCreators = (dispatch, state) => {
     },
 
     getStore: id => {
+      if (state.storesDetails[id]) {
+        return;
+      }
       dispatch({ type: 'GET_STORE' });
       getStore(id)
         .then(store => dispatch({ type: 'GET_STORE_SUCCESS', id, store }))

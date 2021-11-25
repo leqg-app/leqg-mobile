@@ -5,12 +5,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/core';
 import RNBootSplash from 'react-native-bootsplash';
 
+import { useStore } from '../../store/context';
 import { theme } from '../../constants';
 import ProductFilter from './ProductFilter';
 import Filters from './Filters';
 import Mapbox from './Mapbox';
 import StoreSheet from './StoreSheet';
-import { useStore } from '../../store/context';
 
 const Map = ({ navigation, route }) => {
   const [, actions] = useStore();
@@ -32,6 +32,7 @@ const Map = ({ navigation, route }) => {
       // TODO: better handle
       PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
     };
 

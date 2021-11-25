@@ -73,7 +73,9 @@ export const reducer = (state, action) => {
 
     case 'SET_STORE': {
       const { id, store } = action;
-      const stores = id ? state.stores.filter(s => id !== s.id) : state.stores;
+      const stores = id
+        ? state.stores.filter(s => id !== s.id)
+        : Array.from(state.stores);
       stores.push(storeToMap(store));
       return {
         ...state,
