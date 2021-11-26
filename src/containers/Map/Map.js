@@ -11,6 +11,7 @@ import ProductFilter from './ProductFilter';
 import Filters from './Filters';
 import Mapbox from './Mapbox';
 import StoreSheet from './StoreSheet';
+import SearchStore from './SearchStore';
 
 const Map = ({ navigation, route }) => {
   const [, actions] = useStore();
@@ -72,6 +73,7 @@ const Map = ({ navigation, route }) => {
         style={styles.searchbar}
         placeholder="Rechercher"
         onChangeText={onChangeText}
+        onPressIn={() => navigation.navigate('SearchStore')}
         value={text}
         clearButtonMode="always"
       />
@@ -116,15 +118,25 @@ export default () => (
       },
       headerTintColor: '#fff',
     }}>
-    <MapStack.Screen
-      name="MapScreen"
-      component={Map}
-      options={{ headerShown: false }}
-    />
-    <MapStack.Screen
-      options={{ title: 'Filtrer par bière' }}
-      name="ProductFilter"
-      component={ProductFilter}
-    />
+    <MapStack.Group screenOptions={{ presentation: 'modal' }}>
+      <MapStack.Screen
+        name="MapScreen"
+        component={Map}
+        options={{ headerShown: false }}
+      />
+      <MapStack.Screen
+        options={{ title: 'Filtrer par bière' }}
+        name="ProductFilter"
+        component={ProductFilter}
+      />
+    </MapStack.Group>
+    <MapStack.Group
+      screenOptions={{ presentation: 'modal', animation: 'fade' }}>
+      <MapStack.Screen
+        options={{ headerShown: false }}
+        name="SearchStore"
+        component={SearchStore}
+      />
+    </MapStack.Group>
   </MapStack.Navigator>
 );

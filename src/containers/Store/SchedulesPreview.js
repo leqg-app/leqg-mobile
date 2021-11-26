@@ -33,7 +33,7 @@ function Closed({ day }) {
     <View style={styles.infoScheduleState}>
       <Text style={styles.scheduleClosed}>Fermé</Text>
       {opening && opening < closing && (
-        <Text> - Ouvre à {secondToTime(opening)}</Text>
+        <Text> Ouvre à {secondToTime(opening)}</Text>
       )}
     </View>
   );
