@@ -38,11 +38,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
 
   useEffect(() => {
     if (selectedStore && camera.current) {
-      camera.current.setCamera({
-        centerCoordinate: [selectedStore.lng, selectedStore.lat],
-        zoomLevel: 14,
-        animationDuration: 1000,
-      });
+      camera.current.flyTo([selectedStore.lng, selectedStore.lat]);
     }
   }, [selectedStore]);
 
