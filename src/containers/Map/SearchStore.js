@@ -26,7 +26,9 @@ function SearchStore({ navigation }) {
   }, [searchBar.current]);
 
   const stores = text
-    ? state.stores.filter(s => s.name.includes(text)).slice(0, 5)
+    ? state.stores
+        .filter(s => s.name.toLowerCase().includes(text.toLowerCase()))
+        .slice(0, 5)
     : [];
 
   return (
@@ -40,6 +42,7 @@ function SearchStore({ navigation }) {
         clearButtonMode="always"
       />
       <FlatList
+        keyboardShouldPersistTaps="always"
         data={stores}
         renderItem={({ item }) => (
           <RowStore
