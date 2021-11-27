@@ -1,7 +1,7 @@
 import { get, post, put } from './index';
 
 function getVersion() {
-  return get(`/v1/version`);
+  return get(`/v1/version`, { 'cache-control': 'no-store' });
 }
 
 function getStores(version) {
