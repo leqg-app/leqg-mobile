@@ -101,7 +101,7 @@ const EditStore = ({ route, navigation }) => {
   const validForm = name && validAddress;
 
   const save = async () => {
-    setLoading(false);
+    setLoading(true);
     if (!validForm) {
       setError('Missing field');
       return;
@@ -126,20 +126,16 @@ const EditStore = ({ route, navigation }) => {
     });
   }, [route.params]);
 
-  const headerRight = () => (
-    <Appbar.Action
-      color="white"
-      icon="check"
-      disabled={!validForm || loading}
-      onPress={save}
-    />
-  );
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight,
-    });
-  }, [loading, validForm]);
+  navigation.setOptions({
+    headerRight: () => (
+      <Appbar.Action
+        color="white"
+        icon="check"
+        disabled={!validForm || loading}
+        onPress={save}
+      />
+    ),
+  });
 
   if (loading) {
     return (
