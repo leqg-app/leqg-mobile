@@ -2,10 +2,16 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import * as Sentry from '@sentry/react-native';
 
 import { StoreProvider } from './store/context';
 import Routes from './Routes';
 import { theme } from './constants';
+
+Sentry.init({
+  dsn: 'https://247aa8fba4ca46688925bf9823ba239e@o1079194.ingest.sentry.io/6083816',
+  tracesSampleRate: 1.0,
+});
 
 const App = () => {
   return (
@@ -25,4 +31,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Sentry.wrap(App);

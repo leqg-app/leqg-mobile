@@ -226,6 +226,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				CF35D9FF2CC9AC4C7DAACE9D /* [CP] Embed Pods Frameworks */,
 				FA465B4467DAF49B07BBC4BE /* [CP] Copy Pods Resources */,
+				73B92D907517476DAA6F7B4B /* Upload Debug Symbols to Sentry */,
 			);
 			buildRules = (
 			);
@@ -304,7 +305,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nset -e\n\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		0C83C1A362FD02C66A7D2DF4 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -322,6 +323,20 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-leqg-leqgTests/Pods-leqg-leqgTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		73B92D907517476DAA6F7B4B /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym";
 		};
 		7E4DE034DF268FE1B7E0E43F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
