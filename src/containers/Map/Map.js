@@ -31,10 +31,10 @@ const Map = ({ navigation, route }) => {
       ]);
 
       // TODO: better handle
-      PermissionsAndroid.request(
+      PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
+      ]);
     };
 
     init().finally(async () => {
