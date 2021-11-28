@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import {
+  Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -33,7 +34,7 @@ const types = {
   bottle: 'Bouteille',
 };
 
-const Product = ({ product, onPress, onRemove }) => {
+const Product = ({ product, onPress }) => {
   const { price, specialPrice, productName, type, volume } = product;
   return (
     <View style={styles.productRow}>
@@ -68,17 +69,6 @@ const Product = ({ product, onPress, onRemove }) => {
             </View>
           </View>
         </View>
-      </TouchableRipple>
-      <TouchableRipple
-        style={styles.removeButton}
-        rippleColor="#000"
-        onPress={() => onRemove(product)}>
-        <Avatar.Icon
-          icon="trash-can-outline"
-          size={30}
-          color="#000"
-          style={styles.transparentIcon}
-        />
       </TouchableRipple>
     </View>
   );
@@ -126,16 +116,18 @@ const EditStore = ({ route, navigation }) => {
     });
   }, [route.params]);
 
-  navigation.setOptions({
-    headerRight: () => (
-      <Appbar.Action
-        color="white"
-        icon="check"
-        disabled={!validForm || loading}
-        onPress={save}
-      />
-    ),
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Appbar.Action
+          color="white"
+          icon="check"
+          disabled={!validForm || loading}
+          onPress={save}
+        />
+      ),
+    });
+  }, [validForm, loading, save]);
 
   if (loading) {
     return (
@@ -178,11 +170,6 @@ const EditStore = ({ route, navigation }) => {
     })) || [];
 
   const hasHH = products.some(product => product.specialPrice);
-
-  const removeProduct = product =>
-    actions.setStoreEdition({
-      products: products.filter(p => p !== product),
-    });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -236,7 +223,6 @@ const EditStore = ({ route, navigation }) => {
               key={i}
               product={product}
               onPress={() => navigation.navigate('EditProduct', { product })}
-              onRemove={removeProduct}
             />
           ))}
 
@@ -253,13 +239,14 @@ const EditStore = ({ route, navigation }) => {
             {!schedules.length ? (
               <Paragraph>Aucun horaire renseigné pour le moment</Paragraph>
             ) : (
-              <Schedules schedules={schedules} />
+              <Pressable onPress={() => navigation.navigate('EditSchedules')}>
+                <Schedules schedules={schedules} />
+              </Pressable>
             )}
             <Button
               mode="contained"
               uppercase={false}
-              onPress={() => navigation.navigate('EditSchedules')}
-              style={{ marginTop: 20 }}>
+              onPress={() => navigation.navigate('EditSchedules')}>
               Modifier les horaires
             </Button>
           </View>
@@ -317,14 +304,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  removeButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 50,
-    borderLeftColor: '#ddd',
-    borderLeftWidth: StyleSheet.hairlineWidth,
-  },
   prices: {
     display: 'flex',
     flexDirection: 'row',
@@ -332,6 +311,9 @@ const styles = StyleSheet.create({
   price: {
     width: 40,
     textAlign: 'center',
+  },
+  editButton: {
+    marginRight: 10,
   },
   transparentIcon: {
     backgroundColor: 'transparent',
