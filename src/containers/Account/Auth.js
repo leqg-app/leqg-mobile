@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
   Title,
   Divider,
@@ -8,6 +8,7 @@ import {
   Button,
   HelperText,
 } from 'react-native-paper';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { useStore } from '../../store/context';
 
@@ -66,7 +67,7 @@ const Auth = ({ navigation }) => {
   }, [mode]);
 
   return (
-    <View style={styles.box}>
+    <KeyboardAwareScrollView style={styles.container}>
       <Paragraph>
         {mode === 'login' ? 'Pas encore inscrit ?' : 'Déjà inscrit ?'}
       </Paragraph>
@@ -77,99 +78,99 @@ const Auth = ({ navigation }) => {
         {mode === 'login' ? 'Inscription' : 'Connexion'}
       </Button>
       <Divider style={styles.divider} />
-      <View>
-        <Title>{mode === 'login' ? 'Connexion' : 'Inscription'}</Title>
-        {mode === 'login' ? (
-          <>
-            <TextInput
-              style={styles.space}
-              label="Pseudo"
-              mode="outlined"
-              textContentType="nickname"
-              onChangeText={onChangeUsername}
-              value={username}
-              returnKeyType="next"
-              onSubmitEditing={() => passwordInput.current.focus()}
-              blurOnSubmit={false}
-            />
-            <TextInput
-              ref={passwordInput}
-              style={styles.space}
-              label="Mot de passe"
-              mode="outlined"
-              textContentType="password"
-              onChangeText={onChangePassword}
-              value={password}
-              secureTextEntry
-              returnKeyType="done"
-            />
-          </>
-        ) : (
-          <>
-            <Paragraph>
-              Inscrivez-vous et profitez de tous les avantages des membres
-            </Paragraph>
-            <TextInput
-              style={styles.space}
-              label="Pseudo"
-              mode="outlined"
-              textContentType="nickname"
-              returnKeyType="next"
-              onChangeText={onChangeUsername}
-              value={username}
-              onSubmitEditing={() => emailInput.current.focus()}
-              blurOnSubmit={false}
-            />
-            <TextInput
-              ref={emailInput}
-              style={styles.space}
-              label="E-mail"
-              mode="outlined"
-              returnKeyType="next"
-              autoCapitalize="none"
-              autoCompleteType="email"
-              textContentType="emailAddress"
-              keyboardType="email-address"
-              onChangeText={onChangeEmail}
-              value={email}
-              onSubmitEditing={() => passwordInput.current.focus()}
-              blurOnSubmit={false}
-            />
-            <TextInput
-              ref={passwordInput}
-              style={styles.space}
-              label="Mot de passe"
-              mode="outlined"
-              textContentType="password"
-              returnKeyType="done"
-              onChangeText={onChangePassword}
-              value={password}
-              secureTextEntry
-            />
-          </>
-        )}
-        {state.error && (
-          <HelperText type="error">
-            {errors[state.error] ||
-              'Erreur inconnue, nous avons été informés. Merci de réessayer plus tard'}
-          </HelperText>
-        )}
-        <Button
-          style={styles.space}
-          mode="contained"
-          onPress={submit}
-          loading={state.loading}
-          disabled={!username || !password || (mode === 'signup' && !email)}>
-          {mode === 'login' ? 'Connexion' : 'Inscription'}
-        </Button>
-      </View>
-    </View>
+
+      <Title>{mode === 'login' ? 'Connexion' : 'Inscription'}</Title>
+      {mode === 'login' ? (
+        <>
+          <TextInput
+            style={styles.space}
+            label="Pseudo"
+            mode="outlined"
+            textContentType="nickname"
+            onChangeText={onChangeUsername}
+            value={username}
+            returnKeyType="next"
+            onSubmitEditing={() => passwordInput.current.focus()}
+            blurOnSubmit={false}
+          />
+          <TextInput
+            ref={passwordInput}
+            style={styles.space}
+            label="Mot de passe"
+            mode="outlined"
+            textContentType="password"
+            onChangeText={onChangePassword}
+            value={password}
+            secureTextEntry
+            returnKeyType="done"
+          />
+        </>
+      ) : (
+        <>
+          <Paragraph>
+            Inscrivez-vous et profitez de tous les avantages des membres
+          </Paragraph>
+          <TextInput
+            style={styles.space}
+            label="Pseudo"
+            mode="outlined"
+            textContentType="nickname"
+            returnKeyType="next"
+            onChangeText={onChangeUsername}
+            value={username}
+            onSubmitEditing={() => emailInput.current.focus()}
+            blurOnSubmit={false}
+          />
+          <TextInput
+            ref={emailInput}
+            style={styles.space}
+            label="E-mail"
+            mode="outlined"
+            returnKeyType="next"
+            autoCapitalize="none"
+            autoCompleteType="email"
+            textContentType="emailAddress"
+            keyboardType="email-address"
+            onChangeText={onChangeEmail}
+            value={email}
+            onSubmitEditing={() => passwordInput.current.focus()}
+            blurOnSubmit={false}
+          />
+          <TextInput
+            ref={passwordInput}
+            style={styles.space}
+            label="Mot de passe"
+            mode="outlined"
+            textContentType="password"
+            returnKeyType="done"
+            onChangeText={onChangePassword}
+            value={password}
+            secureTextEntry
+          />
+        </>
+      )}
+      {state.error && (
+        <HelperText type="error">
+          {errors[state.error] ||
+            'Erreur inconnue, nous avons été informés. Merci de réessayer plus tard'}
+        </HelperText>
+      )}
+      <Button
+        style={styles.space}
+        mode="contained"
+        onPress={submit}
+        loading={state.loading}
+        disabled={!username || !password || (mode === 'signup' && !email)}>
+        {mode === 'login' ? 'Connexion' : 'Inscription'}
+      </Button>
+    </KeyboardAwareScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  box: {
+  container: {
     padding: 20,
+    flex: 1,
   },
   divider: {
     marginVertical: 15,
