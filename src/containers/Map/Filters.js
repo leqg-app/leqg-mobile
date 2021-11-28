@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Chip } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/core';
 
@@ -64,34 +64,39 @@ const Filters = ({ onChange }) => {
 
   return (
     <>
-      <View style={styles.filters}>
-        <Chip
-          style={styles.filter}
-          icon="currency-usd"
-          onPress={() => setPriceModal(true)}
-          onClose={priceFilter && (() => setPriceFilter(undefined))}
-          mode="outlined">
-          {priceFilter ? `Prix: ${priceFilter}€` : 'Prix'}
-        </Chip>
-        <Chip
-          style={styles.filter}
-          icon="beer-outline"
-          onPress={() => navigation.navigate('ProductFilter')}
-          onClose={beerFilter && (() => setBeerFilter(undefined))}
-          mode="outlined">
-          {beerFilter
-            ? `Bière: ${state.products.find(p => p.id === beerFilter)?.name}`
-            : 'Bière'}
-        </Chip>
-        <Chip
-          style={styles.filter}
-          icon="clock-outline"
-          onPress={() => setOpenFilter(true)}
-          onClose={openNow && (() => setOpenFilter(false))}
-          mode="outlined">
-          Ouvert
-        </Chip>
-      </View>
+      <ScrollView
+        style={styles.scroll}
+        horizontal
+        showsHorizontalScrollIndicator={false}>
+        <View style={styles.filters}>
+          <Chip
+            style={styles.filter}
+            icon="currency-usd"
+            onPress={() => setPriceModal(true)}
+            onClose={priceFilter && (() => setPriceFilter(undefined))}
+            mode="outlined">
+            {priceFilter ? `Prix: ${priceFilter}€` : 'Prix'}
+          </Chip>
+          <Chip
+            style={styles.filter}
+            icon="beer-outline"
+            onPress={() => navigation.navigate('ProductFilter')}
+            onClose={beerFilter && (() => setBeerFilter(undefined))}
+            mode="outlined">
+            {beerFilter
+              ? `Bière: ${state.products.find(p => p.id === beerFilter)?.name}`
+              : 'Bière'}
+          </Chip>
+          <Chip
+            style={styles.filter}
+            icon="clock-outline"
+            onPress={() => setOpenFilter(true)}
+            onClose={openNow && (() => setOpenFilter(false))}
+            mode="outlined">
+            Ouvert
+          </Chip>
+        </View>
+      </ScrollView>
       {priceModal && (
         <PriceFilter
           onClose={() => setPriceModal(false)}
@@ -104,6 +109,9 @@ const Filters = ({ onChange }) => {
 };
 
 const styles = StyleSheet.create({
+  scroll: {
+    maxHeight: 60,
+  },
   filters: {
     height: 33,
     zIndex: 1,
@@ -111,6 +119,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 15,
     marginLeft: 25,
+    marginRight: 15,
   },
   filter: {
     zIndex: 1,
