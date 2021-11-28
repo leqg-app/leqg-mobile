@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import AppIntro from 'react-native-intro-screens';
 import RNBootSplash from 'react-native-bootsplash';
 import { IconButton } from 'react-native-paper';
+import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 
 import { theme } from './constants';
 import { storage } from './store/storage';
@@ -19,7 +20,14 @@ function Splash() {
     ]);
   }, []);
 
-  const done = () => storage.setBool('firstOpen', true);
+  const done = async () => {
+    await requestMultiple([
+      PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+    ]);
+    storage.setBool('firstOpen', true);
+  };
 
   const pages = [
     {
