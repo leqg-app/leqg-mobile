@@ -16,6 +16,7 @@ export const theme = {
     ...DefaultTheme.colors,
     primary: '#163033',
     bright: '#2d4447',
-    accent: '#d1a03c',
+    accent: '#f9a825',
+    danger: '#B00020',
   },
 };

@@ -23,9 +23,9 @@ const SelectProduct = ({ navigation }) => {
 
   const onSelect = productId => {
     if (productId) {
-      navigation.navigate('EditProduct', { productId });
+      navigation.replace('EditProduct', { productId });
     } else {
-      navigation.navigate('EditProduct', { productName: search });
+      navigation.replace('EditProduct', { productName: search });
     }
   };
 

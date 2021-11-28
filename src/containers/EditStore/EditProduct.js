@@ -1,13 +1,14 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import {
-  Appbar,
+  Button,
   IconButton,
   RadioButton,
   TextInput,
   Title,
   useTheme,
 } from 'react-native-paper';
+import { theme } from '../../constants';
 
 import { useStore } from '../../store/context';
 
@@ -114,8 +115,32 @@ const EditProducts = ({ navigation, route }) => {
 
   const selectedProduct = state.products.find(({ id }) => id === product);
 
+  const removeProduct = () => {
+    Alert.alert('Confirmation', 'Voulez-vous vraiment supprimer ce produit ?', [
+      {
+        text: 'Annuler',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          const storeProducts = state.storeEdition?.products || [];
+          const products = storeProducts.filter(storeProduct =>
+            storeProduct.product
+              ? storeProduct.product !== product
+              : storeProduct.productName !== productName,
+          );
+          actions.setStoreEdition({
+            products,
+          });
+          navigation.goBack();
+        },
+      },
+    ]);
+  };
+
   return (
-    <View style={styles.box}>
+    <ScrollView style={styles.container}>
       <Title>{selectedProduct?.name || productName}</Title>
       <View style={styles.typeGroup}>
         <RadioButton.Group onValueChange={changeType} value={type}>
@@ -161,21 +186,35 @@ const EditProducts = ({ navigation, route }) => {
         returnKeyType="done"
         right={<TextInput.Affix text="€" />}
       />
-    </View>
+      {storeProduct.id && (
+        <Button
+          mode="contained"
+          color={theme.colors.danger}
+          style={styles.removeButton}
+          onPress={removeProduct}>
+          Supprimer
+        </Button>
+      )}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  box: {
+  container: {
+    flex: 1,
     padding: 20,
   },
   typeGroup: {
     marginTop: 10,
   },
   textInput: {
+    flex: 1,
     marginTop: 10,
     marginBottom: 15,
     backgroundColor: 'transparent',
+  },
+  removeButton: {
+    marginTop: 10,
   },
 });
 
