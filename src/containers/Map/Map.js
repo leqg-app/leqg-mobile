@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { StyleSheet, StatusBar, View, PermissionsAndroid } from 'react-native';
+import { StyleSheet, StatusBar, View, Platform } from 'react-native';
 import { Searchbar, Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/core';
@@ -29,12 +29,6 @@ const Map = ({ navigation, route }) => {
         actions.getProducts(),
         actions.getUser(),
       ]);
-
-      // TODO: better handle
-      PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      ]);
     };
 
     init().finally(async () => {
@@ -44,8 +38,10 @@ const Map = ({ navigation, route }) => {
 
   useEffect(() => {
     if (isFocused) {
-      StatusBar.setBackgroundColor('transparent');
-      StatusBar.setTranslucent(true);
+      if (Platform.OS === 'android') {
+        StatusBar.setBackgroundColor('transparent');
+        StatusBar.setTranslucent(true);
+      }
       StatusBar.setBarStyle('dark-content');
     } else {
       StatusBar.setBarStyle('light-content');

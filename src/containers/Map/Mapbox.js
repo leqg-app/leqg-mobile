@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { PermissionsAndroid, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import Geolocation from 'react-native-geolocation-service';
+import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
 
@@ -18,13 +19,11 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
   const camera = useRef();
   const [state] = useStore();
   const { colors } = useTheme();
-  const [geoloc, setGeoloc] = useState(false);
   const [position, setPosition] = useState(undefined);
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
       ({ coords }) => {
-        setGeoloc(true);
         setPosition([coords.longitude, coords.latitude]);
       },
       () => {
@@ -34,7 +33,23 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         timeout: 2000,
       },
     );
-  }, [PermissionsAndroid.RESULTS]);
+  }, []);
+
+  const moveToLocation = async () => {
+    const status = await requestMultiple([
+      PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+    ]);
+    if (status[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] !== 'granted') {
+      // TODO: display error message
+      return;
+    }
+    Geolocation.getCurrentPosition(({ coords }) => {
+      camera.current.flyTo(position);
+      setPosition([coords.longitude, coords.latitude]);
+    });
+  };
 
   useEffect(() => {
     if (selectedStore && camera.current) {
@@ -130,14 +145,12 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
           />
         </MapboxGL.ShapeSource>
       </MapboxGL.MapView>
-      {geoloc && (
-        <FAB
-          style={styles.fab}
-          icon="target"
-          color={colors.primary}
-          onPress={() => camera.current.flyTo(position)}
-        />
-      )}
+      <FAB
+        style={styles.fab}
+        icon="target"
+        color={colors.primary}
+        onPress={moveToLocation}
+      />
     </>
   );
 };

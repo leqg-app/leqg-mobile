@@ -29,6 +29,10 @@ target 'leqg' do
     $RNMBGL.pre_install(installer)
   end
 
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-LocationAccuracy', :path => "#{permissions_path}/LocationAccuracy"
+  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+
   post_install do |installer|
     $RNMBGL.post_install(installer)
     react_native_post_install(installer)
