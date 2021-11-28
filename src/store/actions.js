@@ -12,16 +12,19 @@ import { storage } from './storage';
 
 export const actionCreators = (dispatch, state) => {
   return {
-    signUp: body => {
+    signUp: async body => {
       dispatch({ type: 'AUTH' });
-      return signUp(body)
-        .then(({ jwt, user, data, error }) => {
-          if (error) {
-            return data[0].messages[0].id;
-          }
-          dispatch({ type: 'AUTH_SUCCESS', jwt, user });
-        })
-        .catch(({ message }) => message);
+      try {
+        const { error, data, jwt, user } = await signUp(body);
+        if (error) {
+          return data[0].messages[0].id;
+        }
+        await storage.setStringAsync('jwt', jwt);
+        user.jwt = jwt;
+        dispatch({ type: 'AUTH_SUCCESS', user });
+      } catch (err) {
+        return err.message;
+      }
     },
     signIn: async body => {
       dispatch({ type: 'AUTH' });
