@@ -24,11 +24,8 @@ const Map = ({ navigation, route }) => {
 
   useEffect(() => {
     const init = async () => {
-      await Promise.all([
-        actions.getStores(),
-        actions.getProducts(),
-        actions.getUser(),
-      ]);
+      await actions.getUser();
+      Promise.all([actions.getStores(), actions.getProducts()]);
     };
 
     init().finally(async () => {
