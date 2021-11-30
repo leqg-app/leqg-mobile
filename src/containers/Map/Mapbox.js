@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import MapboxGL from '@react-native-mapbox-gl/maps';
+import MapboxGL, { Logger } from '@react-native-mapbox-gl/maps';
 import Geolocation from 'react-native-geolocation-service';
 import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 import circle from '@turf/circle';
@@ -10,6 +10,17 @@ import { theme } from '../../constants';
 import { useStore } from '../../store/context';
 
 MapboxGL.setAccessToken('');
+
+// https://github.com/react-native-mapbox-gl/maps/issues/943
+if (__DEV__) {
+  Logger.setLogCallback(log => {
+    const { message } = log;
+    if (message.match('Request failed due to a permanent error: Canceled')) {
+      return true;
+    }
+    return false;
+  });
+}
 
 const CENTER = [2.341924, 48.860395];
 
