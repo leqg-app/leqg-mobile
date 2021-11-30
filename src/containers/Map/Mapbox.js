@@ -120,7 +120,12 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
           zoomLevel={13}
           centerCoordinate={position}
         />
-        <MapboxGL.UserLocation minDisplacement={100} />
+        <MapboxGL.UserLocation
+          onUpdate={({ coords }) =>
+            setPosition([coords.longitude, coords.latitude])
+          }
+          minDisplacement={10}
+        />
         <MapboxGL.ShapeSource
           id="stores"
           shape={storesShape}
