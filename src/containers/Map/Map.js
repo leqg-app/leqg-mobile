@@ -79,7 +79,7 @@ const Map = ({ navigation, route }) => {
       />
       <Searchbar
         style={styles.searchbar}
-        placeholder="Rechercher"
+        placeholder="Rechercher un bar"
         onChangeText={onChangeText}
         onPressIn={() => navigation.navigate('SearchStore')}
         value={text}
