@@ -1,5 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { StyleSheet, StatusBar, View, Platform } from 'react-native';
+import {
+  BackHandler,
+  StyleSheet,
+  StatusBar,
+  View,
+  Platform,
+} from 'react-native';
 import { Searchbar, Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/core';
@@ -30,6 +36,15 @@ const Map = ({ navigation, route }) => {
 
     init().finally(async () => {
       await RNBootSplash.hide({ fade: true });
+    });
+
+    BackHandler.addEventListener('hardwareBackPress', function () {
+      if (!selectedStore) {
+        selectStore(false);
+        sheet.current.snapTo(0);
+        return true;
+      }
+      return false;
     });
   }, []);
 
