@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import Geolocation from 'react-native-geolocation-service';
 import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
@@ -41,7 +41,11 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
       PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
     ]);
-    if (status[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] !== 'granted') {
+    const asked = Platform.select({
+      ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+      android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+    });
+    if (status[asked] !== 'granted') {
       // TODO: display error message
       return;
     }
