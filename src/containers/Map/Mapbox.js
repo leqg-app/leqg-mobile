@@ -61,7 +61,11 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
       return;
     }
     Geolocation.getCurrentPosition(({ coords }) => {
-      camera.current.flyTo(position);
+      camera.current.setCamera({
+        centerCoordinate: [coords.longitude, coords.latitude],
+        zoomLevel: 13,
+        animationDuration: 1500,
+      });
       setPosition([coords.longitude, coords.latitude]);
     });
   };
