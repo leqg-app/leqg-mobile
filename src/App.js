@@ -8,10 +8,12 @@ import { StoreProvider } from './store/context';
 import Routes from './Routes';
 import { theme } from './constants';
 
-Sentry.init({
-  dsn: 'https://247aa8fba4ca46688925bf9823ba239e@o1079194.ingest.sentry.io/6083816',
-  tracesSampleRate: 1.0,
-});
+if (!__DEV__) {
+  Sentry.init({
+    dsn: 'https://247aa8fba4ca46688925bf9823ba239e@o1079194.ingest.sentry.io/6083816',
+    tracesSampleRate: 1.0,
+  });
+}
 
 const App = () => {
   return (
