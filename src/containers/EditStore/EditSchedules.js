@@ -9,19 +9,14 @@ import {
   Dialog,
   IconButton,
   Portal,
-  TextInput,
   TouchableRipple,
   useTheme,
+  List,
 } from 'react-native-paper';
-import { TimePickerModal } from 'react-native-paper-dates';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { useStore } from '../../store/context';
-import {
-  secondToHour,
-  secondToTime,
-  toHours,
-  toMinutes,
-} from '../../utils/time';
+import { secondToHour, secondToTime } from '../../utils/time';
 import { daysFull, daysShort, theme } from '../../constants';
 
 const newSchedule = () => ({
@@ -31,6 +26,20 @@ const newSchedule = () => ({
   openingSpecial: null,
   closingSpecial: null,
 });
+
+const defaultsHour = {
+  opening: 17,
+  closing: 2,
+  openingSpecial: 18,
+  closingSpecial: 20,
+};
+
+const scheduleTypes = [
+  { name: 'Ouverture', type: 'opening' },
+  { name: 'Fermeture', type: 'closing' },
+  { name: 'Début Happy hour', type: 'openingSpecial' },
+  { name: 'Fin Happy hour', type: 'closingSpecial' },
+];
 
 function Time({ schedule }) {
   const [open, close] = schedule;
@@ -53,6 +62,14 @@ const DaySchedule = ({ schedule }) => {
     </>
   );
 };
+
+function RightHour({ hour }) {
+  return (
+    <Text style={{ textAlignVertical: 'center' }}>
+      {hour ? secondToHour(hour) : '-'}
+    </Text>
+  );
+}
 
 const EditSchedulesModal = props => {
   const { colors } = useTheme();
@@ -104,61 +121,34 @@ const EditSchedulesModal = props => {
           </View>
           {!closed && (
             <View>
-              <View style={styles.flex}>
-                <TextInput
-                  mode="outlined"
-                  label="Ouverture"
-                  value={secondToHour(opening)}
-                  onTouchStart={() => setTimePicker('opening')}
-                  showSoftInputOnFocus={false}
-                  style={styles.scheduleHourLeft}
+              {scheduleTypes.map(({ name, type }) => (
+                <List.Item
+                  title={name}
+                  right={() => <RightHour hour={schedule[type]} />}
+                  style={styles.scheduleRow}
+                  onPress={() => setTimePicker(type)}
                 />
-                <TextInput
-                  mode="outlined"
-                  label="Fermeture"
-                  value={secondToHour(closing)}
-                  onTouchStart={() => setTimePicker('closing')}
-                  showSoftInputOnFocus={false}
-                  style={styles.scheduleHourRight}
-                />
-              </View>
-              <View style={styles.flex}>
-                <TextInput
-                  mode="outlined"
-                  label="Début happy h"
-                  value={secondToHour(openingSpecial)}
-                  onTouchStart={() => setTimePicker('openingSpecial')}
-                  showSoftInputOnFocus={false}
-                  style={styles.scheduleHourLeft}
-                />
-                <TextInput
-                  mode="outlined"
-                  label="Fin happy hour"
-                  value={secondToHour(closingSpecial)}
-                  onTouchStart={() => setTimePicker('closingSpecial')}
-                  showSoftInputOnFocus={false}
-                  style={styles.scheduleHourRight}
-                />
-              </View>
+              ))}
               {timePicker && (
-                <TimePickerModal
-                  visible={!!timePicker}
-                  onDismiss={() => setTimePicker(false)}
-                  onConfirm={time => {
-                    const seconds = time.hours * 3600 + time.minutes * 60;
+                <DateTimePicker
+                  value={
+                    new Date(new Date(0).setHours(defaultsHour[timePicker]))
+                  }
+                  mode="time"
+                  is24Hour={true}
+                  display="default"
+                  onChange={(_, time) => {
+                    setTimePicker(false);
+                    if (!time) {
+                      return;
+                    }
+                    const seconds =
+                      time.getHours() * 3600 + time.getMinutes() * 60;
                     setSchedule({
                       ...schedule,
                       [timePicker]: seconds,
                     });
-                    setTimePicker(false);
                   }}
-                  hours={toHours(schedule[timePicker])}
-                  minutes={toMinutes(schedule[timePicker])}
-                  locale="fr"
-                  label=""
-                  cancelLabel="Annuler"
-                  confirmLabel="OK"
-                  animationType="fade"
                 />
               )}
             </View>
@@ -293,6 +283,10 @@ const styles = StyleSheet.create({
     width: 90,
     textAlign: 'center',
   },
+  scheduleRow: {
+    borderBottomColor: 'grey',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
   dayButtons: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -309,16 +303,6 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
     backgroundColor: theme.colors.primary,
     color: 'white',
-  },
-  scheduleHourLeft: {
-    flex: 1,
-    marginRight: 5,
-    backgroundColor: 'white',
-  },
-  scheduleHourRight: {
-    flex: 1,
-    marginLeft: 5,
-    backgroundColor: 'white',
   },
   buttonEditAll: {
     margin: 30,

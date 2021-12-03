@@ -1,5 +1,5 @@
 import { storeToMap } from '../utils/formatStore';
-import { initialState } from './context';
+import { createStoreEdition } from './context';
 
 export const reducer = (state, action) => {
   switch (action.type) {
@@ -101,7 +101,7 @@ export const reducer = (state, action) => {
     case 'RESET_STORE_EDITION': {
       return {
         ...state,
-        storeEdition: initialState.storeEdition,
+        storeEdition: createStoreEdition(),
       };
     }
 

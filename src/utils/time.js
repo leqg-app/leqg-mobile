@@ -9,18 +9,18 @@ function pad2(n) {
 
 export function secondToTime(seconds) {
   if (!seconds) {
-    return '00h';
+    return '00:00';
   }
   const hour = Math.floor(seconds / 3600);
   const minute = Math.floor((seconds % 3600) / 60);
-  return `${hour}h${minute ? pad2(minute) : ''}`;
+  return `${pad2(hour)}:${pad2(minute)}`;
 }
 
 export function secondToHour(seconds) {
   if (!seconds) {
     return '00:00';
   }
-  return `${Math.floor(seconds / 3600)}:${pad2(
+  return `${pad2(Math.floor(seconds / 3600))}:${pad2(
     Math.floor((seconds % 3600) / 60),
   )}`;
 }

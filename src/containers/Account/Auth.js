@@ -23,7 +23,7 @@ const Auth = ({ navigation }) => {
   const emailInput = useRef();
   const passwordInput = useRef();
 
-  const [mode, setMode] = React.useState('signup');
+  const [mode, setMode] = React.useState('login');
   const [state, setState] = React.useState({
     error: undefined,
     loading: false,
