@@ -33,7 +33,7 @@ function SearchStore({ navigation }) {
       if (searchBar.current) {
         searchBar.current.focus();
       }
-    });
+    }, 500);
   }, [searchBar.current]);
 
   const stores = useMemo(() => {
