@@ -98,9 +98,12 @@ const EditStore = ({ route, navigation }) => {
     }
     if (state.storeEdition.id) {
       await actions.editStore(state.storeEdition.id, state.storeEdition);
+      setLoading(false);
       navigation.navigate('MapScreen', { contribute: true });
     } else {
       const focusStore = await actions.addStore(state.storeEdition);
+
+      setLoading(false);
       navigation.navigate('MapScreen', { contribute: true, focusStore });
     }
   };

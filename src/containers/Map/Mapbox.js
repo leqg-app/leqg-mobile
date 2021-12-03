@@ -6,7 +6,7 @@ import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
 
-import { theme } from '../../constants';
+import { isDark, theme } from '../../constants';
 import { useStore } from '../../store/context';
 
 MapboxGL.setAccessToken('');
@@ -112,6 +112,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         localizeLabels={true}
         rotateEnabled={false}
         pitchEnabled={false}
+        styleURL={isDark ? 'mapbox://styles/mapbox/dark-v10' : undefined}
         onPress={() => onPress()}>
         <MapboxGL.Camera
           ref={camera}

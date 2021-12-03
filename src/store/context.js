@@ -3,19 +3,23 @@ import React, { createContext, useMemo, useContext, useReducer } from 'react';
 import { reducer } from './reducer';
 import { actionCreators } from './actions';
 
+export function createStoreEdition() {
+  return {
+    name: '',
+    products: [],
+    schedules: new Array(7)
+      .fill()
+      .map((_, i) => ({ dayOfWeek: i + 1, closed: true })),
+  };
+}
+
 export const initialState = {
   loading: false,
   user: {
     jwt: undefined,
   },
   stores: [],
-  storeEdition: {
-    name: '',
-    products: [],
-    schedules: new Array(7)
-      .fill()
-      .map((_, i) => ({ dayOfWeek: i + 1, closed: true })),
-  },
+  storeEdition: createStoreEdition(),
   storesDetails: {},
   products: [],
 };
