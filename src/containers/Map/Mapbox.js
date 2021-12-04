@@ -31,22 +31,42 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
   const [state] = useStore();
   const { colors } = useTheme();
   const [position, setPosition] = useState(undefined);
+  const [followLocation, setFollowLocation] = useState(true);
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
       ({ coords }) => {
-        setPosition([coords.longitude, coords.latitude]);
+        moveTo([coords.longitude, coords.latitude]);
       },
       () => {
-        setPosition(CENTER);
+        moveTo(CENTER);
       },
       {
         timeout: 2000,
       },
     );
-  }, []);
+  }, [camera.current]);
 
-  const moveToLocation = async () => {
+  useEffect(() => {
+    if (selectedStore && camera.current) {
+      setFollowLocation(false);
+      camera.current.flyTo([selectedStore.lng, selectedStore.lat]);
+    }
+  }, [selectedStore]);
+
+  const moveTo = centerCoordinate => {
+    setPosition(centerCoordinate);
+    if (!camera.current) {
+      return;
+    }
+    camera.current.setCamera({
+      centerCoordinate,
+      zoomLevel: 13,
+      animationDuration: 1500,
+    });
+  };
+
+  const moveToCurrentLocation = async () => {
     const status = await requestMultiple([
       PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
       PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
@@ -60,21 +80,23 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
       // TODO: display error message
       return;
     }
-    Geolocation.getCurrentPosition(({ coords }) => {
-      camera.current.setCamera({
-        centerCoordinate: [coords.longitude, coords.latitude],
-        zoomLevel: 13,
-        animationDuration: 1500,
-      });
-      setPosition([coords.longitude, coords.latitude]);
-    });
+    setFollowLocation(true);
+    Geolocation.getCurrentPosition(({ coords }) =>
+      moveTo([coords.longitude, coords.latitude]),
+    );
   };
 
-  useEffect(() => {
-    if (selectedStore && camera.current) {
-      camera.current.flyTo([selectedStore.lng, selectedStore.lat]);
+  const onMove = ({ properties }) => {
+    if (properties.isUserInteraction && followLocation) {
+      setFollowLocation(false);
     }
-  }, [selectedStore]);
+  };
+
+  const onUpdateLocation = ({ coords }) =>
+    (followLocation ? moveTo : setPosition)([
+      coords.longitude,
+      coords.latitude,
+    ]);
 
   const storesShape = useMemo(
     () => ({
@@ -112,19 +134,14 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
       <MapboxGL.MapView
         style={styles.absolute}
         localizeLabels={true}
-        rotateEnabled={false}
         pitchEnabled={false}
         styleURL={isDark ? 'mapbox://styles/mapbox/dark-v10' : undefined}
-        onPress={() => onPress()}>
-        <MapboxGL.Camera
-          ref={camera}
-          zoomLevel={13}
-          centerCoordinate={position}
-        />
+        onPress={() => onPress()}
+        compassViewPosition={2}
+        onRegionIsChanging={onMove}>
+        <MapboxGL.Camera ref={camera} zoomLevel={13} />
         <MapboxGL.UserLocation
-          onUpdate={({ coords }) =>
-            setPosition([coords.longitude, coords.latitude])
-          }
+          onUpdate={onUpdateLocation}
           minDisplacement={10}
         />
         <MapboxGL.ShapeSource
@@ -171,10 +188,13 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         </MapboxGL.ShapeSource>
       </MapboxGL.MapView>
       <FAB
-        style={styles.fab}
+        style={[
+          styles.fab,
+          { backgroundColor: followLocation ? colors.primary : 'white' },
+        ]}
         icon="target"
-        color={colors.primary}
-        onPress={moveToLocation}
+        color={followLocation ? 'white' : colors.primary}
+        onPress={moveToCurrentLocation}
       />
     </>
   );
@@ -243,7 +263,6 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
-    backgroundColor: 'white',
     elevation: 0,
     borderColor: 'grey',
     borderWidth: StyleSheet.hairlineWidth,
