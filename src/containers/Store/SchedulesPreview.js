@@ -9,7 +9,7 @@ function Open({ day }) {
     <View style={styles.infoScheduleState}>
       <Text>
         <Text style={styles.scheduleOpen}>Ouvert</Text>
-        {closing && <Text> jusqu'à {secondToTime(closing)}</Text>}
+        {closing !== null && <Text> jusqu'à {secondToTime(closing)}</Text>}
         {openingSpecial && (
           <Text>
             {' '}

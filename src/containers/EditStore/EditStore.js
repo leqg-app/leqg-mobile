@@ -21,7 +21,7 @@ import {
   TouchableRipple,
 } from 'react-native-paper';
 
-import { formatPrice, sortByPrices } from '../../utils/formatPrice';
+import { displayPrice, sortByPrices } from '../../utils/price';
 import { theme } from '../../constants';
 import { useStore } from '../../store/context';
 import EditSchedules from './EditSchedules';
@@ -56,10 +56,10 @@ const Product = ({ product, onPress }) => {
           <View style={styles.flex}>
             <View style={styles.prices}>
               <Text style={styles.price}>
-                {price ? `${formatPrice(price)}€` : '-'}
+                {price ? `${displayPrice(price)}€` : '-'}
               </Text>
               <Text style={styles.price}>
-                {specialPrice ? `${formatPrice(specialPrice)}€` : ' '}
+                {specialPrice ? `${displayPrice(specialPrice)}€` : ' '}
               </Text>
             </View>
             <View style={styles.editButton}>
@@ -101,9 +101,11 @@ const EditStore = ({ route, navigation }) => {
     }
     if (state.storeEdition.id) {
       await actions.editStore(state.storeEdition.id, state.storeEdition);
+      setLoading(false);
       navigation.navigate('MapScreen', { contribute: true });
     } else {
       const focusStore = await actions.addStore(state.storeEdition);
+      setLoading(false);
       navigation.navigate('MapScreen', { contribute: true, focusStore });
     }
   };

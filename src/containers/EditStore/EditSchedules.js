@@ -66,9 +66,20 @@ const DaySchedule = ({ schedule }) => {
 function RightHour({ hour }) {
   return (
     <Text style={{ textAlignVertical: 'center' }}>
-      {hour ? secondToHour(hour) : '-'}
+      {hour !== null ? secondToHour(hour) : '-'}
     </Text>
   );
+}
+
+function getPickerValue(schedule, timePicker) {
+  const timezoneOffset = new Date().getTimezoneOffset() * 60000;
+  const date = new Date(timezoneOffset);
+  if (!schedule[timePicker]) {
+    date.setHours(defaultsHour[timePicker]);
+    return date;
+  }
+  date.setTime(schedule[timePicker] * 1000 + timezoneOffset);
+  return date;
 }
 
 const EditSchedulesModal = props => {
@@ -87,7 +98,7 @@ const EditSchedulesModal = props => {
     }
   };
 
-  const { closed, opening, closing, openingSpecial, closingSpecial } = schedule;
+  const { closed } = schedule;
 
   return (
     <Dialog visible={true} onDismiss={onDismiss}>
@@ -123,6 +134,7 @@ const EditSchedulesModal = props => {
             <View>
               {scheduleTypes.map(({ name, type }) => (
                 <List.Item
+                  key={type}
                   title={name}
                   right={() => <RightHour hour={schedule[type]} />}
                   style={styles.scheduleRow}
@@ -131,15 +143,13 @@ const EditSchedulesModal = props => {
               ))}
               {timePicker && (
                 <DateTimePicker
-                  value={
-                    new Date(new Date(0).setHours(defaultsHour[timePicker]))
-                  }
+                  value={getPickerValue(schedule, timePicker)}
                   mode="time"
                   is24Hour={true}
                   display="default"
                   onChange={(_, time) => {
                     setTimePicker(false);
-                    if (!time) {
+                    if (time === undefined) {
                       return;
                     }
                     const seconds =
