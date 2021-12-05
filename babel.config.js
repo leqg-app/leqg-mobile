@@ -10,6 +10,9 @@ module.exports = {
     'react-native-reanimated/plugin',
   ],
   env: {
+    test: {
+      plugins: ['react-native-paper/babel'],
+    },
     production: {
       plugins: ['react-native-paper/babel'],
     },
