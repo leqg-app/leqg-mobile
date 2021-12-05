@@ -1,12 +1,18 @@
-export function formatPrice(price) {
+export function displayPrice(price) {
   if (!price || isNaN(parseInt(price))) {
     return '';
   }
-  price = String(price).replace(',', '.');
   if (parseFloat(price) === parseInt(price)) {
     return parseInt(price).toString();
   }
-  return parseFloat(price).toFixed(2).replace('.', ',');
+  return price.toFixed(2).replace('.', ',');
+}
+
+export function parsePrice(price) {
+  if (!price || isNaN(parseFloat(price))) {
+    return '';
+  }
+  return parseFloat(String(price).replace(',', '.'));
 }
 
 export function sortByPrices(a, b) {

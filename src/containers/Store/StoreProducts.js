@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Caption } from 'react-native-paper';
 
 import { useStore } from '../../store/context';
-import { formatPrice, sortByPrices } from '../../utils/formatPrice';
+import { displayPrice, sortByPrices } from '../../utils/price';
 
 const types = {
   draft: 'Pression',
@@ -43,10 +43,10 @@ function StoreProducts({ products }) {
               </View>
               <View style={styles.prices}>
                 <Text style={styles.pricesCell}>
-                  {price ? `${formatPrice(price)}€` : '-'}
+                  {price ? `${displayPrice(price)}€` : '-'}
                 </Text>
                 <Text style={styles.pricesCell}>
-                  {specialPrice ? `${formatPrice(specialPrice)}€` : ''}
+                  {specialPrice ? `${displayPrice(specialPrice)}€` : ''}
                 </Text>
               </View>
             </View>

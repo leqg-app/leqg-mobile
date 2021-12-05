@@ -11,7 +11,7 @@ import {
 import { theme } from '../../constants';
 
 import { useStore } from '../../store/context';
-import { formatPrice } from '../../utils/formatPrice';
+import { displayPrice, parsePrice } from '../../utils/price';
 
 const productTypes = [
   {
@@ -42,14 +42,18 @@ const EditProducts = ({ navigation, route }) => {
     }
     const { product, productId, productName } = route.params;
     if (product) {
+      // Editing product
       setProduct({
         ...storeProduct,
         ...product,
+        price: displayPrice(product.price),
+        specialPrice: displayPrice(product.specialPrice),
         ...(product.product?.id && { product: product.product.id }),
       });
       return;
     }
     if (productId) {
+      // New product with id
       const found = state.products.find(product => product.id === productId);
       if (found) {
         setProduct({
@@ -60,6 +64,7 @@ const EditProducts = ({ navigation, route }) => {
       return;
     }
     if (productName) {
+      // New product with name
       setProduct({
         ...storeProduct,
         productName,
@@ -80,7 +85,7 @@ const EditProducts = ({ navigation, route }) => {
   const { product, productName, type, volume, price, specialPrice } =
     storeProduct;
   const validForm = Boolean(
-    (product || productName) && type && volume && formatPrice(price),
+    (product || productName) && type && volume && parseFloat(price),
   );
 
   useLayoutEffect(() => {
@@ -114,8 +119,8 @@ const EditProducts = ({ navigation, route }) => {
     );
 
     // Format price
-    storeProduct.price = formatPrice(storeProduct.price);
-    storeProduct.specialPrice = formatPrice(storeProduct.specialPrice);
+    storeProduct.price = parsePrice(storeProduct.price);
+    storeProduct.specialPrice = parsePrice(storeProduct.specialPrice);
 
     products.push(storeProduct);
 
