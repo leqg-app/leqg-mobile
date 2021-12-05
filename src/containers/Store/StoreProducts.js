@@ -40,9 +40,9 @@ function StoreProducts({ products }) {
             </View>
             <View style={styles.prices}>
               <Text style={styles.pricesCell}>{price ? `${price}€` : '-'}</Text>
-              {specialPrice && (
-                <Text style={styles.pricesCell}>{specialPrice}€</Text>
-              )}
+              <Text style={styles.pricesCell}>
+                {specialPrice ? `${specialPrice}€` : ''}
+              </Text>
             </View>
           </View>
         );
