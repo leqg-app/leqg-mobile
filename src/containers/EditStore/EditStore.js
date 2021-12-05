@@ -21,6 +21,7 @@ import {
   TouchableRipple,
 } from 'react-native-paper';
 
+import { formatPrice } from '../../utils/formatPrice';
 import { theme } from '../../constants';
 import { useStore } from '../../store/context';
 import EditSchedules from './EditSchedules';
@@ -54,9 +55,11 @@ const Product = ({ product, onPress }) => {
           </View>
           <View style={styles.flex}>
             <View style={styles.prices}>
-              <Text style={styles.price}>{price ? `${price}€` : '-'}</Text>
               <Text style={styles.price}>
-                {specialPrice ? `${specialPrice}€` : ' '}
+                {price ? `${formatPrice(price)}€` : '-'}
+              </Text>
+              <Text style={styles.price}>
+                {specialPrice ? `${formatPrice(specialPrice)}€` : ' '}
               </Text>
             </View>
             <View style={styles.editButton}>
@@ -98,12 +101,9 @@ const EditStore = ({ route, navigation }) => {
     }
     if (state.storeEdition.id) {
       await actions.editStore(state.storeEdition.id, state.storeEdition);
-      setLoading(false);
       navigation.navigate('MapScreen', { contribute: true });
     } else {
       const focusStore = await actions.addStore(state.storeEdition);
-
-      setLoading(false);
       navigation.navigate('MapScreen', { contribute: true, focusStore });
     }
   };
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'flex-start',
-    marginRight: 80,
+    marginRight: 40,
     height: 25,
   },
   productRow: {
@@ -352,12 +352,12 @@ export default () => (
       component={EditSchedules}
     />
     <AddStack.Screen
-      options={{ title: 'Ajouter un produit' }}
+      options={{ title: 'Ajouter une bière' }}
       name="SelectProduct"
       component={SelectProduct}
     />
     <AddStack.Screen
-      options={{ title: 'Modifier un produit' }}
+      options={{ title: 'Modifier une bière' }}
       name="EditProduct"
       component={EditProduct}
     />

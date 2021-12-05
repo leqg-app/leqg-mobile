@@ -11,6 +11,7 @@ import {
 import { theme } from '../../constants';
 
 import { useStore } from '../../store/context';
+import { formatPrice } from '../../utils/formatPrice';
 
 const productTypes = [
   {
@@ -79,7 +80,7 @@ const EditProducts = ({ navigation, route }) => {
   const { product, productName, type, volume, price, specialPrice } =
     storeProduct;
   const validForm = Boolean(
-    (product || productName) && type && volume && price,
+    (product || productName) && type && volume && formatPrice(price),
   );
 
   useLayoutEffect(() => {
@@ -93,7 +94,7 @@ const EditProducts = ({ navigation, route }) => {
         />
       ),
     });
-  }, [navigation, validForm]);
+  }, [navigation, storeProduct]);
 
   const save = () => {
     if (!validForm) {
@@ -101,12 +102,23 @@ const EditProducts = ({ navigation, route }) => {
     }
 
     // Replace beer if this one was already added on this store
-    const storeProducts = state.storeEdition?.products || [];
-    const products = storeProducts.filter(
-      storeProduct => storeProduct.product !== product,
+    const products = (Array.from(state.storeEdition?.products) || []).filter(
+      sP => {
+        if (!sP.product && sP.productName) {
+          return sP.productName !== productName;
+        }
+        if (sP.product && !sP.productName) {
+          return sP.product !== product;
+        }
+      },
     );
 
+    // Format price
+    storeProduct.price = formatPrice(storeProduct.price);
+    storeProduct.specialPrice = formatPrice(storeProduct.specialPrice);
+
     products.push(storeProduct);
+
     actions.setStoreEdition({
       products,
     });

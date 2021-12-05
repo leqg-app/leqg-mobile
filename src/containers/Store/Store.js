@@ -41,6 +41,17 @@ function ActionButton({ name, icon, onPress, color = 'white' }) {
   );
 }
 
+function openAddress(store) {
+  const { name, latitude, longitude, address } = store;
+  const encodedName = encodeURIComponent(name);
+  const encodedAddress = encodeURIComponent(address);
+  const url = Platform.select({
+    ios: `maps:0,0?q=${encodedName}@${latitude},${longitude}`,
+    android: `https://www.google.com/maps/search/${encodedName},+${encodedAddress}?hl=fr`,
+  });
+  Linking.openURL(url);
+}
+
 const StoreDetails = ({ store }) => {
   const [state, actions] = useStore();
   const { colors } = useTheme();
@@ -48,17 +59,6 @@ const StoreDetails = ({ store }) => {
   const [modalLogin, setModalLogin] = useState(false);
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
-
-  const openAddress = () => {
-    const { name, latitude, longitude, address } = store;
-    const encodedName = encodeURIComponent(name);
-    const encodedAddress = encodeURIComponent(address);
-    const url = Platform.select({
-      ios: `maps:0,0?q=${encodedName}@${latitude},${longitude}`,
-      android: `https://www.google.com/maps/search/${encodedName},+${encodedAddress}?hl=fr`,
-    });
-    Linking.openURL(url);
-  };
 
   const toggleFavorite = () => {
     if (!state.user?.id) {
@@ -90,7 +90,7 @@ const StoreDetails = ({ store }) => {
     <View>
       <View style={styles.actionsBar}>
         <ActionButton
-          onPress={openAddress}
+          onPress={() => openAddress(store)}
           name="Itinéraire"
           icon="directions"
         />
@@ -103,7 +103,9 @@ const StoreDetails = ({ store }) => {
         />
       </View>
       <Divider />
-      <TouchableRipple onPress={openAddress} rippleColor="rgba(0, 0, 0, .25)">
+      <TouchableRipple
+        onPress={() => openAddress(store)}
+        rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.row}>
           <View style={styles.infoRow}>
             <Avatar.Icon
