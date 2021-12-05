@@ -8,3 +8,14 @@ export function formatPrice(price) {
   }
   return parseFloat(price).toFixed(2).replace('.', ',');
 }
+
+export function sortByPrices(a, b) {
+  const substracted = a.price - b.price;
+  if (substracted) {
+    return substracted;
+  }
+  if (a.specialPrice && b.specialPrice) {
+    return a.specialPrice - b.specialPrice;
+  }
+  return 0;
+}

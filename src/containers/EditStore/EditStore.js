@@ -21,7 +21,7 @@ import {
   TouchableRipple,
 } from 'react-native-paper';
 
-import { formatPrice } from '../../utils/formatPrice';
+import { formatPrice, sortByPrices } from '../../utils/formatPrice';
 import { theme } from '../../constants';
 import { useStore } from '../../store/context';
 import EditSchedules from './EditSchedules';
@@ -165,12 +165,14 @@ const EditStore = ({ route, navigation }) => {
   }
 
   const products =
-    state.storeEdition?.products?.map(storeProduct => ({
-      ...storeProduct,
-      ...(storeProduct.product && {
-        product: state.products.find(({ id }) => id === storeProduct.product),
-      }),
-    })) || [];
+    state.storeEdition?.products
+      ?.map(storeProduct => ({
+        ...storeProduct,
+        ...(storeProduct.product && {
+          product: state.products.find(({ id }) => id === storeProduct.product),
+        }),
+      }))
+      .sort(sortByPrices) || [];
 
   const hasHH = products.some(product => product.specialPrice);
 

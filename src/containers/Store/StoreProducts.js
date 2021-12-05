@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Caption } from 'react-native-paper';
 
 import { useStore } from '../../store/context';
-import { formatPrice } from '../../utils/formatPrice';
+import { formatPrice, sortByPrices } from '../../utils/formatPrice';
 
 const types = {
   draft: 'Pression',
@@ -23,33 +23,35 @@ function StoreProducts({ products }) {
           {hasHH && <Text style={styles.pricesCell}>HH.</Text>}
         </View>
       </View>
-      {products.map((product, i) => {
-        const { volume, price, specialPrice, productName } = product;
-        const productDetail = state.products.find(
-          ({ id }) => id === product.product,
-        );
-        return (
-          <View key={i} style={styles.row}>
-            <View style={{ flex: 1 }}>
-              <Text numberOfLines={1}>
-                {productDetail?.name || productName || 'Bière'}
-              </Text>
-              <Caption>
-                {types[product.type]}
-                {volume && ` - ${volume}cl`}
-              </Caption>
+      {Array.from(products)
+        .sort(sortByPrices)
+        .map((product, i) => {
+          const { volume, price, specialPrice, productName } = product;
+          const productDetail = state.products.find(
+            ({ id }) => id === product.product,
+          );
+          return (
+            <View key={i} style={styles.row}>
+              <View style={{ flex: 1 }}>
+                <Text numberOfLines={1}>
+                  {productDetail?.name || productName || 'Bière'}
+                </Text>
+                <Caption>
+                  {types[product.type]}
+                  {volume && ` - ${volume}cl`}
+                </Caption>
+              </View>
+              <View style={styles.prices}>
+                <Text style={styles.pricesCell}>
+                  {price ? `${formatPrice(price)}€` : '-'}
+                </Text>
+                <Text style={styles.pricesCell}>
+                  {specialPrice ? `${formatPrice(specialPrice)}€` : ''}
+                </Text>
+              </View>
             </View>
-            <View style={styles.prices}>
-              <Text style={styles.pricesCell}>
-                {price ? `${formatPrice(price)}€` : '-'}
-              </Text>
-              <Text style={styles.pricesCell}>
-                {specialPrice ? `${formatPrice(specialPrice)}€` : ''}
-              </Text>
-            </View>
-          </View>
-        );
-      })}
+          );
+        })}
     </View>
   );
 }
