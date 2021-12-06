@@ -60,7 +60,7 @@ function SearchStore({ navigation }) {
       <Searchbar
         ref={searchBar}
         style={styles.searchbar}
-        placeholder="Rechercher"
+        placeholder="Rechercher un bar"
         onChangeText={text => setText(text)}
         value={text}
         clearButtonMode="always"
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     elevation: 0,
     color: 'white',
-    marginTop: 40,
+    marginTop: 50,
     marginHorizontal: 20,
     borderRadius: 30,
     height: 45,
