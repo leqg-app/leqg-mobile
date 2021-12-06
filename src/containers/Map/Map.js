@@ -12,6 +12,7 @@ import { Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/core';
 import RNBootSplash from 'react-native-bootsplash';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import leqgLogo from '../../assets/icon-transparent.png';
 import { useStore } from '../../store/context';
@@ -42,9 +43,9 @@ const Map = ({ navigation, route }) => {
     });
 
     BackHandler.addEventListener('hardwareBackPress', function () {
-      if (!selectedStore) {
+      if (selectedStore) {
         selectStore(false);
-        sheet.current.snapTo(0);
+        sheet.current.close();
         return true;
       }
       return false;
@@ -66,18 +67,22 @@ const Map = ({ navigation, route }) => {
   useEffect(() => {
     if (params?.focusStore) {
       selectStore(params?.focusStore);
-      sheet.current.snapTo(1);
+      sheet.current.snapToIndex(0);
     }
   }, [params?.focusStore]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Mapbox
         filters={filters}
         selectedStore={selectedStore}
         onPress={store => {
           selectStore(store);
-          sheet.current.snapTo(store ? 1 : 0);
+          if (store) {
+            sheet.current.snapToIndex(0);
+          } else {
+            sheet.current.close();
+          }
         }}
       />
       <View
@@ -89,14 +94,18 @@ const Map = ({ navigation, route }) => {
         </Text>
       </View>
       <Filters onChange={filters => setFilters(filters)} />
-      <StoreSheet sheet={sheet} store={selectedStore} />
+      <StoreSheet
+        sheet={sheet}
+        store={selectedStore}
+        dismissStore={() => selectStore(false)}
+      />
       <Snackbar
         visible={params?.contribute}
         duration={2000}
         onDismiss={() => navigation.setParams({ contribute: false })}>
         Merci pour votre contribution !
       </Snackbar>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -109,7 +118,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 50,
+    marginTop: 10,
     marginHorizontal: 20,
     borderRadius: 30,
     height: 45,
@@ -117,15 +126,16 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
   },
   searchLogo: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     resizeMode: 'stretch',
     marginLeft: 18,
-    marginRight: 18,
+    marginRight: 13,
   },
   searchPlaceholder: {
     color: '#666',
     fontSize: 18,
+    marginTop: -1,
   },
 });
 
