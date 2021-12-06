@@ -1,28 +1,53 @@
-import React, { useEffect, useRef } from 'react';
-import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
-import { ActivityIndicator, Appbar, Title } from 'react-native-paper';
-import Animated from 'react-native-reanimated';
-import BottomSheet from 'reanimated-bottom-sheet';
+import React, { useEffect, useMemo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, IconButton, Title } from 'react-native-paper';
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import Header from '../../components/Header';
 import { useStore } from '../../store/context';
 import SchedulesPreview from '../Store/SchedulesPreview';
 import Store from '../Store/Store';
 
 const StoreSheet = props => {
   const [state, actions] = useStore();
-  const fall = useRef(new Animated.Value(1)).current;
+  const sheetPosition = useSharedValue(0);
+  const { top } = useSafeAreaInsets();
 
-  const animatedTopbar = Animated.interpolateNode(fall, {
-    inputRange: [0, 0.5],
-    outputRange: [0, -120],
-    extrapolate: Animated.Extrapolate.CLAMP,
-  });
-  const animatedDetails = Animated.interpolateNode(fall, {
-    inputRange: [0, 0.5],
-    outputRange: [-70, 0],
-    extrapolate: Animated.Extrapolate.CLAMP,
-  });
+  const topbarHeight = top + 50;
+
+  const animatedTopBar = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: interpolate(
+          sheetPosition.value,
+          [0.5, 1],
+          [-topbarHeight, 0],
+        ),
+      },
+    ],
+    opacity: sheetPosition.value,
+  }));
+  const topBarStyle = useMemo(
+    () => [styles.topBarWrapper, animatedTopBar, { height: topbarHeight }],
+    [animatedTopBar],
+  );
+
+  const animatedContent = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: interpolate(sheetPosition.value, [0.5, 1], [0, -60]),
+      },
+    ],
+  }));
+  const contentStyle = useMemo(
+    () => [styles.sheetContent, animatedContent],
+    [animatedContent],
+  );
 
   useEffect(() => {
     if (props.store?.id) {
@@ -30,62 +55,55 @@ const StoreSheet = props => {
     }
   }, [props.store?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const sheetSize = (() => {
-    const { height } = Dimensions.get('window');
-    const two = (120 / height) * 100;
-    const three = 100 - 8000 / height;
-    return ['0%', `${two}%`, `${three}%`];
-  })();
-
-  const renderContent = () => {
-    const store = state.storesDetails[props.store?.id];
-    return (
-      <View style={styles.sheetContent}>
-        <Pressable onPress={() => props.sheet.current.snapTo(2)}>
-          <Title numberOfLines={1} style={styles.title}>
-            {store?.name || props.store?.name}
-          </Title>
-          {store ? (
-            <View style={styles.preview}>
-              <View style={styles.previewSchedules}>
-                <SchedulesPreview schedules={store.schedules} />
-              </View>
-              <Text numberOfLines={1}>{store.address}</Text>
-            </View>
-          ) : (
-            <ActivityIndicator style={styles.loading} />
-          )}
-        </Pressable>
-        <Animated.View
-          style={{ top: animatedDetails, backgroundColor: 'white' }}>
-          {store && <Store store={store} />}
-        </Animated.View>
-      </View>
-    );
-  };
-
+  const store = state.storesDetails[props.store?.id];
   return (
     <>
-      <Animated.View style={[styles.topBarWrapper, { top: animatedTopbar }]}>
-        <Header style={styles.topBar}>
-          <Appbar.Action
-            icon="chevron-down"
-            onPress={() => props.sheet.current.snapTo(1)}
-          />
-        </Header>
+      <Animated.View style={topBarStyle}>
+        <IconButton
+          size={30}
+          style={styles.arrow}
+          icon="chevron-down"
+          onPress={() => props.sheet.current.snapToIndex(0)}
+        />
       </Animated.View>
       <BottomSheet
         ref={props.sheet}
-        callbackNode={fall}
-        snapPoints={sheetSize}
-        borderRadius={10}
-        renderContent={renderContent}
-      />
+        index={-1}
+        snapPoints={[120, '100%']}
+        animatedIndex={sheetPosition}
+        topInset={topbarHeight - 20}
+        onChange={position => position === -1 && props.dismissStore()}>
+        <View style={styles.sheetContent}>
+          <Pressable onPress={() => props.sheet.current.snapToIndex(1)}>
+            <Title numberOfLines={1} style={styles.title}>
+              {store?.name || props.store?.name}
+            </Title>
+            {store ? (
+              <View style={styles.preview}>
+                <View style={styles.previewSchedules}>
+                  <SchedulesPreview schedules={store.schedules} />
+                </View>
+                <Text numberOfLines={1}>{store.address}</Text>
+              </View>
+            ) : (
+              <ActivityIndicator style={styles.loading} />
+            )}
+          </Pressable>
+          <Animated.View style={contentStyle}>
+            {store && <Store store={store} />}
+          </Animated.View>
+        </View>
+      </BottomSheet>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  arrow: {
+    marginLeft: 20,
+    bottom: -10,
+    position: 'absolute',
+  },
   topBarWrapper: {
     backgroundColor: 'white',
     position: 'absolute',
@@ -94,13 +112,9 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 99,
   },
-  topBar: {
-    backgroundColor: 'white',
-  },
   sheetContent: { backgroundColor: 'white', minHeight: '100%' },
   title: {
     fontWeight: 'bold',
-    marginTop: 15,
     marginHorizontal: 15,
     marginBottom: 10,
   },

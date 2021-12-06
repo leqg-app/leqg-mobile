@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Sentry from '@sentry/react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { StoreProvider } from './store/context';
 import Routes from './Routes';
@@ -20,7 +21,9 @@ const App = () => {
     <GestureHandlerRootView style={styles.container}>
       <StoreProvider>
         <PaperProvider theme={theme}>
-          <Routes />
+          <SafeAreaProvider>
+            <Routes />
+          </SafeAreaProvider>
         </PaperProvider>
       </StoreProvider>
     </GestureHandlerRootView>

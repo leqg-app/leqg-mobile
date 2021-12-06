@@ -13,7 +13,7 @@ function RowStore({ store, onSelect }) {
       left={props => (
         <List.Icon
           {...props}
-          icon={store.history ? 'backup-restore' : 'store'}
+          icon={store.history ? 'clock-outline' : 'store'}
         />
       )}
       style={styles.rowStore}
@@ -84,10 +84,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchbar: {
-    zIndex: 1,
     elevation: 0,
     color: 'white',
-    marginTop: 50,
+    marginTop: 48,
     marginHorizontal: 20,
     borderRadius: 30,
     height: 45,
