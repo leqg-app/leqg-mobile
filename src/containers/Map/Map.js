@@ -5,12 +5,15 @@ import {
   StatusBar,
   View,
   Platform,
+  Text,
+  Image,
 } from 'react-native';
-import { Searchbar, Snackbar } from 'react-native-paper';
+import { Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/core';
 import RNBootSplash from 'react-native-bootsplash';
 
+import leqgLogo from '../../assets/icon-transparent.png';
 import { useStore } from '../../store/context';
 import { theme } from '../../constants';
 import ProductFilter from './ProductFilter';
@@ -77,14 +80,14 @@ const Map = ({ navigation, route }) => {
           sheet.current.snapTo(store ? 1 : 0);
         }}
       />
-      <Searchbar
+      <View
         style={styles.searchbar}
-        placeholder="Rechercher un bar"
-        onChangeText={onChangeText}
-        onPressIn={() => navigation.navigate('SearchStore')}
-        value={text}
-        clearButtonMode="always"
-      />
+        onTouchStart={() => navigation.navigate('SearchStore')}>
+        <Image source={leqgLogo} style={styles.searchLogo} />
+        <Text style={styles.searchPlaceholder} numberOfLines={1}>
+          Rechercher un bar
+        </Text>
+      </View>
       <Filters onChange={filters => setFilters(filters)} />
       <StoreSheet sheet={sheet} store={selectedStore} />
       <Snackbar
@@ -102,16 +105,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchbar: {
-    zIndex: 1,
-    elevation: 0,
-    color: 'white',
-    marginTop: 40,
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 50,
     marginHorizontal: 20,
     borderRadius: 30,
     height: 45,
-    paddingLeft: 10,
     borderColor: 'grey',
     borderWidth: StyleSheet.hairlineWidth,
+  },
+  searchLogo: {
+    width: 30,
+    height: 30,
+    resizeMode: 'stretch',
+    marginLeft: 18,
+    marginRight: 18,
+  },
+  searchPlaceholder: {
+    color: '#666',
+    fontSize: 18,
   },
 });
 
@@ -139,7 +153,7 @@ export default () => (
       />
     </MapStack.Group>
     <MapStack.Group
-      screenOptions={{ presentation: 'modal', animation: 'fade' }}>
+      screenOptions={{ presentation: 'fullScreenModal', animation: 'fade' }}>
       <MapStack.Screen
         options={{ headerShown: false }}
         name="SearchStore"
