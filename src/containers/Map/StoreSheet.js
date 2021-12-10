@@ -6,7 +6,10 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import BottomSheet from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  useBottomSheetDynamicSnapPoints,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useStore } from '../../store/context';
@@ -17,6 +20,15 @@ const StoreSheet = props => {
   const [state, actions] = useStore();
   const sheetPosition = useSharedValue(0);
   const { top } = useSafeAreaInsets();
+
+  const snapPoints = useMemo(() => ['CONTENT_HEIGHT', '100%'], []);
+
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(snapPoints);
 
   const topbarHeight = top + 50;
 
@@ -69,26 +81,30 @@ const StoreSheet = props => {
       <BottomSheet
         ref={props.sheet}
         index={-1}
-        snapPoints={[120, '100%']}
+        snapPoints={animatedSnapPoints}
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}
         animatedIndex={sheetPosition}
         topInset={topbarHeight - 20}
         onChange={position => position === -1 && props.dismissStore()}>
         <View style={styles.sheetContent}>
-          <Pressable onPress={() => props.sheet.current.snapToIndex(1)}>
-            <Title numberOfLines={1} style={styles.title}>
-              {store?.name || props.store?.name}
-            </Title>
-            {store ? (
-              <View style={styles.preview}>
-                <View style={styles.previewSchedules}>
-                  <SchedulesPreview schedules={store.schedules} />
+          <BottomSheetView onLayout={handleContentLayout}>
+            <Pressable onPress={() => props.sheet.current.snapToIndex(1)}>
+              <Title numberOfLines={1} style={styles.title}>
+                {store?.name || props.store?.name}
+              </Title>
+              {store ? (
+                <View style={styles.preview}>
+                  <View style={styles.previewSchedules}>
+                    <SchedulesPreview schedules={store.schedules} />
+                  </View>
+                  <Text numberOfLines={1}>{store.address}</Text>
                 </View>
-                <Text numberOfLines={1}>{store.address}</Text>
-              </View>
-            ) : (
-              <ActivityIndicator style={styles.loading} />
-            )}
-          </Pressable>
+              ) : (
+                <ActivityIndicator style={styles.loading} />
+              )}
+            </Pressable>
+          </BottomSheetView>
           <Animated.View style={contentStyle}>
             {store && <Store store={store} />}
           </Animated.View>
@@ -126,7 +142,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
   loading: {
-    marginTop: 10,
+    marginVertical: 10,
   },
 });
 
