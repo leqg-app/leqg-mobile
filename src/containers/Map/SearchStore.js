@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { FlatList, StatusBar, StyleSheet, View } from 'react-native';
+import { FlatList, StatusBar, StyleSheet } from 'react-native';
 import { List, Searchbar } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useStore } from '../../store/context';
 import { useStorage } from '../../store/storage';
@@ -56,7 +57,7 @@ function SearchStore({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Searchbar
         ref={searchBar}
         style={styles.searchbar}
@@ -75,7 +76,7 @@ function SearchStore({ navigation }) {
           <RowStore onSelect={selectStore} store={item} />
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
   searchbar: {
     elevation: 0,
     color: 'white',
-    marginTop: 48,
+    marginTop: 10,
     marginHorizontal: 20,
     borderRadius: 30,
     height: 45,
