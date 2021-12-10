@@ -27,7 +27,7 @@
 	<key>NSAppTransportSecurity</key>
 	<dict/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>YOUR TEXT</string>
+	<string>La localisation est seulement utilisée pour vous situer sur la carte et trouver plus facilement les bars proches de vous</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
