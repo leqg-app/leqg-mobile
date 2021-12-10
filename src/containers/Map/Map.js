@@ -27,7 +27,6 @@ const Map = ({ navigation, route }) => {
   const [, actions] = useStore();
   const isFocused = useIsFocused();
   const sheet = useRef(null);
-  const [text, onChangeText] = useState('');
   const [selectedStore, selectStore] = useState(false);
   const [filters, setFilters] = useState([]);
   const { params } = route;
