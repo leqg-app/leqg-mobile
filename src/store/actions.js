@@ -125,12 +125,14 @@ export const actionCreators = (dispatch, state) => {
       // Compare API version and storage version to use products from API or storage
       const apiVersions = await getVersion();
       const versions = (await storage.getMapAsync('versions')) || {};
-      if (versions.products === apiVersions?.products) {
+      if (versions.products) {
         const products = await storage.getArrayAsync('products');
         if (products?.length) {
           dispatch({ type: 'GET_PRODUCTS_SUCCESS', products });
-          return;
         }
+      }
+      if (versions.products === apiVersions?.products) {
+        return;
       }
       dispatch({ type: 'GET_PRODUCTS' });
       try {
