@@ -9,6 +9,9 @@ export const reducer = (state, action) => {
     case 'AUTH_SUCCESS': {
       return { ...state, user: action.user };
     }
+    case 'AUTH_RESET': {
+      return { ...state, user: {} };
+    }
 
     case 'GET_STORE': {
       return { ...state, error: undefined };

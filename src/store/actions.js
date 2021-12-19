@@ -40,6 +40,9 @@ export const actionCreators = (dispatch, state) => {
         return err.message;
       }
     },
+
+    signOut: () => dispatch({ type: 'AUTH' }),
+
     getUser: async () => {
       try {
         const jwt = await storage.getStringAsync('jwt');

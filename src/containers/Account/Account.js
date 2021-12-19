@@ -1,26 +1,59 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Subheading, Title, useTheme } from 'react-native-paper';
+import { List, Subheading, Title, useTheme } from 'react-native-paper';
 
 import Auth from './Auth';
 import { useStore } from '../../store/context';
 
+const Menu = ({ name, icon, onPress }) => (
+  <List.Item
+    style={styles.menu}
+    title={name}
+    onPress={onPress}
+    left={props => <List.Icon {...props} icon={icon} />}
+  />
+);
+
 const Account = () => {
-  const [state] = useStore();
+  const [state, actions] = useStore();
+
+  const signout = () => {
+    Alert.alert('Confirmation', 'Voulez-vous vraiment vous déconnecter ?', [
+      {
+        text: 'Annuler',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => actions.signOut(),
+      },
+    ]);
+  };
+
   return (
-    <SafeAreaView>
+    <View>
       <View style={styles.box}>
         <Title>{state.user.username}</Title>
         <Subheading>0 contribution</Subheading>
       </View>
-    </SafeAreaView>
+      <View style={styles.menus}>
+        <Menu name="Se déconnecter" icon="logout" onPress={signout} />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   box: {
     padding: 20,
+  },
+  menus: {
+    marginTop: 30,
+  },
+  menu: {
+    borderTopColor: '#777',
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
 });
 
