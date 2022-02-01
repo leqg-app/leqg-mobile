@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { LogBox, StyleSheet } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Sentry from '@sentry/react-native';
@@ -8,6 +8,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StoreProvider } from './store/context';
 import Routes from './Routes';
 import { theme } from './constants';
+
+// @gorhom/bottom-sheet@4.1.5
+LogBox.ignoreLogs([
+  "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
+]);
 
 if (!__DEV__) {
   Sentry.init({

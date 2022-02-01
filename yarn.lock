@@ -3807,6 +3807,11 @@ data-urls@^2.0.0:
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
 
+date-fns@^2.28.0:
+  version "2.28.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.28.0.tgz#9570d656f5fc13143e50c975a3b6bbeb46cd08b2"
+  integrity sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==
+
 dayjs@^1.8.15:
   version "1.10.6"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.6.tgz#288b2aa82f2d8418a6c9d4df5898c0737ad02a63"
@@ -7629,10 +7634,10 @@ react-native-keyboard-aware-scroll-view@^0.9.5:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
 
-react-native-mmkv-storage@^0.6.11:
-  version "0.6.11"
-  resolved "https://registry.yarnpkg.com/react-native-mmkv-storage/-/react-native-mmkv-storage-0.6.11.tgz#2af23a487486d2bd411b1bb020c37725573b822c"
-  integrity sha512-PaxUxbTwr+PHfzoYt6E1Mds9/CjV5uOFVstuBW0laFUWlGrTHgiaLWR8VwJt0EPScSl5Lz4RM8IiqmXbIUSbbw==
+react-native-mmkv@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-mmkv/-/react-native-mmkv-2.0.1.tgz#99cdb49e378d9dd23d62097220cbb79590109dbb"
+  integrity sha512-4DSUt47zGEvOaFKhv6OiAmK8yYDOi5Jlp5iYs4BRQkHme+DsUMAZWpZzhqxPlP5IghY2Hub4EB7GkKPs3LkPZA==
 
 react-native-paper@^4.11.2:
   version "4.11.2"
@@ -7712,10 +7717,10 @@ react-native-vector-icons@^9.0.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native@0.67.1:
-  version "0.67.1"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.67.1.tgz#a9cc13f1a691e9bb23f146f001e11fc0157af51c"
-  integrity sha512-doKN9qhtjilF+6p8603OVzqGKL4fq8EDAH5u00KPmZbL5ampHDQX9y8/uwlUvJggvHwZXlnvhW63u8Y1LA8rxw==
+react-native@0.67.2:
+  version "0.67.2"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.67.2.tgz#312224bc2271c3cecd374d4bc425619cff4ea5dc"
+  integrity sha512-grEtpOLLvtSg8Bivg0ffVRCjTkresqMt7Jdog/geF6VAYhb4RnLaaUCWvyrfyB9buf135FKnqg5BIuve/XQNXA==
   dependencies:
     "@jest/create-cache-key-function" "^27.0.1"
     "@react-native-community/cli" "^6.0.0"

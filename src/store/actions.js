@@ -19,7 +19,7 @@ export const actionCreators = (dispatch, state) => {
         if (error) {
           return data[0].messages[0].id;
         }
-        await storage.setStringAsync('jwt', jwt);
+        storage.set('jwt', jwt);
         user.jwt = jwt;
         dispatch({ type: 'AUTH_SUCCESS', user });
       } catch (err) {
@@ -33,7 +33,7 @@ export const actionCreators = (dispatch, state) => {
         if (error) {
           return data[0].messages[0].id;
         }
-        await storage.setStringAsync('jwt', jwt);
+        storage.set('jwt', jwt);
         user.jwt = jwt;
         dispatch({ type: 'AUTH_SUCCESS', user });
       } catch (err) {
@@ -45,7 +45,7 @@ export const actionCreators = (dispatch, state) => {
 
     getUser: async () => {
       try {
-        const jwt = await storage.getStringAsync('jwt');
+        const jwt = await storage.getString('jwt');
         if (!jwt) {
           return;
         }
@@ -74,9 +74,9 @@ export const actionCreators = (dispatch, state) => {
     getStores: async () => {
       // Compare API version and storage version to use stores from API or storage
       const apiVersions = await getVersion();
-      const versions = (await storage.getMapAsync('versions')) || {};
+      const versions = storage.getObject('versions', {});
       if (versions.stores === apiVersions?.stores) {
-        const stores = await storage.getArrayAsync('stores');
+        const stores = storage.getObject('stores', []);
         if (stores?.length) {
           dispatch({ type: 'GET_STORES_SUCCESS', stores });
           return;
@@ -85,8 +85,8 @@ export const actionCreators = (dispatch, state) => {
       dispatch({ type: 'GET_STORES' });
       try {
         const stores = await getStores(apiVersions?.stores);
-        await storage.setArrayAsync('stores', stores);
-        await storage.setMapAsync('versions', {
+        storage.setObject('stores', stores);
+        storage.setObject('versions', {
           ...versions,
           stores: apiVersions.stores,
         });
@@ -127,9 +127,9 @@ export const actionCreators = (dispatch, state) => {
     getProducts: async () => {
       // Compare API version and storage version to use products from API or storage
       const apiVersions = await getVersion();
-      const versions = (await storage.getMapAsync('versions')) || {};
+      const versions = storage.getObject('versions', []);
       if (versions.products) {
-        const products = await storage.getArrayAsync('products');
+        const products = storage.getObject('products', []);
         if (products?.length) {
           dispatch({ type: 'GET_PRODUCTS_SUCCESS', products });
         }
@@ -140,8 +140,8 @@ export const actionCreators = (dispatch, state) => {
       dispatch({ type: 'GET_PRODUCTS' });
       try {
         const products = await getProducts();
-        await storage.setArrayAsync('products', products);
-        await storage.setMapAsync('versions', {
+        storage.setObject('products', products);
+        storage.setObject('versions', {
           ...versions,
           products: apiVersions.products,
         });
