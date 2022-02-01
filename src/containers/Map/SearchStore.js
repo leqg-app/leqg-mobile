@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FlatList, StatusBar, StyleSheet } from 'react-native';
 import { List, Searchbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useMMKVObject } from 'react-native-mmkv';
 
 import { useStore } from '../../store/context';
-import { useStorage } from '../../store/storage';
+import { storage } from '../../store/storage';
 
 function RowStore({ store, onSelect }) {
   return (
@@ -24,7 +25,10 @@ function RowStore({ store, onSelect }) {
 
 function SearchStore({ navigation }) {
   const [state] = useStore();
-  const [searchHistory, setSearchHistory] = useStorage('searchHistory', []);
+  const [searchHistory = [], setSearchHistory] = useMMKVObject(
+    'searchHistory',
+    storage,
+  );
   const searchBar = useRef();
   const [text, setText] = useState('');
 

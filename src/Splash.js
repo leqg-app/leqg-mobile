@@ -26,7 +26,7 @@ function Splash() {
       PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
     ]);
-    storage.setBool('firstOpen', true);
+    storage.set('firstOpen', true);
   };
 
   const pages = [
