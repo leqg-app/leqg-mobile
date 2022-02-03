@@ -75,11 +75,10 @@ export const reducer = (state, action) => {
     }
 
     case 'SET_STORE': {
-      const { id, store } = action;
-      const stores = id
-        ? state.stores.filter(s => id !== s.id)
-        : Array.from(state.stores);
+      const { id, store, contributed } = action;
+      const stores = state.stores.filter(s => id !== s.id);
       stores.push(storeToMap(store));
+
       return {
         ...state,
         stores,
@@ -87,6 +86,12 @@ export const reducer = (state, action) => {
           ...state.storesDetails,
           [id || store.id]: store,
         },
+        ...(contributed && {
+          user: {
+            ...state.user,
+            contributions: state.user.contributions + 1,
+          },
+        }),
         storeEdition: {},
       };
     }
