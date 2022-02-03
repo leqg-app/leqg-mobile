@@ -41,14 +41,19 @@ const Map = ({ navigation, route }) => {
       await RNBootSplash.hide({ fade: true });
     });
 
-    BackHandler.addEventListener('hardwareBackPress', function () {
-      if (selectedStore) {
-        selectStore(false);
-        sheet.current.close();
-        return true;
-      }
-      return false;
-    });
+    const event = BackHandler.addEventListener(
+      'hardwareBackPress',
+      function () {
+        if (selectedStore) {
+          selectStore(false);
+          sheet.current.close();
+          return true;
+        }
+        return false;
+      },
+    );
+
+    return () => event.remove();
   }, []);
 
   useEffect(() => {
