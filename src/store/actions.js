@@ -45,7 +45,7 @@ export const actionCreators = (dispatch, state) => {
 
     getUser: async () => {
       try {
-        const jwt = await storage.getString('jwt');
+        const jwt = storage.getString('jwt');
         if (!jwt) {
           return;
         }
@@ -102,8 +102,12 @@ export const actionCreators = (dispatch, state) => {
         return;
       }
       try {
-        await editStore(id, store, { jwt: state.user.jwt });
-        dispatch({ type: 'SET_STORE', id, store });
+        const edition = await editStore(id, store, { jwt: state.user.jwt });
+        if (edition?.store) {
+          dispatch({ type: 'SET_STORE', id, ...edition });
+        } else {
+          dispatch({ type: 'SET_STORE', id, store });
+        }
       } catch (err) {
         return { error: err.message };
       }
@@ -113,12 +117,16 @@ export const actionCreators = (dispatch, state) => {
         return;
       }
       try {
-        const store = await addStore(details, { jwt: state.user.jwt });
-        if (store.error) {
-          return store.message;
+        const response = await addStore(details, { jwt: state.user.jwt });
+        if (response.error) {
+          return response.message;
         }
-        dispatch({ type: 'SET_STORE', store });
-        return storeToMap(store);
+        if (response?.store) {
+          dispatch({ type: 'SET_STORE', ...response });
+          return storeToMap(response?.store);
+        }
+        dispatch({ type: 'SET_STORE', store: response });
+        return storeToMap(response);
       } catch (err) {
         return { error: err.message };
       }

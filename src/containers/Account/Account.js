@@ -31,11 +31,16 @@ const Account = () => {
     ]);
   };
 
+  const { username, contributions = 0 } = state.user;
+
   return (
     <View>
       <View style={styles.box}>
-        <Title>{state.user.username}</Title>
-        <Subheading>0 contribution</Subheading>
+        <Title>{username}</Title>
+        <Subheading>
+          {contributions} contribution
+          {contributions > 1 ? 's' : ''}
+        </Subheading>
       </View>
       <View style={styles.menus}>
         <Menu name="Se déconnecter" icon="logout" onPress={signout} />
