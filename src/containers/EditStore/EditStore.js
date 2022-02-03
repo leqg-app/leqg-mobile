@@ -24,10 +24,12 @@ import {
 import { displayPrice, sortByPrices } from '../../utils/price';
 import { theme } from '../../constants';
 import { useStore } from '../../store/context';
+import Menu from '../../components/Menu';
 import EditSchedules from './EditSchedules';
 import EditAddress from './EditAddress';
 import SelectProduct from './SelectProduct';
 import EditProduct from './EditProduct';
+import History from './History';
 import Schedules from '../Store/Schedules';
 
 const types = {
@@ -186,6 +188,18 @@ const EditStore = ({ route, navigation }) => {
         backgroundColor="transparent"
       />
       <ScrollView>
+        {state.storeEdition?.revisions?.length ? (
+          <Menu>
+            <Menu.Item
+              name="Voir l'historique des modifications"
+              icon="clock-outline"
+              onPress={() =>
+                navigation.navigate('History', { store: state.storeEdition })
+              }
+              last
+            />
+          </Menu>
+        ) : null}
         <View style={styles.scrollView}>
           <View style={styles.horizontalMargin}>
             <TextInput
@@ -364,6 +378,11 @@ export default () => (
       options={{ title: 'Modifier une bière' }}
       name="EditProduct"
       component={EditProduct}
+    />
+    <AddStack.Screen
+      options={{ title: 'Historique' }}
+      name="History"
+      component={History}
     />
   </AddStack.Navigator>
 );
