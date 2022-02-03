@@ -1,11 +1,7 @@
 name: Deploy iOS
 
 on:
-  push:
-    branches:
-      - master
-    tags:
-      - '*'
+  workflow_dispatch: ~
 
 jobs:
   build:
@@ -42,17 +38,18 @@ jobs:
         run: pod install
         working-directory: ios
 
-      # - name: Unit tests
-      #   run: yarn test
+      - name: Unit tests
+        run: yarn test
 
-      # - name: Get release version
-      #   run: echo "RELEASE_VERSION=1.0.3" >> $GITHUB_ENV
+      - name: Get release version
+        run: echo "RELEASE_VERSION=1.0.3" >> $GITHUB_ENV
 
-      # - run: fastlane beta
-      #   env:
-      #     FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-      #     FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-      #     MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
-      #     MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.GIT_REPO_TOKEN_64 }}
-      #     BUILD_NUMBER: ${{ github.run_number }}
-      #     VERSION_NUMBER: ${{ env.RELEASE_VERSION }}
+      - run: fastlane beta
+        env:
+          APPSTORE_CONNECT_API_KEY_ID:
+          APPSTORE_CONNECT_API_ISSUER_ID:
+          APPSTORE_CONNECT_API_KEY:
+          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.GIT_REPO_TOKEN_64 }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          VERSION_NUMBER: ${{ env.RELEASE_VERSION }}
