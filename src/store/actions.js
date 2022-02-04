@@ -121,11 +121,7 @@ export const actionCreators = (dispatch, state) => {
         if (response.error) {
           return response.message;
         }
-        if (response?.store) {
-          dispatch({ type: 'SET_STORE', ...response });
-          return storeToMap(response?.store);
-        }
-        dispatch({ type: 'SET_STORE', store: response });
+        dispatch({ type: 'SET_STORE', store: response, contributed: true });
         return storeToMap(response);
       } catch (err) {
         return { error: err.message };
