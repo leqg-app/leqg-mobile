@@ -45,9 +45,11 @@ function StoreProducts({ products }) {
                 <Text style={styles.pricesCell}>
                   {price ? `${displayPrice(price)}€` : '-'}
                 </Text>
-                <Text style={styles.pricesCell}>
-                  {specialPrice ? `${displayPrice(specialPrice)}€` : ''}
-                </Text>
+                {hasHH && (
+                  <Text style={styles.pricesCell}>
+                    {specialPrice ? `${displayPrice(specialPrice)}€` : ''}
+                  </Text>
+                )}
               </View>
             </View>
           );
