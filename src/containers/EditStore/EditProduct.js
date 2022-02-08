@@ -115,6 +115,7 @@ const EditProducts = ({ navigation, route }) => {
         if (sP.product && !sP.productName) {
           return sP.product !== product;
         }
+        return true;
       },
     );
 
