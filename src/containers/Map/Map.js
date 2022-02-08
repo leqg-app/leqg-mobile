@@ -81,7 +81,16 @@ const Map = ({ navigation, route }) => {
           }
         }}
       />
-      <SearchBar onSearch={() => navigation.navigate('SearchStore')} />
+      <SearchBar
+        onSearch={() => navigation.navigate('SearchStore')}
+        onBack={
+          selectedStore &&
+          (() => {
+            selectStore(false);
+            sheet.current.close();
+          })
+        }
+      />
       <Filters onChange={filters => setFilters(filters)} />
       <StoreSheet
         sheet={sheet}

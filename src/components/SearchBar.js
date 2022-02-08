@@ -1,15 +1,28 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import { IconButton } from 'react-native-paper';
 
 import leqgLogo from '../assets/icon-transparent.png';
 
-function SearchBar({ onSearch }) {
+function SearchBar({ onSearch, onBack }) {
   return (
-    <View style={styles.container} onTouchStart={onSearch}>
-      <Image source={leqgLogo} style={styles.logo} />
-      <Text style={styles.placeholder} numberOfLines={1}>
-        Rechercher un bar
-      </Text>
+    <View style={styles.container}>
+      <View style={styles.left}>
+        {onBack ? (
+          <IconButton
+            icon="arrow-left"
+            onPress={onBack}
+            color="rgba(0,0,0,0.54)"
+          />
+        ) : (
+          <Image source={leqgLogo} style={styles.logo} />
+        )}
+      </View>
+      <View onTouchStart={onSearch} style={styles.input}>
+        <Text style={styles.placeholder} numberOfLines={1}>
+          Rechercher un bar
+        </Text>
+      </View>
     </View>
   );
 }
@@ -27,12 +40,20 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
     borderWidth: StyleSheet.hairlineWidth,
   },
+  left: {
+    marginLeft: 10,
+    marginRight: 9,
+  },
   logo: {
+    resizeMode: 'stretch',
     width: 35,
     height: 35,
-    resizeMode: 'stretch',
-    marginLeft: 18,
-    marginRight: 13,
+    marginLeft: 12,
+    marginRight: 1,
+  },
+  input: {
+    paddingVertical: 10,
+    flex: 1,
   },
   placeholder: {
     color: '#666',
