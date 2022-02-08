@@ -1,26 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
-import {
-  BackHandler,
-  StyleSheet,
-  StatusBar,
-  View,
-  Platform,
-  Text,
-  Image,
-} from 'react-native';
+import { BackHandler, Platform, StatusBar, StyleSheet } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/core';
 import RNBootSplash from 'react-native-bootsplash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import leqgLogo from '../../assets/icon-transparent.png';
 import { useStore } from '../../store/context';
 import { theme } from '../../constants';
 import ProductFilter from './ProductFilter';
 import Filters from './Filters';
 import Mapbox from './Mapbox';
 import StoreSheet from './StoreSheet';
+import SearchBar from '../../components/SearchBar';
 import SearchStore from './SearchStore';
 
 const Map = ({ navigation, route }) => {
@@ -89,14 +81,7 @@ const Map = ({ navigation, route }) => {
           }
         }}
       />
-      <View
-        style={styles.searchbar}
-        onTouchStart={() => navigation.navigate('SearchStore')}>
-        <Image source={leqgLogo} style={styles.searchLogo} />
-        <Text style={styles.searchPlaceholder} numberOfLines={1}>
-          Rechercher un bar
-        </Text>
-      </View>
+      <SearchBar onSearch={() => navigation.navigate('SearchStore')} />
       <Filters onChange={filters => setFilters(filters)} />
       <StoreSheet
         sheet={sheet}
@@ -116,30 +101,6 @@ const Map = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  searchbar: {
-    backgroundColor: 'white',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-    marginHorizontal: 20,
-    borderRadius: 30,
-    height: 45,
-    borderColor: 'grey',
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  searchLogo: {
-    width: 35,
-    height: 35,
-    resizeMode: 'stretch',
-    marginLeft: 18,
-    marginRight: 13,
-  },
-  searchPlaceholder: {
-    color: '#666',
-    fontSize: 18,
-    marginTop: -1,
   },
 });
 
