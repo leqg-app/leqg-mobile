@@ -13,21 +13,13 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
-### certificates
-
-```sh
-[bundle exec] fastlane certificates
-```
-
-Fetch certificates and provisioning profiles
-
 ### beta
 
 ```sh
 [bundle exec] fastlane beta
 ```
 
-Ship to Testflight.
+Ship to Testflight
 
 ----
 

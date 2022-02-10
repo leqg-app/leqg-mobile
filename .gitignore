@@ -50,6 +50,7 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 /leqg.app.*.zip
+.env
 
 # Bundle artifact
 *.jsbundle
