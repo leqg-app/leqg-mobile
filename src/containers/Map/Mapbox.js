@@ -5,11 +5,12 @@ import Geolocation from 'react-native-geolocation-service';
 import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
+import Config from 'react-native-config';
 
 import { isDark, theme } from '../../constants';
 import { useStore } from '../../store/context';
 
-MapboxGL.setAccessToken('');
+MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
 // https://github.com/react-native-mapbox-gl/maps/issues/943
 if (__DEV__) {

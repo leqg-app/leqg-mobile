@@ -29,7 +29,7 @@ const EditAddress = ({ navigation }) => {
         }}
         fetchDetails={true}
         query={{
-          key: '',
+          key: Config.GOOGLE_MAP_API_KEY,
           language: 'fr',
         }}
         enablePoweredByContainer={false}
