@@ -1,0 +1,17 @@
+- Store features
+- Better map store display
+- Lost password screen
+- Social sign-up/sign-in
+- Features map filter
+- Validate user position
+- Contribution history
+- Heatmap with prices
+- Help screen
+- Privacy policy screen
+- User score
+- Store rating
+- Rates map filter
+- Store photos
+- Account screen
+- Barathon screen
+- Friends/Contacts
