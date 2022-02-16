@@ -1,6 +1,6 @@
 {
   "git": {
-    "commitMessage": "Le QG ${version}",
+    "commitMessage": "${version}",
     "tagName": "v${version}"
   },
   "npm": {
@@ -8,6 +8,6 @@
   },
   "github": {
     "release": true,
-    "releaseName": "Le QG ${version}"
+    "releaseName": "${version}"
   }
 }
