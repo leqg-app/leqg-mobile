@@ -1,0 +1,4 @@
+defaults.url=https://sentry.io/
+defaults.org=le-qg
+defaults.project=le-qg
+auth.token=

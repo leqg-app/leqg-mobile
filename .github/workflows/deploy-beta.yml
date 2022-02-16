@@ -6,6 +6,12 @@ on:
 
 concurrency: build-and-deploy-beta
 
+env:
+  SENTRY_URL: https://sentry.io/
+  SENTRY_PROJECT: le-qg
+  SENTRY_ORG: le-qg
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
 jobs:
   android:
     name: Android App
