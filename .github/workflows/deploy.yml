@@ -11,8 +11,6 @@ env:
   SENTRY_PROJECT: le-qg
   SENTRY_ORG: le-qg
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-  GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-  MAPBOX_API_KEY: ${{ secrets.MAPBOX_API_KEY }}
 
 jobs:
   android:
@@ -43,6 +41,13 @@ jobs:
       - name: Install dependencies
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
+
+      - name: Create env file
+        run: |
+          cat << EOF > .env
+          GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}
+          MAPBOX_API_KEY=${{ secrets.MAPBOX_API_KEY }}
+          EOF
 
       - name: Unit tests
         run: yarn test
@@ -119,6 +124,13 @@ jobs:
       - name: Install dependencies
         if: steps.cache-nodejs-dependencies.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
+
+      - name: Create env file
+        run: |
+          cat << EOF > .env
+          GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}
+          MAPBOX_API_KEY=${{ secrets.MAPBOX_API_KEY }}
+          EOF
 
       - name: Cache iOS dependencies
         id: cache-ios-dependencies
