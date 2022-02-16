@@ -66,75 +66,75 @@ jobs:
           versionCode: ${{ github.run_id }}
           versionName: ${{ env.RELEASE_VERSION }}
 
-      # - name: Build Release AAB
-      #   working-directory: android
-      #   run: ./gradlew bundleRelease --no-daemon
+      - name: Build Release AAB
+        working-directory: android
+        run: ./gradlew bundleRelease --no-daemon
 
-      # - name: Sign AAB
-      #   uses: r0adkll/sign-android-release@v1
-      #   with:
-      #     releaseDirectory: android/app/build/outputs/bundle/release
-      #     signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
-      #     alias: ${{ secrets.ANDROID_SIGNING_ALIAS }}
-      #     keyStorePassword: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
-      #     keyPassword: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
+      - name: Sign AAB
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: android/app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
+          alias: ${{ secrets.ANDROID_SIGNING_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
 
-      # - name: Deploy to Play Store
-      #   uses: r0adkll/upload-google-play@v1
-      #   with:
-      #     serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-      #     packageName: com.leqg
-      #     releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
-      #     track: beta
-      #     status: completed
+      - name: Deploy to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: com.leqg
+          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          track: beta
+          status: completed
 
-  # ios:
-  #   name: iOS App
-  #   runs-on: macOS-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+  ios:
+    name: iOS App
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Install Node.js
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: '12'
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
 
-  #     - name: Cache Node.js dependencies
-  #       id: cache-nodejs-dependencies
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: |
-  #           ~/.cache
-  #           **/node_modules
-  #         key: ${{ hashFiles('**/yarn.lock') }}
-  #     - name: Install dependencies
-  #       if: steps.cache-nodejs-dependencies.outputs.cache-hit != 'true'
-  #       run: yarn install --frozen-lockfile
+      - name: Cache Node.js dependencies
+        id: cache-nodejs-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache
+            **/node_modules
+          key: ${{ hashFiles('**/yarn.lock') }}
+      - name: Install dependencies
+        if: steps.cache-nodejs-dependencies.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
 
-  #     - name: Cache iOS dependencies
-  #       id: cache-ios-dependencies
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: ios/Pods
-  #         key: ${{ hashFiles('**/Podfile.lock') }}
-  #     - name: Install iOS dependencies
-  #       if: steps.cache-ios-dependencies.outputs.cache-hit != 'true'
-  #       run: pod install
-  #       working-directory: ios
+      - name: Cache iOS dependencies
+        id: cache-ios-dependencies
+        uses: actions/cache@v2
+        with:
+          path: ios/Pods
+          key: ${{ hashFiles('**/Podfile.lock') }}
+      - name: Install iOS dependencies
+        if: steps.cache-ios-dependencies.outputs.cache-hit != 'true'
+        run: pod install
+        working-directory: ios
 
-  #     - name: Unit tests
-  #       run: yarn test
+      - name: Unit tests
+        run: yarn test
 
-  #     - name: Get release version
-  #       run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/v*}" >> $GITHUB_ENV
+      - name: Get release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/v*}" >> $GITHUB_ENV
 
-  #     - run: fastlane beta
-  #       env:
-  #         APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-  #         APPSTORE_CONNECT_API_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_API_ISSUER_ID }}
-  #         APPSTORE_CONNECT_API_KEY: ${{ secrets.APPSTORE_CONNECT_API_KEY }}
-  #         MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
-  #         MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.GIT_REPO_TOKEN_64 }}
-  #         BUILD_NUMBER: ${{ github.run_number }}
-  #         VERSION_NUMBER: ${{ env.RELEASE_VERSION }}
+      - run: fastlane beta
+        env:
+          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
+          APPSTORE_CONNECT_API_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_API_ISSUER_ID }}
+          APPSTORE_CONNECT_API_KEY: ${{ secrets.APPSTORE_CONNECT_API_KEY }}
+          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.GIT_REPO_TOKEN_64 }}
+          BUILD_NUMBER: ${{ github.run_id }}
+          VERSION_NUMBER: ${{ env.RELEASE_VERSION }}
