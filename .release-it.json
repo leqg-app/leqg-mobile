@@ -1,0 +1,13 @@
+{
+  "git": {
+    "commitMessage": "Le QG ${version}",
+    "tagName": "v${version}"
+  },
+  "npm": {
+    "publish": false
+  },
+  "github": {
+    "release": true,
+    "releaseName": "Le QG ${version}"
+  }
+}
