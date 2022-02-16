@@ -1,9 +1,8 @@
 name: Build & Deploy
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [released]
 
 concurrency: build-and-deploy
 
