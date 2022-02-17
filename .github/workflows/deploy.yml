@@ -149,7 +149,7 @@ jobs:
       - name: Get release version
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/v*}" >> $GITHUB_ENV
 
-      - run: fastlane beta
+      - run: fastlane release
         env:
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_API_ISSUER_ID }}
