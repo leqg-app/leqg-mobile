@@ -15,6 +15,7 @@ import { useStore } from '../../store/context';
 const errors = {
   'Auth.form.error.email.taken':
     'Cette adresse email est déjà utilisé, essayez de vous connecter',
+  'Auth.form.error.invalid': 'Identifiant ou mot de passe incorrect',
   'Network request failed': 'Vérifiez votre connexion internet',
 };
 
