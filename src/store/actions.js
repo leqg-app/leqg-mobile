@@ -41,7 +41,10 @@ export const actionCreators = (dispatch, state) => {
       }
     },
 
-    signOut: () => dispatch({ type: 'AUTH' }),
+    signOut: () => {
+      dispatch({ type: 'AUTH' });
+      storage.set('jwt', '');
+    },
 
     getUser: async () => {
       try {
