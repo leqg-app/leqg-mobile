@@ -8,7 +8,7 @@ lane :beta do
   increment_version_number(version_number: ENV['VERSION_NUMBER'], xcodeproj: './ios/leqg.xcodeproj')
 
   build_app(scheme: 'leqg', workspace: './ios/leqg.xcworkspace', silent: true, suppress_xcode_output: true)
-  upload_to_testflight(api_key: api_key, skip_waiting_for_build_processing: true)
+  upload_to_testflight(api_key: api_key)
 end
 
 desc 'Deploy to App Store'
@@ -21,5 +21,5 @@ lane :release do
   increment_version_number(version_number: ENV['VERSION_NUMBER'], xcodeproj: './ios/leqg.xcodeproj')
 
   build_app(scheme: 'leqg', workspace: './ios/leqg.xcworkspace', silent: true, suppress_xcode_output: true)
-  upload_to_app_store(api_key: api_key, skip_waiting_for_build_processing: true)
+  upload_to_app_store(api_key: api_key)
 end
