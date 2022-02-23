@@ -149,6 +149,9 @@ jobs:
       - name: Get release version
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/v*}" >> $GITHUB_ENV
 
+      - name: Get release note from release description
+        run: echo "${{ github.event.release.body }}" > ./fastlane/metadata/fr-FR/release_notes.txt
+
       - run: fastlane release
         env:
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
