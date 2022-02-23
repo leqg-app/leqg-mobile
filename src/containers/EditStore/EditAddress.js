@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { SafeAreaView } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Searchbar } from 'react-native-paper';
+import Config from 'react-native-config';
 
 import { useStore } from '../../store/context';
 
