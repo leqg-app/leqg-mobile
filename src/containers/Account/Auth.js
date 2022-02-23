@@ -68,7 +68,9 @@ const Auth = ({ navigation }) => {
   }, [mode]);
 
   return (
-    <KeyboardAwareScrollView style={styles.container}>
+    <KeyboardAwareScrollView
+      style={styles.container}
+      keyboardShouldPersistTaps="always">
       <Paragraph>
         {mode === 'login' ? 'Pas encore inscrit ?' : 'Déjà inscrit ?'}
       </Paragraph>

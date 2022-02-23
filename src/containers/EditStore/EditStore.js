@@ -187,7 +187,7 @@ const EditStore = ({ route, navigation }) => {
         translucent={true}
         backgroundColor="transparent"
       />
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps="always">
         {state.storeEdition?.revisions?.length ? (
           <Menu>
             <Menu.Item
