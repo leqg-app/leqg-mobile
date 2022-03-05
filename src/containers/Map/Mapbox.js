@@ -29,17 +29,31 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
   const camera = useRef();
   const [state] = useStore();
   const { colors } = useTheme();
-  const [position, setPosition] = useState(undefined);
-  const [followLocation, setFollowLocation] = useState(true);
+
+  const [mapState, setState] = useState({
+    position: undefined,
+    initialPosition: undefined,
+    location: false,
+    followLocation: true,
+  });
+
+  const { position, initialPosition, location, followLocation } = mapState;
+  const setMap = state => setState({ ...mapState, ...state });
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
-      ({ coords }) => {
-        moveTo([coords.longitude, coords.latitude]);
-      },
-      () => {
-        moveTo(CENTER);
-      },
+      ({ coords }) =>
+        setMap({
+          location: true,
+          position: [coords.longitude, coords.latitude],
+          initialPosition: [coords.longitude, coords.latitude],
+        }),
+      () =>
+        setMap({
+          location: false,
+          position: CENTER,
+          initialPosition: CENTER,
+        }),
       {
         timeout: 2000,
       },
@@ -48,18 +62,17 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
 
   useEffect(() => {
     if (selectedStore && camera.current) {
-      setFollowLocation(false);
+      setMap({ followLocation: false });
       camera.current.flyTo([selectedStore.lng, selectedStore.lat]);
     }
   }, [selectedStore]);
 
-  const moveTo = centerCoordinate => {
-    setPosition(centerCoordinate);
+  const moveTo = position => {
     if (!camera.current) {
       return;
     }
     camera.current.setCamera({
-      centerCoordinate,
+      centerCoordinate: position,
       zoomLevel: 13,
       animationDuration: 1500,
     });
@@ -77,25 +90,33 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
     });
     if (status[asked] !== 'granted') {
       // TODO: display error message
+      setMap({ location: false });
       return;
     }
-    setFollowLocation(true);
-    Geolocation.getCurrentPosition(({ coords }) =>
-      moveTo([coords.longitude, coords.latitude]),
-    );
+    Geolocation.getCurrentPosition(({ coords }) => {
+      const position = [coords.longitude, coords.latitude];
+      moveTo(position);
+      setMap({
+        location: true,
+        position,
+        followLocation: true,
+      });
+    });
   };
 
   const onMove = ({ properties }) => {
     if (properties.isUserInteraction && followLocation) {
-      setFollowLocation(false);
+      setMap({ followLocation: false });
     }
   };
 
-  const onUpdateLocation = ({ coords }) =>
-    (followLocation ? moveTo : setPosition)([
-      coords.longitude,
-      coords.latitude,
-    ]);
+  const onUpdateLocation = ({ coords }) => {
+    const position = [coords.longitude, coords.latitude];
+    if (followLocation) {
+      moveTo(position);
+    }
+    setMap({ position });
+  };
 
   const storesShape = useMemo(
     () => ({
@@ -138,7 +159,12 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         onPress={() => onPress()}
         compassViewPosition={2}
         onRegionIsChanging={onMove}>
-        <MapboxGL.Camera ref={camera} zoomLevel={13} />
+        <MapboxGL.Camera
+          ref={camera}
+          animationDuration={0}
+          centerCoordinate={initialPosition}
+          zoomLevel={13}
+        />
         <MapboxGL.UserLocation
           onUpdate={onUpdateLocation}
           minDisplacement={10}
@@ -160,31 +186,35 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
             style={layerStyles.priceText}
           />
         </MapboxGL.ShapeSource>
-        <MapboxGL.ShapeSource
-          id="textSource"
-          shape={{
-            type: 'Feature',
-            geometry: {
-              type: 'Point',
-              coordinates: [position[0], position[1] + 0.0095],
-              properties: {},
-            },
-          }}>
-          <MapboxGL.SymbolLayer
-            id="nearText"
-            minZoomLevel={12.5}
-            maxZoomLevel={13.5}
-            style={layerStyles.nearText}
-          />
-        </MapboxGL.ShapeSource>
-        <MapboxGL.ShapeSource id="lineSource" shape={circle(position, 1)}>
-          <MapboxGL.LineLayer
-            id="nearLine"
-            minZoomLevel={10.5}
-            style={layerStyles.nearLine}
-            belowLayerID="pointCircle"
-          />
-        </MapboxGL.ShapeSource>
+        {location && (
+          <>
+            <MapboxGL.ShapeSource
+              id="textSource"
+              shape={{
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [position[0], position[1] + 0.0095],
+                  properties: {},
+                },
+              }}>
+              <MapboxGL.SymbolLayer
+                id="nearText"
+                minZoomLevel={12.5}
+                maxZoomLevel={13.5}
+                style={layerStyles.nearText}
+              />
+            </MapboxGL.ShapeSource>
+            <MapboxGL.ShapeSource id="lineSource" shape={circle(position, 1)}>
+              <MapboxGL.LineLayer
+                id="nearLine"
+                minZoomLevel={10.5}
+                style={layerStyles.nearLine}
+                belowLayerID="pointCircle"
+              />
+            </MapboxGL.ShapeSource>
+          </>
+        )}
       </MapboxGL.MapView>
       <FAB
         style={[
