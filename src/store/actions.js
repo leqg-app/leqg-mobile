@@ -92,16 +92,18 @@ export const actionCreators = (dispatch, state) => {
         );
     },
     getStores: async () => {
-      // Compare API version and storage version to use stores from API or storage
+      // Get stores from device data
+      const stores = storage.getObject('stores', []);
+      if (stores?.length) {
+        dispatch({ type: 'GET_STORES_SUCCESS', stores });
+      }
+      // Check if we need to get stores from API
       const apiVersions = await getVersion();
       const versions = storage.getObject('versions', {});
       if (versions.stores === apiVersions?.stores) {
-        const stores = storage.getObject('stores', []);
-        if (stores?.length) {
-          dispatch({ type: 'GET_STORES_SUCCESS', stores });
-          return;
-        }
+        return;
       }
+      // Load, display & save new stores
       dispatch({ type: 'GET_STORES' });
       try {
         const stores = await getStores(apiVersions?.stores);
@@ -112,6 +114,8 @@ export const actionCreators = (dispatch, state) => {
         });
         dispatch({ type: 'GET_STORES_SUCCESS', stores });
       } catch (err) {
+        // Mostly network
+        // TODO: handle network failure
         dispatch({ type: 'GET_STORES_FAIL', message: err.message });
       }
     },
@@ -149,15 +153,14 @@ export const actionCreators = (dispatch, state) => {
     },
 
     getProducts: async () => {
-      // Compare API version and storage version to use products from API or storage
+      // Get products from device data
+      const products = storage.getObject('products', []);
+      if (products?.length) {
+        dispatch({ type: 'GET_PRODUCTS_SUCCESS', products });
+      }
+      // Check if we need to get products from API
       const apiVersions = await getVersion();
       const versions = storage.getObject('versions', []);
-      if (versions.products) {
-        const products = storage.getObject('products', []);
-        if (products?.length) {
-          dispatch({ type: 'GET_PRODUCTS_SUCCESS', products });
-        }
-      }
       if (versions.products === apiVersions?.products) {
         return;
       }
