@@ -8,6 +8,10 @@ function signIn(data) {
   return post('/auth/local', data);
 }
 
+function resetPassword(data) {
+  return post('/auth/forgot-password', data);
+}
+
 function getProfile(jwt) {
   return get('/users/me', { Authorization: `Bearer ${jwt}` });
 }
@@ -16,4 +20,4 @@ function updateProfile(jwt, data) {
   return put('/users/me', data, { Authorization: `Bearer ${jwt}` });
 }
 
-export { signUp, signIn, getProfile, updateProfile };
+export { signUp, signIn, getProfile, updateProfile, resetPassword };

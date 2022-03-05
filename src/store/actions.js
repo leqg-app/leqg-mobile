@@ -6,7 +6,13 @@ import {
   editStore,
   getVersion,
 } from '../api/stores';
-import { signIn, signUp, getProfile, updateProfile } from '../api/users';
+import {
+  signIn,
+  signUp,
+  getProfile,
+  updateProfile,
+  resetPassword,
+} from '../api/users';
 import { storeToMap } from '../utils/formatStore';
 import { storage } from './storage';
 
@@ -36,6 +42,17 @@ export const actionCreators = (dispatch, state) => {
         storage.set('jwt', jwt);
         user.jwt = jwt;
         dispatch({ type: 'AUTH_SUCCESS', user });
+      } catch (err) {
+        return err.message;
+      }
+    },
+    resetPassword: async body => {
+      try {
+        const { data, error } = await resetPassword(body);
+        if (error) {
+          return data[0].messages[0].id;
+        }
+        return false;
       } catch (err) {
         return err.message;
       }

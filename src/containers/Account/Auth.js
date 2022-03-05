@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import {
   Title,
@@ -7,9 +7,12 @@ import {
   TextInput,
   Button,
   HelperText,
+  useTheme,
 } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import ResetPassword from './ResetPassword';
 import { useStore } from '../../store/context';
 
 const errors = {
@@ -24,7 +27,7 @@ const Auth = ({ navigation }) => {
   const emailInput = useRef();
   const passwordInput = useRef();
 
-  const [mode, setMode] = React.useState('login');
+  const [mode, setMode] = React.useState('signIn');
   const [state, setState] = React.useState({
     error: undefined,
     loading: false,
@@ -48,7 +51,7 @@ const Auth = ({ navigation }) => {
 
   const submit = async () => {
     setState({ error: undefined, loading: true });
-    const error = await (mode === 'login' ? signIn : signUp)();
+    const error = await (mode === 'signIn' ? signIn : signUp)();
     if (error) {
       setState({ error, loading: false });
     }
@@ -58,32 +61,29 @@ const Auth = ({ navigation }) => {
   const toggleMode = () => {
     onChangePassword('');
     setState({ error: undefined, loading: false });
-    setMode(mode === 'login' ? 'signup' : 'login');
-  };
-
-  useLayoutEffect(() => {
+    setMode(mode === 'signIn' ? 'signUp' : 'signIn');
     navigation.setOptions({
-      title: mode === 'login' ? 'Connexion' : 'Inscription',
+      title: mode === 'signIn' ? 'Inscription' : 'Connexion',
     });
-  }, [mode]);
+  };
 
   return (
     <KeyboardAwareScrollView
       style={styles.container}
       keyboardShouldPersistTaps="always">
       <Paragraph>
-        {mode === 'login' ? 'Pas encore inscrit ?' : 'Déjà inscrit ?'}
+        {mode === 'signIn' ? 'Pas encore inscrit ?' : 'Déjà inscrit ?'}
       </Paragraph>
       <Button
         style={styles.space}
         mode="contained"
         onPress={() => toggleMode()}>
-        {mode === 'login' ? 'Inscription' : 'Connexion'}
+        {mode === 'signIn' ? 'Inscription' : 'Connexion'}
       </Button>
       <Divider style={styles.divider} />
 
-      <Title>{mode === 'login' ? 'Connexion' : 'Inscription'}</Title>
-      {mode === 'login' ? (
+      <Title>{mode === 'signIn' ? 'Connexion' : 'Inscription'}</Title>
+      {mode === 'signIn' ? (
         <>
           <TextInput
             style={styles.space}
@@ -158,13 +158,21 @@ const Auth = ({ navigation }) => {
             'Erreur inconnue, nous avons été informés. Merci de réessayer plus tard'}
         </HelperText>
       )}
+      {mode === 'signIn' ? (
+        <Button
+          style={styles.space}
+          mode="text"
+          onPress={() => navigation.navigate('ResetPassword')}>
+          Mot de passe oublié
+        </Button>
+      ) : null}
       <Button
         style={styles.space}
         mode="contained"
         onPress={submit}
         loading={state.loading}
-        disabled={!username || !password || (mode === 'signup' && !email)}>
-        {mode === 'login' ? 'Connexion' : 'Inscription'}
+        disabled={!username || !password || (mode === 'signUp' && !email)}>
+        {mode === 'signIn' ? 'Connexion' : 'Inscription'}
       </Button>
     </KeyboardAwareScrollView>
   );
@@ -183,4 +191,28 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Auth;
+const AuthStack = createNativeStackNavigator();
+
+export default () => {
+  const { colors } = useTheme();
+  return (
+    <AuthStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.primary,
+        },
+        headerTintColor: '#fff',
+      }}>
+      <AuthStack.Screen
+        options={{ title: 'Connexion' }}
+        name="AuthScreen"
+        component={Auth}
+      />
+      <AuthStack.Screen
+        options={{ title: 'Mot de passe oublié' }}
+        name="ResetPassword"
+        component={ResetPassword}
+      />
+    </AuthStack.Navigator>
+  );
+};

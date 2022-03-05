@@ -83,7 +83,7 @@ export default () => {
         />
       ) : (
         <AccountStack.Screen
-          options={{ title: 'Inscription' }}
+          options={{ headerShown: false }}
           name="Auth"
           component={Auth}
         />
