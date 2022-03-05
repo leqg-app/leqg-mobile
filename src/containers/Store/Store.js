@@ -136,7 +136,9 @@ const StoreDetails = ({ store }) => {
                 <SchedulesPreview schedules={store.schedules} />
               </View>
             ) : (
-              <Schedules schedules={store.schedules} />
+              <View style={styles.schedulesWrapper}>
+                <Schedules schedules={store.schedules} />
+              </View>
             )}
           </View>
           {!expandSchedules && <IconButton icon="chevron-down" color="grey" />}
@@ -278,6 +280,9 @@ const styles = StyleSheet.create({
   infoTextItalic: {
     marginVertical: 20,
     fontStyle: 'italic',
+  },
+  schedulesWrapper: {
+    marginTop: 20,
   },
 });
 
