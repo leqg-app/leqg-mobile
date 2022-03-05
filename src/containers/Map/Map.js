@@ -3,6 +3,7 @@ import { BackHandler, Platform, StatusBar, StyleSheet } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/core';
+import { useFocusEffect } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -32,7 +33,9 @@ const Map = ({ navigation, route }) => {
     init().finally(async () => {
       await RNBootSplash.hide({ fade: true });
     });
+  }, []);
 
+  useFocusEffect(() => {
     const event = BackHandler.addEventListener(
       'hardwareBackPress',
       function () {
@@ -44,9 +47,8 @@ const Map = ({ navigation, route }) => {
         return false;
       },
     );
-
     return () => event.remove();
-  }, []);
+  });
 
   useEffect(() => {
     if (isFocused) {
