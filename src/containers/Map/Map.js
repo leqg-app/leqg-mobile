@@ -17,7 +17,7 @@ import SearchBar from '../../components/SearchBar';
 import SearchStore from './SearchStore';
 
 const Map = ({ navigation, route }) => {
-  const [, actions] = useStore();
+  const [state, actions] = useStore();
   const isFocused = useIsFocused();
   const sheet = useRef(null);
   const [selectedStore, selectStore] = useState(false);
@@ -30,9 +30,7 @@ const Map = ({ navigation, route }) => {
       Promise.all([actions.getStores(), actions.getProducts()]);
     };
 
-    init().finally(async () => {
-      await RNBootSplash.hide({ fade: true });
-    });
+    init().finally(() => RNBootSplash.hide({ fade: true }));
   }, []);
 
   useFocusEffect(() => {
@@ -92,6 +90,7 @@ const Map = ({ navigation, route }) => {
             sheet.current.close();
           })
         }
+        loading={state.loading}
       />
       <Filters onChange={filters => setFilters(filters)} />
       <StoreSheet

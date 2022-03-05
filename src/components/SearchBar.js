@@ -1,10 +1,10 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
 
 import leqgLogo from '../assets/icon-transparent.png';
 
-function SearchBar({ onSearch, onBack }) {
+function SearchBar({ onSearch, onBack, loading }) {
   return (
     <View style={styles.container}>
       <View style={styles.left}>
@@ -23,6 +23,7 @@ function SearchBar({ onSearch, onBack }) {
           Rechercher un bar
         </Text>
       </View>
+      {loading && <ActivityIndicator style={styles.loader} size={19} />}
     </View>
   );
 }
@@ -59,6 +60,9 @@ const styles = StyleSheet.create({
     color: '#666',
     fontSize: 18,
     marginTop: -1,
+  },
+  loader: {
+    marginRight: 15,
   },
 });
 
