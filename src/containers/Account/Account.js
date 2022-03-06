@@ -31,12 +31,12 @@ const Account = () => {
     ]);
   };
 
-  const { username, contributions = 0 } = state.user;
+  const contributions = state.user.contributions || 0;
 
   return (
     <View>
       <View style={styles.box}>
-        <Title>{username}</Title>
+        <Title>{state.user.username}</Title>
         <Subheading>
           {contributions} contribution
           {contributions > 1 ? 's' : ''}
