@@ -7,6 +7,7 @@ import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
 import Config from 'react-native-config';
 
+import tooltipIcon from '../../assets/tooltip-50.png';
 import { isDark, theme } from '../../constants';
 import { useStore } from '../../store/context';
 
@@ -137,26 +138,15 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
     return <View />;
   }
 
-  const pointCircle = {
-    circleColor: selectedStore
-      ? [
-          'case',
-          ['==', selectedStore.id, ['get', 'id']],
-          theme.colors.accent,
-          theme.colors.bright,
-        ]
-      : theme.colors.bright,
-    circleRadius: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 10],
-  };
-
   return (
     <>
       <MapboxGL.MapView
         style={styles.absolute}
         localizeLabels={true}
         pitchEnabled={false}
-        styleURL={isDark ? 'mapbox://styles/mapbox/dark-v10' : undefined}
+        styleURL={isDark ? MapboxGL.StyleURL.Dark : undefined}
         onPress={() => onPress()}
+        onLongPress={(a, b, c) => console.log(a, b, c)}
         compassViewPosition={2}
         onRegionIsChanging={onMove}>
         <MapboxGL.Camera
@@ -173,17 +163,17 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
           id="stores"
           shape={storesShape}
           onPress={e => onPress(e.features[0].properties)}>
-          <MapboxGL.CircleLayer
-            id="pointCircle"
+          <MapboxGL.SymbolLayer
+            id="store"
             filter={filters && ['all', ...filters]}
-            style={pointCircle}
+            style={layerStyles.storePrice}
           />
           <MapboxGL.SymbolLayer
-            id="priceText"
-            aboveLayerID="pointCircle"
-            minZoomLevel={12}
+            id="storeName"
+            belowLayerID="store"
+            minZoomLevel={15}
             filter={filters && ['all', ...filters]}
-            style={layerStyles.priceText}
+            style={layerStyles.storeName}
           />
         </MapboxGL.ShapeSource>
         {location && (
@@ -210,7 +200,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
                 id="nearLine"
                 minZoomLevel={10.5}
                 style={layerStyles.nearLine}
-                belowLayerID="pointCircle"
+                belowLayerID="store"
               />
             </MapboxGL.ShapeSource>
           </>
@@ -258,14 +248,31 @@ const textField = [
 ];
 
 const layerStyles = {
-  priceText: {
+  storePrice: {
+    iconImage: tooltipIcon,
+    iconTranslate: [0, -10],
+    iconSize: 0.5,
+    iconAllowOverlap: true,
+    iconIgnorePlacement: true,
+    symbolSortKey: ['get', 'price'],
+
     textField,
-    textSize: ['interpolate', ['linear'], ['zoom'], 10, 3, 13, 9],
-    textMaxWidth: 50,
-    textColor: '#FFF',
-    textAnchor: 'center',
-    textTranslate: [0, 0],
+    textColor: '#fff',
+    textTranslate: [0, -13],
+    textSize: 13,
+    textAllowOverlap: false,
+    textIgnorePlacement: false,
+  },
+  storeName: {
+    textField: '{name}',
+    textSize: 14,
+    textAnchor: 'bottom-left',
+    textTranslate: [18, -5],
+    textHaloColor: '#fff',
+    textHaloWidth: 2,
     textAllowOverlap: true,
+    textIgnorePlacement: true,
+    textOptional: true,
   },
   nearLine: {
     lineColor: theme.colors.primary,
