@@ -44,6 +44,11 @@ function SchedulesPreview({ schedules }) {
   const today = date.getDay() || 7;
   const now = date.getHours() * 3600 + date.getMinutes() * 60;
   const day = schedules.find(schedule => schedule.dayOfWeek === today);
+
+  if (!day) {
+    return <Text />;
+  }
+
   const { closed, opening, closing } = day;
 
   if (closed) {
