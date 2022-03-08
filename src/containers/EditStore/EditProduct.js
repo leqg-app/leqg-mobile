@@ -28,7 +28,7 @@ const EditProducts = ({ navigation, route }) => {
   const [state, actions] = useStore();
   const { colors } = useTheme();
   const [storeProduct, setProduct] = useState({
-    product: {},
+    product: null,
     type: 'draft',
     volume: 50,
     price: '',
@@ -48,7 +48,7 @@ const EditProducts = ({ navigation, route }) => {
         ...product,
         price: displayPrice(product.price),
         specialPrice: displayPrice(product.specialPrice),
-        ...(product.product?.id && { product: product.product.id }),
+        product: product.product?.id || null,
       });
       return;
     }
@@ -67,6 +67,7 @@ const EditProducts = ({ navigation, route }) => {
       // New product with name
       setProduct({
         ...storeProduct,
+        product: null,
         productName,
       });
       return;
@@ -144,7 +145,7 @@ const EditProducts = ({ navigation, route }) => {
         onPress: () => {
           const storeProducts = state.storeEdition?.products || [];
           const products = storeProducts.filter(storeProduct =>
-            storeProduct.product
+            storeProduct.product?.id
               ? storeProduct.product !== product
               : storeProduct.productName !== productName,
           );
@@ -204,7 +205,7 @@ const EditProducts = ({ navigation, route }) => {
         returnKeyType="done"
         right={<TextInput.Affix text="€" />}
       />
-      {storeProduct.id && (
+      {route.params?.product && (
         <Button
           mode="contained"
           color={theme.colors.danger}
