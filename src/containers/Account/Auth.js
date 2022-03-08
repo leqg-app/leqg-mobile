@@ -18,7 +18,19 @@ import { useStore } from '../../store/context';
 const errors = {
   'Auth.form.error.email.taken':
     'Cette adresse email est déjà utilisé, essayez de vous connecter',
+  'Auth.form.error.username.taken':
+    "Ce nom d'utilisateur est déjà utilisé, choisissez-en un autre",
   'Auth.form.error.invalid': 'Identifiant ou mot de passe incorrect',
+  'Auth.form.error.confirmed': 'Confirmez votre email afin de vous connecter',
+  'Auth.form.error.blocked':
+    "Ce compte a été désactivé, contactez-nous pour plus d'information",
+  'Auth.form.error.password.local':
+    "Ce compte n'a pas de mot de passe, utilisez le moyen de connexion que vous avez choisi lors de l'inscription",
+  'Auth.form.error.email.provide': 'Email invalide',
+  'Auth.form.error.email.format': 'Email invalide',
+  'Auth.form.error.password.provide': 'Mot de passe invalide',
+  'Auth.form.error.password.format':
+    'Votre mot de pass ne peut pas contenir plus de 3 fois le symbole "$"', // WTF Strapi?
   'Network request failed': 'Vérifiez votre connexion internet',
 };
 

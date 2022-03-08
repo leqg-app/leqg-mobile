@@ -7,6 +7,10 @@ import { useStore } from '../../store/context';
 
 const errors = {
   'Network request failed': 'Vérifiez votre connexion internet',
+  'Auth.form.error.email.format': 'Adresse email invalide',
+  'Auth.form.error.user.not-exist': "Cet email n'a pas de compte",
+  'Auth.form.error.user.blocked':
+    "Ce compte a été désactivé, contactez-nous pour plus d'information",
 };
 
 const ResetPassword = ({ navigation }) => {
