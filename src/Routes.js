@@ -14,6 +14,7 @@ import Splash from './Splash';
 import { storage } from './store/storage';
 
 const Tab = createBottomTabNavigator();
+
 const TabNavigator = () => (
   <Tab.Navigator
     initialRouteName="MapTab"
@@ -27,7 +28,6 @@ const TabNavigator = () => (
       tabBarIcon: ({ color, size }) => {
         const icons = {
           MapTab: 'map',
-          EditStoreTab: 'plus',
           FavoritesTab: 'bookmark-outline',
           AccountTab: 'account',
         };
@@ -50,18 +50,11 @@ const TabNavigator = () => (
       }}
     />
     <Tab.Screen
-      name="EditStoreTab"
-      component={EditStore}
-      options={{
-        headerShown: false,
-        title: 'Ajouter',
-      }}
-    />
-    <Tab.Screen
       name="FavoritesTab"
       component={Favorites}
       options={{
         title: 'Enregistrés',
+        lazy: false,
       }}
     />
     <Tab.Screen
@@ -70,6 +63,7 @@ const TabNavigator = () => (
       options={{
         headerShown: false,
         title: 'Compte',
+        lazy: false,
       }}
     />
   </Tab.Navigator>

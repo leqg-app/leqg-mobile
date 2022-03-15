@@ -1,15 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import MapboxGL, { Logger } from '@react-native-mapbox-gl/maps';
 import Geolocation from 'react-native-geolocation-service';
 import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 import circle from '@turf/circle';
-import { FAB, useTheme } from 'react-native-paper';
+import { Button, FAB, Title, useTheme } from 'react-native-paper';
 import Config from 'react-native-config';
+import { useNavigation } from '@react-navigation/native';
 
 import tooltipIcon from '../../assets/tooltip-50.png';
 import { isDark, theme } from '../../constants';
 import { useStore } from '../../store/context';
+import searchPlace from '../../utils/searchPlace';
+import ActionSheet from '../../components/ActionSheet';
 
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
@@ -27,10 +30,12 @@ if (__DEV__) {
 const CENTER = [2.341924, 48.860395];
 
 const Mapbox = ({ filters, onPress, selectedStore }) => {
+  const navigation = useNavigation();
   const camera = useRef();
   const [state] = useStore();
   const { colors } = useTheme();
 
+  const [newStore, setNewStore] = useState();
   const [mapState, setState] = useState({
     position: undefined,
     initialPosition: undefined,
@@ -63,6 +68,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
 
   useEffect(() => {
     if (selectedStore && camera.current) {
+      setNewStore();
       setMap({ followLocation: false });
       camera.current.flyTo([selectedStore.lng, selectedStore.lat]);
     }
@@ -138,6 +144,19 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
     return <View />;
   }
 
+  const searchPoint = async ({ geometry: { coordinates } }) => {
+    const [longitude, latitude] = coordinates;
+    setNewStore({ loading: true, longitude, latitude });
+    try {
+      const { features } = await searchPlace(longitude, latitude);
+      const { place_name: address } = features[0];
+      setNewStore({ address, longitude, latitude });
+    } catch (e) {
+      // TODO: toast with message
+      console.log(e);
+    }
+  };
+
   return (
     <>
       <MapboxGL.MapView
@@ -146,7 +165,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         pitchEnabled={false}
         styleURL={isDark ? MapboxGL.StyleURL.Dark : undefined}
         onPress={() => onPress()}
-        onLongPress={(a, b, c) => console.log(a, b, c)}
+        onLongPress={searchPoint}
         compassViewPosition={2}
         onRegionIsChanging={onMove}>
         <MapboxGL.Camera
@@ -176,6 +195,27 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
             style={layerStyles.storeName}
           />
         </MapboxGL.ShapeSource>
+        {newStore && (
+          <MapboxGL.ShapeSource
+            id="newStoreSource"
+            shape={{
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [newStore.longitude, newStore.latitude],
+                properties: {},
+              },
+            }}>
+            <MapboxGL.SymbolLayer
+              id="newStoreCross"
+              style={{
+                textField: '✕',
+                textSize: 20,
+                textColor: theme.colors.primary,
+              }}
+            />
+          </MapboxGL.ShapeSource>
+        )}
         {location && (
           <>
             <MapboxGL.ShapeSource
@@ -215,6 +255,38 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         color={followLocation ? 'white' : colors.primary}
         onPress={moveToCurrentLocation}
       />
+      {newStore && (
+        <ActionSheet>
+          <View style={styles.newStoreSheet}>
+            <Title>Ajouter un nouveau bar</Title>
+            <Text>
+              {newStore.loading
+                ? "Chargement de l'adresse..."
+                : newStore.address}
+            </Text>
+            <View style={styles.actions}>
+              <Button
+                mode="outlined"
+                style={styles.actionsButton}
+                onPress={() => setNewStore()}>
+                Annuler
+              </Button>
+              <Button
+                mode="contained"
+                style={styles.actionsButton}
+                disabled={newStore.loading}
+                onPress={() =>
+                  navigation.navigate('EditStoreScreen', {
+                    screen: 'EditStore',
+                    params: { store: newStore },
+                  })
+                }>
+                Ajouter
+              </Button>
+            </View>
+          </View>
+        </ActionSheet>
+      )}
     </>
   );
 };
@@ -302,6 +374,19 @@ const styles = StyleSheet.create({
     elevation: 0,
     borderColor: 'grey',
     borderWidth: StyleSheet.hairlineWidth,
+  },
+  newStoreSheet: {
+    paddingHorizontal: 20,
+  },
+  actions: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 20,
+  },
+  actionsButton: {
+    borderRadius: 99,
+    width: '40%',
   },
 });
 
