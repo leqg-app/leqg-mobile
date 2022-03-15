@@ -5,8 +5,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-function ActionSheet({ children }) {
-  const bottomSheetRef = useRef();
+const ActionSheet = React.forwardRef(({ children }, ref) => {
   const { top } = useSafeAreaInsets();
   const topbarHeight = top + 50;
 
@@ -21,7 +20,8 @@ function ActionSheet({ children }) {
 
   return (
     <BottomSheet
-      ref={bottomSheetRef}
+      ref={ref}
+      index={-1}
       snapPoints={animatedSnapPoints}
       handleHeight={animatedHandleHeight}
       contentHeight={animatedContentHeight}
@@ -31,6 +31,6 @@ function ActionSheet({ children }) {
       </BottomSheetView>
     </BottomSheet>
   );
-}
+});
 
 export default ActionSheet;

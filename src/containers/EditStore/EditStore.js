@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -81,6 +81,7 @@ const Product = ({ product, onPress }) => {
 
 const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
+  const nameInput = useRef();
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -115,7 +116,10 @@ const EditStore = ({ route, navigation }) => {
   useEffect(() => {
     setLoading(false);
     if (route.params?.store) {
-      actions.setStoreEdition(route.params?.store);
+      actions.setStoreEdition(route.params.store);
+      if (!route.params.store.name) {
+        nameInput.current.focus();
+      }
     }
     return navigation.addListener('beforeRemove', function () {
       // TODO: confirmation if data was edited
@@ -203,6 +207,7 @@ const EditStore = ({ route, navigation }) => {
         <View style={styles.scrollView}>
           <View style={styles.horizontalMargin}>
             <TextInput
+              ref={nameInput}
               style={styles.fieldName}
               label="Nom"
               mode="flat"
@@ -354,7 +359,7 @@ export default () => (
     }}>
     <AddStack.Screen
       options={({ route }) => ({
-        title: route.params?.store ? 'Modifier un bar' : 'Ajouter un bar',
+        title: route.params?.store?.id ? 'Modifier un bar' : 'Ajouter un bar',
       })}
       name="EditStore"
       component={EditStore}
