@@ -21,5 +21,9 @@ lane :release do
   increment_version_number(version_number: ENV['VERSION_NUMBER'], xcodeproj: './ios/leqg.xcodeproj')
 
   build_app(scheme: 'leqg', workspace: './ios/leqg.xcworkspace', silent: true, suppress_xcode_output: true)
-  upload_to_app_store(api_key: api_key, force: true)
+  upload_to_app_store(
+    api_key: api_key,
+    precheck_include_in_app_purchases: false,
+    force: true
+  )
 end
