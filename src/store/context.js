@@ -9,7 +9,7 @@ export function createStoreEdition() {
     products: [],
     schedules: new Array(7)
       .fill()
-      .map((_, i) => ({ dayOfWeek: i + 1, closed: true })),
+      .map((_, i) => ({ dayOfWeek: i + 1, closed: false })),
   };
 }
 
