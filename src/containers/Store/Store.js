@@ -283,6 +283,7 @@ const styles = StyleSheet.create({
   },
   schedulesWrapper: {
     marginTop: 20,
+    flex: 1,
   },
 });
 
