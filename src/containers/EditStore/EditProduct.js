@@ -1,15 +1,18 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   Button,
   IconButton,
   RadioButton,
   TextInput,
   Title,
+  TouchableRipple,
   useTheme,
 } from 'react-native-paper';
 import { theme } from '../../constants';
 
+import countries from '../../assets/countries.json';
+import currencies from '../../assets/currencies.json';
 import { useStore } from '../../store/context';
 import { displayPrice, parsePrice } from '../../utils/price';
 
@@ -33,6 +36,7 @@ const EditProducts = ({ navigation, route }) => {
     volume: 50,
     price: '',
     specialPrice: '',
+    currencyCode: countries[state.storeEdition.countryCode || 'FR'],
   });
 
   useEffect(() => {
@@ -72,6 +76,12 @@ const EditProducts = ({ navigation, route }) => {
       });
       return;
     }
+    if (route.params.currencyCode) {
+      setProduct({
+        ...storeProduct,
+        currencyCode: route.params.currencyCode,
+      });
+    }
     // WTF?
   }, [route.params]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -83,8 +93,15 @@ const EditProducts = ({ navigation, route }) => {
     });
   };
 
-  const { product, productName, type, volume, price, specialPrice } =
-    storeProduct;
+  const {
+    product,
+    productName,
+    type,
+    volume,
+    price,
+    specialPrice,
+    currencyCode,
+  } = storeProduct;
   const validForm = Boolean(
     (product || productName) && type && volume && parseFloat(price),
   );
@@ -159,7 +176,7 @@ const EditProducts = ({ navigation, route }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
       <Title>{selectedProduct?.name || productName}</Title>
       <View style={styles.typeGroup}>
         <RadioButton.Group onValueChange={changeType} value={type}>
@@ -183,16 +200,23 @@ const EditProducts = ({ navigation, route }) => {
         returnKeyType="done"
         right={<TextInput.Affix text="cl" />}
       />
-      <TextInput
-        style={styles.textInput}
-        label="Prix"
-        mode="flat"
-        onChangeText={price => setProduct({ ...storeProduct, price })}
-        value={price ? String(price) : null}
-        keyboardType="decimal-pad"
-        returnKeyType="done"
-        right={<TextInput.Affix text="€" />}
-      />
+      <View style={styles.flexPrice}>
+        <TextInput
+          style={styles.textInput}
+          label="Prix"
+          mode="flat"
+          onChangeText={price => setProduct({ ...storeProduct, price })}
+          value={price ? String(price) : null}
+          keyboardType="decimal-pad"
+          returnKeyType="done"
+        />
+        <TouchableRipple
+          onPress={() => navigation.navigate('SelectCurrency')}
+          borderless
+          style={styles.selectCurrency}>
+          <Text>{currencies[currencyCode].symbol}</Text>
+        </TouchableRipple>
+      </View>
       <TextInput
         style={styles.textInput}
         label="Prix en Happy hour"
@@ -205,7 +229,7 @@ const EditProducts = ({ navigation, route }) => {
         returnKeyType="done"
         right={<TextInput.Affix text="€" />}
       />
-      {route.params?.product && (
+      {storeProduct.id && (
         <Button
           mode="contained"
           color={theme.colors.danger}
@@ -226,11 +250,28 @@ const styles = StyleSheet.create({
   typeGroup: {
     marginTop: 10,
   },
+  flexPrice: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   textInput: {
     flex: 1,
     marginTop: 10,
     marginBottom: 15,
     backgroundColor: 'transparent',
+  },
+  selectCurrency: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'grey',
+    borderRadius: 9,
+    width: 50,
+    height: 50,
+    marginLeft: 20,
   },
   removeButton: {
     marginTop: 10,

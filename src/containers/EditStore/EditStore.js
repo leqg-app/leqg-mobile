@@ -21,16 +21,18 @@ import {
   TouchableRipple,
 } from 'react-native-paper';
 
-import { displayPrice, sortByPrices } from '../../utils/price';
+import { sortByPrices } from '../../utils/price';
 import { theme } from '../../constants';
 import { useStore } from '../../store/context';
 import Menu from '../../components/Menu';
+import Price from '../../components/Price';
 import EditSchedules from './EditSchedules';
 import EditAddress from './EditAddress';
 import SelectProduct from './SelectProduct';
 import EditProduct from './EditProduct';
 import History from './History';
 import Schedules from '../Store/Schedules';
+import SelectCurrency from './SelectCurrency';
 
 const types = {
   draft: 'Pression',
@@ -38,7 +40,8 @@ const types = {
 };
 
 const Product = ({ product, onPress }) => {
-  const { price, specialPrice, productName, type, volume } = product;
+  const { price, specialPrice, productName, type, volume, currencyCode } =
+    product;
   return (
     <View style={styles.productRow}>
       <TouchableRipple
@@ -58,10 +61,14 @@ const Product = ({ product, onPress }) => {
           <View style={styles.flex}>
             <View style={styles.prices}>
               <Text style={styles.price}>
-                {price ? `${displayPrice(price)}€` : '-'}
+                {price ? <Price amount={price} currency={currencyCode} /> : '-'}
               </Text>
               <Text style={styles.price}>
-                {specialPrice ? `${displayPrice(specialPrice)}€` : ' '}
+                {specialPrice ? (
+                  <Price amount={specialPrice} currency={currencyCode} />
+                ) : (
+                  ' '
+                )}
               </Text>
             </View>
             <View style={styles.editButton}>
@@ -117,7 +124,7 @@ const EditStore = ({ route, navigation }) => {
     setLoading(false);
     if (route.params?.store) {
       actions.setStoreEdition(route.params.store);
-      if (!route.params.store.name) {
+      if (!route.params.store.name && nameInput.current) {
         nameInput.current.focus();
       }
     }
@@ -241,7 +248,7 @@ const EditStore = ({ route, navigation }) => {
           ) : (
             <View style={styles.headRow}>
               <Text style={styles.price}>Prix</Text>
-              {hasHH && <Text style={styles.price}>HH.</Text>}
+              <Text style={styles.price}>HH.</Text>
             </View>
           )}
           {products.map((product, i) => (
@@ -335,7 +342,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   price: {
-    width: 40,
+    width: 50,
     textAlign: 'center',
   },
   editButton: {
@@ -388,6 +395,11 @@ export default () => (
       options={{ title: 'Historique' }}
       name="History"
       component={History}
+    />
+    <AddStack.Screen
+      options={{ title: 'Devise' }}
+      name="SelectCurrency"
+      component={SelectCurrency}
     />
   </AddStack.Navigator>
 );

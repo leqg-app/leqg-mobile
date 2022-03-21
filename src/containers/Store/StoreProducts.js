@@ -3,7 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Caption } from 'react-native-paper';
 
 import { useStore } from '../../store/context';
-import { displayPrice, sortByPrices } from '../../utils/price';
+import Price from '../../components/Price';
+import { sortByPrices } from '../../utils/price';
 
 const types = {
   draft: 'Pression',
@@ -26,7 +27,8 @@ function StoreProducts({ products }) {
       {Array.from(products)
         .sort(sortByPrices)
         .map((product, i) => {
-          const { volume, price, specialPrice, productName } = product;
+          const { volume, price, specialPrice, productName, currencyCode } =
+            product;
           const productDetail = state.products.find(
             ({ id }) => id === product.product,
           );
@@ -43,11 +45,19 @@ function StoreProducts({ products }) {
               </View>
               <View style={styles.prices}>
                 <Text style={styles.pricesCell}>
-                  {price ? `${displayPrice(price)}€` : '-'}
+                  {price ? (
+                    <Price amount={price} currency={currencyCode} />
+                  ) : (
+                    '-'
+                  )}
                 </Text>
                 {hasHH && (
                   <Text style={styles.pricesCell}>
-                    {specialPrice ? `${displayPrice(specialPrice)}€` : ''}
+                    {specialPrice ? (
+                      <Price amount={specialPrice} currency={currencyCode} />
+                    ) : (
+                      ' '
+                    )}
                   </Text>
                 )}
               </View>
