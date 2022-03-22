@@ -5,6 +5,7 @@ import { Searchbar } from 'react-native-paper';
 import Config from 'react-native-config';
 
 import { useStore } from '../../store/context';
+import { getCountryCode } from '../../utils/searchPlace';
 
 const EditAddress = ({ navigation }) => {
   const [, actions] = useStore();
@@ -25,6 +26,7 @@ const EditAddress = ({ navigation }) => {
             address: data.description,
             latitude,
             longitude,
+            countryCode: getCountryCode(details.address_components),
           });
           navigation.goBack();
         }}

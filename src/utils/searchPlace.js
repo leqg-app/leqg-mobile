@@ -1,5 +1,14 @@
 import Config from 'react-native-config';
 
+export function getCountryCode(address_components) {
+  for (const { types, short_name } of address_components) {
+    if (types.includes('country')) {
+      return short_name;
+    }
+  }
+  return '';
+}
+
 // async function searchPlaceMapbox(longitude, latitude) {
 //   const queries = {
 //     access_token: Config.MAPBOX_API_KEY,
@@ -38,18 +47,9 @@ async function searchPlaceGoogle(longitude, latitude) {
     if (formatted_address.includes('+')) {
       continue;
     }
-    const country = address_components.find(({ types }) =>
-      types.includes('country'),
-    );
-    if (country) {
-      return {
-        address: formatted_address,
-        countryCode: country.short_name,
-      };
-    }
     return {
       address: formatted_address,
-      countryCode: '',
+      countryCode: getCountryCode(address_components),
     };
   }
   return {};
