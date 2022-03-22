@@ -147,16 +147,15 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
     onPress();
     setCreateStore({ loading: true, longitude, latitude });
     try {
-      const { features } = await searchPlace(longitude, latitude);
-      if (!features || !features[0] || !features[0].place_name) {
+      const { address, countryCode } = await searchPlace(longitude, latitude);
+      if (!address) {
         setCreateStore({
           error:
             "L'adresse semble invalide, essayez autre part ou contactez-nous",
         });
         return;
       }
-      const { place_name: address } = features[0];
-      setCreateStore({ address, longitude, latitude });
+      setCreateStore({ address, countryCode, longitude, latitude });
     } catch (e) {
       setCreateStore({ error: 'Erreur réseau, réessayez plus tard' });
     }
