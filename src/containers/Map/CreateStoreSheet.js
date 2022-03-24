@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { BackHandler, StyleSheet, Text, View } from 'react-native';
 import { Button, Title } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
@@ -32,6 +32,18 @@ const CreateStoreSheet = ({ createStore, onClose }) => {
     } else {
       sheet.current.close();
     }
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      function () {
+        if (createStore) {
+          onClose();
+          sheet.current.close();
+          return true;
+        }
+        return false;
+      },
+    );
+    return () => backHandler.remove();
   }, [createStore]);
 
   return (
@@ -44,8 +56,8 @@ const CreateStoreSheet = ({ createStore, onClose }) => {
             mode="outlined"
             style={styles.actionsButton}
             onPress={() => {
-              sheet.current.close();
               onClose();
+              sheet.current.close();
             }}>
             Annuler
           </Button>

@@ -227,7 +227,7 @@ const EditProducts = ({ navigation, route }) => {
         value={specialPrice ? String(specialPrice) : null}
         keyboardType="decimal-pad"
         returnKeyType="done"
-        right={<TextInput.Affix text="€" />}
+        right={<TextInput.Affix text={currencies[currencyCode].symbol} />}
       />
       {storeProduct.id && (
         <Button
