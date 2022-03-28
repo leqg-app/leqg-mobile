@@ -25,12 +25,11 @@ const Map = ({ navigation, route }) => {
   const { params } = route;
 
   useEffect(() => {
-    const init = async () => {
-      await actions.getUser();
-      Promise.all([actions.getStores(), actions.getProducts()]);
-    };
-
-    init().finally(() => RNBootSplash.hide({ fade: true }));
+    Promise.all([
+      actions.getUser(),
+      actions.getStores(),
+      actions.getProducts(),
+    ]).finally(() => RNBootSplash.hide({ fade: true }));
   }, []);
 
   useFocusEffect(() => {
