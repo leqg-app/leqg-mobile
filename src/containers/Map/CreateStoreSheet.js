@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { BackHandler, StyleSheet, Text, View } from 'react-native';
-import { Button, Title } from 'react-native-paper';
+import { Title } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import ActionSheet from '../../components/ActionSheet';
+import ActionButtons from '../../components/ActionButtons';
 
 function getStateText(createStore) {
   if (!createStore) {
@@ -51,29 +52,20 @@ const CreateStoreSheet = ({ createStore, onClose }) => {
       <View style={styles.createStoreSheet}>
         <Title>Ajouter un nouveau bar</Title>
         <Text>{getStateText(createStore)}</Text>
-        <View style={styles.actions}>
-          <Button
-            mode="outlined"
-            style={styles.actionsButton}
-            onPress={() => {
-              onClose();
-              sheet.current.close();
-            }}>
-            Annuler
-          </Button>
-          <Button
-            mode="contained"
-            style={styles.actionsButton}
-            disabled={!createStore?.address}
-            onPress={() =>
-              navigation.navigate('EditStoreScreen', {
-                screen: 'EditStore',
-                params: { store: createStore },
-              })
-            }>
-            Ajouter
-          </Button>
-        </View>
+        <ActionButtons
+          onCancel={() => {
+            onClose();
+            sheet.current.close();
+          }}
+          onSubmit={() =>
+            navigation.navigate('EditStoreScreen', {
+              screen: 'EditStore',
+              params: { store: createStore },
+            })
+          }
+          submitLabel="Ajouter"
+          disabled={!createStore?.address}
+        />
       </View>
     </ActionSheet>
   );
@@ -82,16 +74,6 @@ const CreateStoreSheet = ({ createStore, onClose }) => {
 const styles = StyleSheet.create({
   createStoreSheet: {
     paddingHorizontal: 20,
-  },
-  actions: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 20,
-  },
-  actionsButton: {
-    borderRadius: 99,
-    width: '40%',
   },
 });
 

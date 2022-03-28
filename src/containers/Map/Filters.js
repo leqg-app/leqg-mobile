@@ -6,19 +6,42 @@ import { useNavigation, useRoute } from '@react-navigation/core';
 import { useStore } from '../../store/context';
 import PriceFilter from './PriceFilter';
 
+function getPrice(priceRangeFilter) {
+  if (!priceRangeFilter) {
+    return 'Prix';
+  }
+  const [min, max] = priceRangeFilter;
+  if (min && max !== 10) {
+    return `${min}€ - ${max}€`;
+  }
+  if (min) {
+    return `+ de ${min}€`;
+  }
+  if (max < 10) {
+    return `- de ${max}€`;
+  }
+  return 'Prix';
+}
+
 const Filters = ({ onChange }) => {
   const [state] = useStore();
   const navigation = useNavigation();
   const route = useRoute();
   const [priceModal, setPriceModal] = useState(false);
-  const [priceFilter, setPriceFilter] = useState(undefined);
+  const [priceRangeFilter, setPriceFilter] = useState(undefined);
   const [beerFilter, setBeerFilter] = useState(undefined);
   const [openNow, setOpenFilter] = useState(false);
 
   useEffect(() => {
     const filters = [];
-    if (priceFilter) {
-      filters.push(['<=', ['get', 'price'], priceFilter]);
+    if (priceRangeFilter) {
+      const [min, max] = priceRangeFilter;
+      if (min > 0) {
+        filters.push(['>=', ['get', 'price'], min]);
+      }
+      if (max < 10) {
+        filters.push(['<=', ['get', 'price'], max]);
+      }
     }
     if (beerFilter) {
       filters.push(['in', beerFilter, ['get', 'products']]);
@@ -54,7 +77,7 @@ const Filters = ({ onChange }) => {
       );
     }
     onChange(filters);
-  }, [priceFilter, beerFilter, openNow]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [priceRangeFilter, beerFilter, openNow]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (beerFilter !== route.params?.productFilter) {
@@ -73,9 +96,9 @@ const Filters = ({ onChange }) => {
             style={styles.filter}
             icon="currency-usd"
             onPress={() => setPriceModal(true)}
-            onClose={priceFilter && (() => setPriceFilter(undefined))}
+            onClose={priceRangeFilter && (() => setPriceFilter(undefined))}
             mode="outlined">
-            {priceFilter ? `Prix: ${priceFilter}€` : 'Prix'}
+            {getPrice(priceRangeFilter)}
           </Chip>
           <Chip
             style={styles.filter}
@@ -97,13 +120,11 @@ const Filters = ({ onChange }) => {
           </Chip>
         </View>
       </ScrollView>
-      {priceModal && (
-        <PriceFilter
-          onClose={() => setPriceModal(false)}
-          onPrice={price => setPriceFilter(price)}
-          initialPrice={priceFilter}
-        />
-      )}
+      <PriceFilter
+        visible={priceModal}
+        onClose={() => setPriceModal(false)}
+        onPrice={priceRange => setPriceFilter(priceRange)}
+      />
     </>
   );
 };
