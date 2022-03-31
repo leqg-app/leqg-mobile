@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import AppIntro from 'react-native-intro-screens';
 import RNBootSplash from 'react-native-bootsplash';
 import { IconButton } from 'react-native-paper';
-import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { theme } from './constants';
-import { storage } from './store/storage';
-import { useStore } from './store/context';
+import { theme } from '../../constants';
+import { useStore } from '../../store/context';
+import LocationPermission from './LocationPermission';
 
-function Splash() {
+function Intro({ navigation }) {
   const [, actions] = useStore();
 
   useEffect(() => {
@@ -20,13 +20,8 @@ function Splash() {
     ]);
   }, []);
 
-  const done = async () => {
-    await requestMultiple([
-      PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
-      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-      PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-    ]);
-    storage.set('firstOpen', true);
+  const next = async () => {
+    navigation.navigate('LocationPermission');
   };
 
   const pages = [
@@ -57,8 +52,8 @@ function Splash() {
   ];
   return (
     <AppIntro
-      onDoneBtnClick={done}
-      onSkipBtnClick={done}
+      onDoneBtnClick={next}
+      onSkipBtnClick={next}
       doneBtnLabel="OK"
       skipBtnLabel="Passer"
       pageArray={pages}
@@ -67,4 +62,19 @@ function Splash() {
   );
 }
 
-export default Splash;
+const IntroStack = createNativeStackNavigator();
+
+export default () => (
+  <IntroStack.Navigator>
+    <IntroStack.Screen
+      options={{ headerShown: false }}
+      name="Intro"
+      component={Intro}
+    />
+    <IntroStack.Screen
+      options={{ headerShown: false }}
+      name="LocationPermission"
+      component={LocationPermission}
+    />
+  </IntroStack.Navigator>
+);

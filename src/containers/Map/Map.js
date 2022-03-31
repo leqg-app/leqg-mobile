@@ -29,7 +29,8 @@ const Map = ({ navigation, route }) => {
       actions.getUser(),
       actions.getStores(),
       actions.getProducts(),
-    ]).finally(() => RNBootSplash.hide({ fade: true }));
+    ]);
+    RNBootSplash.hide({ fade: true });
   }, []);
 
   useFocusEffect(() => {
