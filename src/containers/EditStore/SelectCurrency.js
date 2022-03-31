@@ -9,20 +9,15 @@ const currenciesArray = Object.entries(currencies).map(([code, details]) => ({
   code,
 }));
 
+const ITEM_HEIGHT = 50;
+
 const CurrencyRow = ({ currency, onSelect }) => (
   <List.Item
     title={currency.name}
+    style={styles.currencyRow}
     onPress={() => onSelect(currency.code)}
     left={props => (
-      <Text
-        {...props}
-        style={{
-          fontSize: 17,
-          fontWeight: 'bold',
-          width: 50,
-          textAlign: 'center',
-          textAlignVertical: 'center',
-        }}>
+      <Text {...props} style={styles.currencyName}>
         {currency.symbol}
       </Text>
     )}
@@ -49,8 +44,15 @@ const SelectCurrency = ({ navigation }) => {
   }, [navigation]);
 
   const onSelect = currencyCode => {
-    if (currencyCode) {
-      navigation.navigate('EditProduct', { currencyCode });
+    if (!currencyCode) {
+      return;
+    }
+    const { index, routes } = navigation.getState();
+    const previousScreenName = routes[index - 1]?.name;
+    if (previousScreenName) {
+      navigation.navigate(previousScreenName, { currencyCode });
+    } else {
+      navigation.goBack();
     }
   };
 
@@ -74,6 +76,11 @@ const SelectCurrency = ({ navigation }) => {
           <CurrencyRow currency={item} onSelect={onSelect} />
         )}
         keyExtractor={currency => currency.code}
+        getItemLayout={(_, index) => ({
+          length: ITEM_HEIGHT,
+          offset: ITEM_HEIGHT * index,
+          index,
+        })}
       />
     </SafeAreaView>
   );
@@ -87,15 +94,14 @@ const styles = StyleSheet.create({
     borderRadius: 0,
   },
   currencyRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(0,0,0,0.12)',
+    height: ITEM_HEIGHT,
   },
-  customName: {
+  currencyName: {
+    fontSize: 17,
     fontWeight: 'bold',
+    width: 50,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
 });
 

@@ -4,18 +4,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { List, Subheading, Title, useTheme } from 'react-native-paper';
 
 import Auth from './Auth';
+import Settings from './Settings';
 import { useStore } from '../../store/context';
+import Menu from '../../components/Menu';
 
-const Menu = ({ name, icon, onPress }) => (
-  <List.Item
-    style={styles.menu}
-    title={name}
-    onPress={onPress}
-    left={props => <List.Icon {...props} icon={icon} />}
-  />
-);
-
-const Account = () => {
+const Account = ({ navigation }) => {
   const [state, actions] = useStore();
 
   const signout = () => {
@@ -43,7 +36,14 @@ const Account = () => {
         </Subheading>
       </View>
       <View style={styles.menus}>
-        <Menu name="Se déconnecter" icon="logout" onPress={signout} />
+        <Menu>
+          <Menu.Item
+            name="Paramètres"
+            icon="cog-outline"
+            onPress={() => navigation.navigate('SettingsStack')}
+          />
+          <Menu.Item name="Se déconnecter" icon="logout" onPress={signout} />
+        </Menu>
       </View>
     </View>
   );
@@ -84,10 +84,15 @@ export default () => {
       ) : (
         <AccountStack.Screen
           options={{ headerShown: false }}
-          name="Auth"
+          name="AuthStack"
           component={Auth}
         />
       )}
+      <AccountStack.Screen
+        options={{ headerShown: false }}
+        name="SettingsStack"
+        component={Settings}
+      />
     </AccountStack.Navigator>
   );
 };

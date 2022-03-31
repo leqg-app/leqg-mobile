@@ -217,7 +217,7 @@ export default () => {
       }}>
       <AuthStack.Screen
         options={{ title: 'Connexion' }}
-        name="AuthScreen"
+        name="Auth"
         component={Auth}
       />
       <AuthStack.Screen
