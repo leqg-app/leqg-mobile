@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import MapboxGL, { Logger } from '@react-native-mapbox-gl/maps';
-import Geolocation from 'react-native-geolocation-service';
-import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
 import Config from 'react-native-config';
@@ -12,6 +10,8 @@ import { isDark, theme } from '../../constants';
 import { useStore } from '../../store/context';
 import searchPlace from '../../utils/searchPlace';
 import CreateStoreSheet from './CreateStoreSheet';
+import { storage } from '../../store/storage';
+import getLocation from '../../utils/location';
 
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
@@ -19,7 +19,10 @@ MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 if (__DEV__) {
   Logger.setLogCallback(log => {
     const { message } = log;
-    if (message.match('Request failed due to a permanent error: Canceled')) {
+    if (
+      message.match('Request failed due to a permanent error: Canceled') ||
+      message.match('Unable to resolve host')
+    ) {
       return true;
     }
     return false;
@@ -27,6 +30,7 @@ if (__DEV__) {
 }
 
 const CENTER = [2.341924, 48.860395];
+const storedMapPosition = storage.getObject('mapPosition', {});
 
 const Mapbox = ({ filters, onPress, selectedStore }) => {
   const camera = useRef();
@@ -36,88 +40,97 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
   const [createStore, setCreateStore] = useState();
   const [mapState, setState] = useState({
     position: undefined,
-    initialPosition: undefined,
-    location: false,
-    followLocation: true,
+    initialPosition: storedMapPosition.coordinates,
+    initialZoomLevel: storedMapPosition.zoom,
+    isLocated: false,
+    isFollowing: storedMapPosition.followUser || false,
   });
 
-  const { position, initialPosition, location, followLocation } = mapState;
+  const { position, isFollowing, initialPosition, initialZoomLevel } = mapState;
+
   const setMap = state => setState({ ...mapState, ...state });
 
   useEffect(() => {
-    Geolocation.getCurrentPosition(
-      ({ coords }) =>
+    // At start, get location
+    // If no initial position yet, use location
+    (async () => {
+      try {
+        const position = await getLocation();
         setMap({
-          location: true,
-          position: [coords.longitude, coords.latitude],
-          initialPosition: [coords.longitude, coords.latitude],
-        }),
-      () =>
+          position,
+          ...(!initialPosition && {
+            initialPosition: position,
+            initialZoomLevel: 13,
+            isFollowing: true,
+          }),
+        });
+      } catch (e) {
         setMap({
-          location: false,
-          position: CENTER,
-          initialPosition: CENTER,
-        }),
-      {
-        timeout: 2000,
-      },
-    );
-  }, [camera.current]);
+          position: undefined,
+          ...(!initialPosition && {
+            initialPosition: CENTER,
+            initialZoomLevel: 7,
+            isFollowing: false,
+          }),
+        });
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (selectedStore && camera.current) {
       setCreateStore();
-      setMap({ followLocation: false });
+      setMap({ isFollowing: false });
       camera.current.flyTo([selectedStore.lng, selectedStore.lat]);
     }
   }, [selectedStore]);
 
-  const moveTo = position => {
+  const moveTo = centerCoordinate => {
     if (!camera.current) {
       return;
     }
     camera.current.setCamera({
-      centerCoordinate: position,
+      centerCoordinate,
       zoomLevel: 13,
       animationDuration: 1500,
     });
   };
 
   const moveToCurrentLocation = async () => {
-    const status = await requestMultiple([
-      PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
-      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-      PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-    ]);
-    const asked = Platform.select({
-      ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-      android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-    });
-    if (status[asked] !== 'granted') {
-      // TODO: display error message
-      setMap({ location: false });
-      return;
-    }
-    Geolocation.getCurrentPosition(({ coords }) => {
-      const position = [coords.longitude, coords.latitude];
+    try {
+      const position = await getLocation({ timeout: 3000 });
       moveTo(position);
       setMap({
-        location: true,
         position,
-        followLocation: true,
+        isFollowing: true,
       });
-    });
+    } catch (e) {
+      console.log(e);
+      // TODO: display error message
+      setMap({ position: undefined });
+    }
   };
 
   const onMove = ({ properties }) => {
-    if (properties.isUserInteraction && followLocation) {
-      setMap({ followLocation: false });
+    if (properties.isUserInteraction && isFollowing) {
+      setMap({ isFollowing: false });
     }
+  };
+
+  const didMove = ({ geometry, properties }) => {
+    const { coordinates } = geometry;
+    const { isUserInteraction, zoomLevel } = properties;
+    storage.setObject('mapPosition', {
+      ...mapState,
+      followUser: isFollowing && isUserInteraction ? false : isFollowing,
+      coordinates,
+      zoom: zoomLevel,
+    });
   };
 
   const onUpdateLocation = ({ coords }) => {
     const position = [coords.longitude, coords.latitude];
-    if (followLocation) {
+    if (isFollowing) {
       moveTo(position);
     }
     setMap({ position });
@@ -138,7 +151,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
     [state.stores],
   );
 
-  if (!position) {
+  if (!initialPosition) {
     return <View />;
   }
 
@@ -171,12 +184,13 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         onPress={() => onPress()}
         onLongPress={searchPoint}
         compassViewPosition={2}
-        onRegionIsChanging={onMove}>
+        onRegionIsChanging={onMove}
+        onRegionDidChange={didMove}>
         <MapboxGL.Camera
           ref={camera}
           animationDuration={0}
           centerCoordinate={initialPosition}
-          zoomLevel={13}
+          zoomLevel={initialZoomLevel}
         />
         <MapboxGL.UserLocation
           onUpdate={onUpdateLocation}
@@ -220,7 +234,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
             />
           </MapboxGL.ShapeSource>
         )}
-        {location && (
+        {position && (
           <>
             <MapboxGL.ShapeSource
               id="textSource"
@@ -253,10 +267,10 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
       <FAB
         style={[
           styles.fab,
-          { backgroundColor: followLocation ? colors.primary : 'white' },
+          { backgroundColor: isFollowing ? colors.primary : 'white' },
         ]}
         icon="target"
-        color={followLocation ? 'white' : colors.primary}
+        color={isFollowing ? 'white' : colors.primary}
         onPress={moveToCurrentLocation}
       />
       <FAB
