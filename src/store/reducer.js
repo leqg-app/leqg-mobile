@@ -74,6 +74,13 @@ export const reducer = (state, action) => {
       };
     }
 
+    case 'GET_RATES_SUCCESS': {
+      return {
+        ...state,
+        rates: action.rates,
+      };
+    }
+
     case 'SET_STORE': {
       const { id, store, contributed } = action;
       const stores = state.stores.filter(s => id !== s.id);

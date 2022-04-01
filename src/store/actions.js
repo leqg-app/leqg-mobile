@@ -6,6 +6,7 @@ import {
   editStore,
   getVersion,
 } from '../api/stores';
+import { getRates } from '../api/rates';
 import {
   signIn,
   signUp,
@@ -15,6 +16,8 @@ import {
 } from '../api/users';
 import { storeToMap } from '../utils/formatStore';
 import { storage } from './storage';
+
+const versionRequest = getVersion().catch(err => (console.log(err), {}));
 
 export const actionCreators = (dispatch, state) => {
   return {
@@ -98,7 +101,7 @@ export const actionCreators = (dispatch, state) => {
         dispatch({ type: 'GET_STORES_SUCCESS', stores });
       }
       // Check if we need to get stores from API
-      const apiVersions = await getVersion();
+      const apiVersions = await versionRequest;
       const versions = storage.getObject('versions', {});
       if (versions.stores === apiVersions?.stores) {
         return;
@@ -159,8 +162,8 @@ export const actionCreators = (dispatch, state) => {
         dispatch({ type: 'GET_PRODUCTS_SUCCESS', products });
       }
       // Check if we need to get products from API
-      const apiVersions = await getVersion();
-      const versions = storage.getObject('versions', []);
+      const apiVersions = await versionRequest;
+      const versions = storage.getObject('versions', {});
       if (versions.products === apiVersions?.products) {
         return;
       }
@@ -175,6 +178,32 @@ export const actionCreators = (dispatch, state) => {
         dispatch({ type: 'GET_PRODUCTS_SUCCESS', products });
       } catch (err) {
         dispatch({ type: 'GET_PRODUCTS_FAIL', message: err.message });
+      }
+    },
+
+    getRates: async () => {
+      // Get rates from device data
+      const rates = storage.getObject('rates', []);
+      if (rates?.length) {
+        dispatch({ type: 'GET_RATES_SUCCESS', rates });
+      }
+      // Check if we need to get rates from API
+      const apiVersions = await versionRequest;
+      const versions = storage.getObject('versions', {});
+      if (!apiVersions.rates || versions.rates === apiVersions?.rates) {
+        return;
+      }
+      dispatch({ type: 'GET_RATES' });
+      try {
+        const rates = await getRates();
+        storage.setObject('rates', rates);
+        storage.setObject('versions', {
+          ...versions,
+          rates: apiVersions.rates,
+        });
+        dispatch({ type: 'GET_RATES_SUCCESS', rates });
+      } catch (err) {
+        dispatch({ type: 'GET_RATES_FAIL', message: err.message });
       }
     },
 

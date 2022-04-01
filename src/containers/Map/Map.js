@@ -29,6 +29,7 @@ const Map = ({ navigation, route }) => {
       actions.getUser(),
       actions.getStores(),
       actions.getProducts(),
+      actions.getRates(),
     ]);
     RNBootSplash.hide({ fade: true });
   }, []);

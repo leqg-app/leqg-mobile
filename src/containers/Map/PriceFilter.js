@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Paragraph, Title } from 'react-native-paper';
 import { BarRheostat } from 'react-native-rheostat';
@@ -11,19 +11,37 @@ import { useStore } from '../../store/context';
 
 let memoValues = [];
 
+function getRate(currencyCode, rates) {
+  if (!currencyCode || currencyCode === 'EUR') {
+    return 1;
+  }
+  return rates.find(rate => rate.code === currencyCode)?.rate || 1;
+}
+
+function getStats({ stores, rates }) {
+  const snaps = new Array(20).fill(0);
+  let priceSum = 0,
+    storeCount = 0;
+  for (const store of stores) {
+    if (!store.price) {
+      continue;
+    }
+    const price = store.price / getRate(store.currency, rates);
+    const step = Math.min(Math.round(price * 2), 19) - 1;
+    snaps[step]++;
+    storeCount++;
+    priceSum += price;
+  }
+  const average = (priceSum / storeCount).toFixed(2);
+  return () => ({ snaps, average });
+}
+
 function PriceFilter({ visible, onClose, onPrice }) {
   const sheet = useRef();
   const [values, setValues] = useState([0, 20]);
   const [state] = useStore();
 
-  const snaps = new Array(20).fill(0);
-  let priceSum = 0;
-  for (const store of state.stores) {
-    const step = Math.min(Math.round(store.price * 2), 19) - 1;
-    snaps[step]++;
-    priceSum += store.price;
-  }
-  const average = priceSum / state.stores.length;
+  const { snaps, average } = useMemo(getStats(state), [state.stores]);
 
   useEffect(() => {
     if (visible) {
@@ -54,7 +72,7 @@ function PriceFilter({ visible, onClose, onPrice }) {
           {min}€ - {max === 10 ? 'Plus de 10' : max}€
         </Paragraph>
         <Paragraph>
-          Le prix moyen d'une pinte de bière est de {average.toFixed(2)}€
+          Le prix moyen d'une pinte de bière est de {average}€
         </Paragraph>
         <BarRheostat
           theme={{ rheostat: { themeColor: '#163033' } }}
@@ -89,7 +107,7 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     marginTop: 15,
-    marginBottom: 5,
+    // marginBottom: 5,
   },
 });
 

@@ -18,6 +18,7 @@ export const initialState = {
   user: {
     jwt: undefined,
   },
+  rates: [],
   stores: [],
   storeEdition: createStoreEdition(),
   storesDetails: {},
