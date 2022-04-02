@@ -4,11 +4,9 @@ import { ActivityIndicator, Button, List, Title } from 'react-native-paper';
 import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { theme } from '../../constants';
+import { DEFAULT_MAP, theme } from '../../constants';
 import { storage } from '../../store/storage';
 import getLocation from '../../utils/location';
-
-const DEFAULT_COORDINATES = [2.341924, 48.860395];
 
 function Bullet({ text }) {
   return (
@@ -28,13 +26,8 @@ function LocationPermission() {
 
   const grant = async () => {
     setLoading(true);
-    await requestMultiple([
-      PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
-      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-      PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-    ]);
     try {
-      const coordinates = await getLocation();
+      const coordinates = await getLocation({ askedByUser: true });
       storage.setObject('mapPosition', {
         followUser: true,
         coordinates,
@@ -45,8 +38,8 @@ function LocationPermission() {
       // TODO: toast error
       storage.setObject('mapPosition', {
         followUser: false,
-        coordinates: DEFAULT_COORDINATES,
-        zoom: 7,
+        coordinates: DEFAULT_MAP.CENTER_COORDINATES,
+        zoom: DEFAULT_MAP.ZOOM_LEVEL,
       });
     }
     next();

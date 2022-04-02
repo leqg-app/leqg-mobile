@@ -13,11 +13,10 @@ function Intro({ navigation }) {
 
   useEffect(() => {
     RNBootSplash.hide({ fade: true });
-    Promise.all([
-      actions.getStores(),
-      actions.getProducts(),
-      actions.getUser(),
-    ]);
+    actions.getUser();
+    actions.getStores();
+    actions.getProducts();
+    actions.getRates();
   }, []);
 
   const next = async () => {

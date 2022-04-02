@@ -25,12 +25,10 @@ const Map = ({ navigation, route }) => {
   const { params } = route;
 
   useEffect(() => {
-    Promise.all([
-      actions.getUser(),
-      actions.getStores(),
-      actions.getProducts(),
-      actions.getRates(),
-    ]);
+    actions.getUser();
+    actions.getStores();
+    actions.getProducts();
+    actions.getRates();
     RNBootSplash.hide({ fade: true });
   }, []);
 

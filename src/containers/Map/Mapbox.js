@@ -6,7 +6,7 @@ import { FAB, useTheme } from 'react-native-paper';
 import Config from 'react-native-config';
 
 import tooltipIcon from '../../assets/tooltip-50.png';
-import { isDark, theme } from '../../constants';
+import { DEFAULT_MAP, isDark, theme } from '../../constants';
 import { useStore } from '../../store/context';
 import searchPlace from '../../utils/searchPlace';
 import CreateStoreSheet from './CreateStoreSheet';
@@ -29,7 +29,6 @@ if (__DEV__) {
   });
 }
 
-const CENTER = [2.341924, 48.860395];
 const storedMapPosition = storage.getObject('mapPosition', {});
 
 const Mapbox = ({ filters, onPress, selectedStore }) => {
@@ -68,8 +67,8 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         setMap({
           position: undefined,
           ...(!initialPosition && {
-            initialPosition: CENTER,
-            initialZoomLevel: 7,
+            initialPosition: DEFAULT_MAP.CENTER_COORDINATES,
+            initialZoomLevel: DEFAULT_MAP.ZOOM_LEVEL,
             isFollowing: false,
           }),
         });
@@ -98,7 +97,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
 
   const moveToCurrentLocation = async () => {
     try {
-      const position = await getLocation({ timeout: 3000 });
+      const position = await getLocation({ timeout: 5000, askedByUser: true });
       moveTo(position);
       setMap({
         position,

@@ -15,6 +15,7 @@ export const daysFull = [
   'samedi',
   'dimanche',
 ];
+
 export const theme = {
   ...Theme,
   colors: {
@@ -24,4 +25,9 @@ export const theme = {
     accent: '#f9a825',
     danger: '#B00020',
   },
+};
+
+export const DEFAULT_MAP = {
+  CENTER_COORDINATES: [2.3419, 48.8603], // Paris
+  ZOOM_LEVEL: 4,
 };
