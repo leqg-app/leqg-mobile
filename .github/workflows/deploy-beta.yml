@@ -28,7 +28,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '12'
+          node-version: '14'
 
       - name: Cache dependencies
         id: cache-dependencies
@@ -111,7 +111,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '12'
+          node-version: '14'
 
       - name: Cache Node.js dependencies
         id: cache-nodejs-dependencies
