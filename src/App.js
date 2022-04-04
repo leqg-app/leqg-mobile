@@ -17,6 +17,7 @@ if (!__DEV__) {
 } else {
   // @gorhom/bottom-sheet@4.1.5
   LogBox.ignoreLogs([
+    /ViewPropType/, // react-native-mapbox-gl
     "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
   ]);
 }
