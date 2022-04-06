@@ -12,6 +12,7 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
+import Share from 'react-native-share';
 
 import { useStore } from '../../store/context';
 
@@ -84,6 +85,14 @@ const StoreDetails = ({ navigation, store }) => {
       params: { store },
     });
 
+  const share = () => {
+    const message = `Retrouvons nous au ${store.name}\n\n${store.address}`;
+    Share.open({
+      title: 'Retrouvons nous',
+      message: `${message}`,
+    }).catch(() => {});
+  };
+
   return (
     <View>
       <View style={styles.actionsBar}>
@@ -92,7 +101,7 @@ const StoreDetails = ({ navigation, store }) => {
           name="Itinéraire"
           icon="directions"
         />
-        <ActionButton onPress={() => {}} name="Partager" icon="share-variant" />
+        <ActionButton onPress={share} name="Partager" icon="share-variant" />
         <ActionButton
           onPress={toggleFavorite}
           name="Enregistrer"
