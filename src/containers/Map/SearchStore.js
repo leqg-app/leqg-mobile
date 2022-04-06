@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchbar: {
-    elevation: 0,
     color: 'white',
     marginTop: 10,
     marginHorizontal: 20,

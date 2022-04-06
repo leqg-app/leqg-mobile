@@ -120,7 +120,6 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
     const { coordinates } = geometry;
     const { isUserInteraction, zoomLevel } = properties;
     storage.setObject('mapPosition', {
-      ...mapState,
       followUser: isFollowing && isUserInteraction ? false : isFollowing,
       coordinates,
       zoom: zoomLevel,
@@ -363,7 +362,6 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
-    elevation: 0,
     borderColor: 'grey',
     borderWidth: StyleSheet.hairlineWidth,
   },

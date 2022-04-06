@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
   filter: {
     zIndex: 1,
     marginRight: 10,
+    elevation: 4,
   },
 });
 

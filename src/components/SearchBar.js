@@ -30,6 +30,7 @@ function SearchBar({ onSearch, onBack, loading }) {
 
 const styles = StyleSheet.create({
   container: {
+    elevation: 4,
     backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'row',
