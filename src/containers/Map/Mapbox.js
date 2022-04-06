@@ -110,6 +110,13 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
     }
   };
 
+  const onMapPress = () => {
+    onPress();
+    if (createStore) {
+      setCreateStore();
+    }
+  };
+
   const onMove = ({ properties }) => {
     if (properties.isUserInteraction && isFollowing) {
       setMap({ isFollowing: false });
@@ -179,7 +186,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         localizeLabels={true}
         pitchEnabled={false}
         styleURL={isDark ? MapboxGL.StyleURL.Dark : undefined}
-        onPress={() => onPress()}
+        onPress={onMapPress}
         onLongPress={searchPoint}
         compassViewPosition={2}
         onRegionIsChanging={onMove}
