@@ -1,4 +1,7 @@
 {
+  "hooks": {
+    "after:bump": "yarn react-native bump-version --skip-semver-for all"
+  },
   "git": {
     "commitMessage": "${version}",
     "tagName": "v${version}"
