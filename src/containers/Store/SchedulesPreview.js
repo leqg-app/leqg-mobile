@@ -10,19 +10,16 @@ function Open({ day }) {
       <Text>
         <Text style={styles.scheduleOpen}>Ouvert</Text>
         {closing !== null && <Text> jusqu'à {secondToTime(closing)}</Text>}
-        {openingSpecial && (
-          <Text>
-            {' '}
-            - Happy hour de{' '}
-            <Text
-              style={
-                inHours(openingSpecial, closingSpecial) && styles.boldText
-              }>
-              {secondToTime(openingSpecial)} à {secondToTime(closingSpecial)}
-            </Text>
-          </Text>
-        )}
       </Text>
+      {openingSpecial && (
+        <Text style={styles.schedules}>
+          Happy hour de{' '}
+          <Text
+            style={inHours(openingSpecial, closingSpecial) && styles.boldText}>
+            {secondToTime(openingSpecial)} à {secondToTime(closingSpecial)}
+          </Text>
+        </Text>
+      )}
     </View>
   );
 }
@@ -70,7 +67,11 @@ function SchedulesPreview({ schedules }) {
 const styles = StyleSheet.create({
   infoScheduleState: {
     display: 'flex',
-    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 10,
+  },
+  schedules: {
+    marginTop: 4,
   },
   scheduleOpen: {
     color: 'green',

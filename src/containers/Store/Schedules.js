@@ -9,7 +9,7 @@ function Time({ schedule }) {
   return !open ? '-' : `${secondToTime(open)}-${secondToTime(close)}`;
 }
 
-function DaySchedule({ day }) {
+function DaySchedule({ day, hasSpecial }) {
   const { closed, opening, closing, openingSpecial, closingSpecial } = day;
 
   const style = [styles.hoursCell];
@@ -19,6 +19,7 @@ function DaySchedule({ day }) {
   }
 
   if (closed) {
+    style.push(styles.twoCol);
     return <Text style={style}>Fermé</Text>;
   }
   if (opening || openingSpecial) {
@@ -27,9 +28,11 @@ function DaySchedule({ day }) {
         <Text style={style}>
           <Time schedule={[opening, closing]} />
         </Text>
-        <Text style={style}>
-          <Time schedule={[openingSpecial, closingSpecial]} />
-        </Text>
+        {hasSpecial && (
+          <Text style={style}>
+            <Time schedule={[openingSpecial, closingSpecial]} />
+          </Text>
+        )}
       </>
     );
   }
@@ -41,12 +44,13 @@ function Schedules({ schedules }) {
     (days, schedule) => ((days[schedule.dayOfWeek - 1] = schedule), days),
     [],
   );
-  const head = days.some(day => day.opening || day.openingSpecial);
+  const hasSchedule = days.some(day => day.opening || day.openingSpecial);
+  const hasSpecial = hasSchedule && days.some(day => day.openingSpecial);
   const today = new Date().getDay() ? new Date().getDay() : 7;
 
   return (
     <View style={styles.table}>
-      {head && (
+      {hasSpecial && (
         <View style={styles.flexRow}>
           <View style={styles.dayCell} />
           <Text style={styles.hoursCell}>Ouverture</Text>
@@ -63,9 +67,7 @@ function Schedules({ schedules }) {
               ]}>
               {daysFull[day.dayOfWeek - 1]}
             </Text>
-            <View style={styles.flexRow}>
-              <DaySchedule day={day} />
-            </View>
+            <DaySchedule day={day} hasSpecial={hasSpecial} />
           </View>
         ))}
       </View>
@@ -81,6 +83,7 @@ const styles = StyleSheet.create({
   scheduleDayRow: {
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-around',
     marginBottom: 10,
   },
   flexRow: {
@@ -89,14 +92,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dayCell: {
-    width: '40%',
+    width: 70,
+    flexGrow: 1,
   },
   hoursCell: {
     width: 90,
     textAlign: 'center',
+    flexGrow: 1,
   },
   boldText: {
     fontWeight: 'bold',
+  },
+  twoCol: {
+    flexGrow: 6,
   },
 });
 
