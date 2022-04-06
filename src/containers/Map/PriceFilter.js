@@ -79,7 +79,7 @@ function PriceFilter({ visible, onClose, onPrice }) {
     sheet.current.close();
     onPrice((min > 0 || max < 10) && [min, max]);
     onClose();
-  }, []);
+  }, [min, max]);
 
   return (
     <ActionSheet ref={sheet} onDismiss={close} backdrop>
