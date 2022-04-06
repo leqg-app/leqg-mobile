@@ -12,7 +12,6 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
 
 import { useStore } from '../../store/context';
 
@@ -52,10 +51,9 @@ function openAddress(store) {
   Linking.openURL(url);
 }
 
-const StoreDetails = ({ store }) => {
+const StoreDetails = ({ navigation, store }) => {
   const [state, actions] = useStore();
   const { colors } = useTheme();
-  const navigation = useNavigation();
   const [modalLogin, setModalLogin] = useState(false);
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
