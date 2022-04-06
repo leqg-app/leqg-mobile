@@ -1,36 +1,75 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
+import { BackHandler } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Portal } from 'react-native-paper';
 import BottomSheet, {
+  BottomSheetBackdrop,
   BottomSheetView,
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const ActionSheet = React.forwardRef(({ children }, ref) => {
-  const { top } = useSafeAreaInsets();
-  const topbarHeight = top + 50;
+let currentIndex = -1;
 
-  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+const ActionSheet = React.forwardRef(
+  ({ children, onDismiss = () => {}, backdrop }, ref) => {
+    const { top } = useSafeAreaInsets();
 
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+    const topbarHeight = useMemo(() => top + 30, []);
+    const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
-  return (
-    <BottomSheet
-      ref={ref}
-      index={-1}
-      snapPoints={animatedSnapPoints}
-      handleHeight={animatedHandleHeight}
-      contentHeight={animatedContentHeight}
-      topInset={topbarHeight - 20}>
-      <BottomSheetView onLayout={handleContentLayout}>
-        {children}
-      </BottomSheetView>
-    </BottomSheet>
-  );
-});
+    const {
+      animatedHandleHeight,
+      animatedSnapPoints,
+      animatedContentHeight,
+      handleContentLayout,
+    } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+
+    useEffect(() => {
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        function () {
+          if (currentIndex !== -1) {
+            ref.current.close();
+            return true;
+          }
+          return false;
+        },
+      );
+      return () => backHandler.remove();
+    }, []);
+
+    const renderBackdrop = useCallback(
+      props => (
+        <BottomSheetBackdrop
+          {...props}
+          disappearsOnIndex={-1}
+          appearsOnIndex={0}
+        />
+      ),
+      [],
+    );
+    const onChange = useCallback(index => (currentIndex = index), []);
+
+    return (
+      <Portal>
+        <BottomSheet
+          ref={ref}
+          index={-1}
+          snapPoints={animatedSnapPoints}
+          handleHeight={animatedHandleHeight}
+          contentHeight={animatedContentHeight}
+          enablePanDownToClose
+          onClose={onDismiss}
+          onChange={onChange}
+          backdropComponent={backdrop && renderBackdrop}
+          topInset={topbarHeight}>
+          <BottomSheetView onLayout={handleContentLayout}>
+            {children}
+          </BottomSheetView>
+        </BottomSheet>
+      </Portal>
+    );
+  },
+);
 
 export default ActionSheet;

@@ -27,36 +27,26 @@ const CreateStoreSheet = ({ createStore, onClose }) => {
   const navigation = useNavigation();
   const sheet = useRef();
 
+  const close = React.useCallback(() => {
+    sheet.current.close();
+    onClose();
+  });
+
   useEffect(() => {
     if (createStore) {
       sheet.current.snapToIndex(0);
     } else {
-      sheet.current.close();
+      sheet.current?.close();
     }
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      function () {
-        if (createStore) {
-          onClose();
-          sheet.current.close();
-          return true;
-        }
-        return false;
-      },
-    );
-    return () => backHandler.remove();
   }, [createStore]);
 
   return (
-    <ActionSheet ref={sheet}>
+    <ActionSheet ref={sheet} onDismiss={close}>
       <View style={styles.createStoreSheet}>
         <Title>Ajouter un nouveau bar</Title>
         <Text>{getStateText(createStore)}</Text>
         <ActionButtons
-          onCancel={() => {
-            onClose();
-            sheet.current.close();
-          }}
+          onCancel={close}
           onSubmit={() =>
             navigation.navigate('EditStoreScreen', {
               screen: 'EditStore',
