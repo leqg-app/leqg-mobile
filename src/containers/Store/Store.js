@@ -116,7 +116,7 @@ const StoreDetails = ({ navigation, store }) => {
     }).catch(() => {});
   };
 
-  const call = () => store.phone && Linking.open(`tel:${store.phone}`);
+  const call = () => store.phone && Linking.openURL(`tel:${store.phone}`);
 
   return (
     <View>
