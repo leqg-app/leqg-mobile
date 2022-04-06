@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   ActivityIndicator,
@@ -11,30 +11,25 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import BottomSheet, {
-  BottomSheetScrollView,
-  useBottomSheetDynamicSnapPoints,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
 import { useStore } from '../../store/context';
 import SchedulesPreview from '../Store/SchedulesPreview';
 import Store from '../Store/Store';
 
 const StoreSheet = props => {
+  const navigation = useNavigation();
+  const [previewHeight, setPreviewHeight] = useState(0);
   const [state, actions] = useStore();
   const sheetPosition = useSharedValue(0);
   const { top, bottom } = useSafeAreaInsets();
 
   const topbarHeight = top + 50;
+  const sheetHeight = bottom + 170;
 
-  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT', '100%'], []);
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+  const initialSnapPoints = useMemo(() => [sheetHeight, '100%'], []);
 
   const animatedTopBar = useAnimatedStyle(() => ({
     transform: [
@@ -53,12 +48,20 @@ const StoreSheet = props => {
     [animatedTopBar],
   );
 
+  const getPreviewHeight = event =>
+    setPreviewHeight(event.nativeEvent.layout.height - 40);
+
   const animatedContent = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: interpolate(sheetPosition.value, [0.5, 1], [0, -83]),
+        translateY: interpolate(
+          sheetPosition.value,
+          [0.5, 1],
+          [0, -previewHeight],
+        ),
       },
     ],
+    opacity: sheetPosition.value,
   }));
   const contentStyle = useMemo(
     () => [styles.sheetContent, animatedContent],
@@ -85,18 +88,16 @@ const StoreSheet = props => {
       <BottomSheet
         ref={props.sheet}
         index={-1}
-        snapPoints={animatedSnapPoints}
-        handleHeight={animatedHandleHeight}
-        contentHeight={animatedContentHeight}
+        snapPoints={initialSnapPoints}
         animatedIndex={sheetPosition}
         topInset={topbarHeight - 20}
         bottomInset={bottom}
         enablePanDownToClose
         onClose={props.dismissStore}>
-        <BottomSheetScrollView style={styles.sheetContent}>
+        <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
           <Pressable
             onPress={() => props.sheet.current.snapToIndex(1)}
-            onLayout={handleContentLayout}>
+            onLayout={getPreviewHeight}>
             <View style={styles.previewContainer}>
               <Title numberOfLines={1} style={styles.title}>
                 {store?.name || props.store?.name}
@@ -114,7 +115,7 @@ const StoreSheet = props => {
             </View>
           </Pressable>
           <Animated.View style={contentStyle}>
-            {store && <Store navigation={props.navigation} store={store} />}
+            {store && <Store navigation={navigation} store={store} />}
           </Animated.View>
         </BottomSheetScrollView>
       </BottomSheet>
@@ -139,12 +140,11 @@ const styles = StyleSheet.create({
   sheetContent: { backgroundColor: 'white', minHeight: '100%' },
   previewContainer: {
     minHeight: 93,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   title: {
     fontWeight: 'bold',
     marginHorizontal: 15,
-    marginBottom: 10,
   },
   preview: {
     marginHorizontal: 16,
