@@ -113,7 +113,7 @@ const Filters = ({ onChange }) => {
           <Chip
             style={styles.filter}
             icon="clock-outline"
-            onPress={() => setOpenFilter(true)}
+            onPress={() => setOpenFilter(!openNow)}
             onClose={openNow && (() => setOpenFilter(false))}
             mode="outlined">
             Ouvert
