@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Platform, StyleSheet, Text, View, Linking } from 'react-native';
 import {
   Avatar,
@@ -6,7 +6,7 @@ import {
   Caption,
   Dialog,
   Divider,
-  IconButton,
+  List,
   Paragraph,
   Portal,
   TouchableRipple,
@@ -19,6 +19,8 @@ import { useStore } from '../../store/context';
 import StoreProducts from './StoreProducts';
 import SchedulesPreview from './SchedulesPreview';
 import Schedules from './Schedules';
+import { theme } from '../../constants';
+import { getUrlHost } from '../../utils/url';
 
 function ActionButton({ name, icon, onPress, color = 'white' }) {
   return (
@@ -36,8 +38,29 @@ function ActionButton({ name, icon, onPress, color = 'white' }) {
           color={color}
         />
       </TouchableRipple>
-      <Caption>{name}</Caption>
+      <Caption style={styles.actionCaption}>{name}</Caption>
     </View>
+  );
+}
+
+function ListInfo({ onPress, content, icon, chevron = true }) {
+  return (
+    <TouchableRipple onPress={onPress} rippleColor="rgba(0, 0, 0, .25)">
+      <View style={styles.row}>
+        <View style={styles.infoRow}>
+          <List.Icon
+            style={styles.infoIcon}
+            size={40}
+            icon={icon}
+            color={theme.colors.primary}
+          />
+          <Text style={styles.infoText}>{content}</Text>
+        </View>
+        {chevron && (
+          <List.Icon icon="chevron-right" color="grey" style={styles.chevron} />
+        )}
+      </View>
+    </TouchableRipple>
   );
 }
 
@@ -64,20 +87,20 @@ const StoreDetails = ({ navigation, store }) => {
       setModalLogin(true);
       return;
     }
-    if (isFavorite()) {
+    if (isFavorite) {
       actions.removeFavorite(store);
     } else {
       actions.addFavorite(store);
     }
   };
 
-  const isFavorite = () => {
+  const isFavorite = useMemo(() => {
     if (!state.user?.id) {
       return;
     }
     const { favorites = [] } = state.user;
     return favorites.some(favorite => favorite.id === store.id);
-  };
+  }, [state.user]);
 
   const editStore = () =>
     navigation.navigate('EditStoreScreen', {
@@ -93,6 +116,8 @@ const StoreDetails = ({ navigation, store }) => {
     }).catch(() => {});
   };
 
+  const call = () => store.phone && Linking.open(`tel:${store.phone}`);
+
   return (
     <View>
       <View style={styles.actionsBar}>
@@ -105,50 +130,46 @@ const StoreDetails = ({ navigation, store }) => {
         <ActionButton
           onPress={toggleFavorite}
           name="Enregistrer"
-          color={isFavorite() ? 'gold' : 'white'}
-          icon={isFavorite() ? 'star' : 'star-outline'}
+          color={isFavorite ? 'gold' : 'white'}
+          icon={isFavorite ? 'star' : 'star-outline'}
         />
+        {store.phone && (
+          <ActionButton onPress={call} name="Appeler" icon="phone" />
+        )}
       </View>
       <Divider />
-      <TouchableRipple
+      <ListInfo
         onPress={() => openAddress(store)}
-        rippleColor="rgba(0, 0, 0, .25)">
-        <View style={styles.row}>
-          <View style={styles.infoRow}>
-            <Avatar.Icon
-              style={styles.infoIcon}
-              size={40}
-              icon="map-marker"
-              color={colors.primary}
-            />
-            <Text style={styles.infoText}>{store.address}</Text>
-          </View>
-          <IconButton icon="chevron-right" color="grey" />
-        </View>
-      </TouchableRipple>
+        content={store.address}
+        icon="map-marker"
+      />
       <Divider />
       <TouchableRipple
         onPress={() => setExpandSchedules(!expandSchedules)}
         rippleColor="rgba(0, 0, 0, .25)">
         <View style={styles.row}>
-          <View style={styles.infoRow}>
-            <Avatar.Icon
-              style={styles.infoIcon}
-              size={40}
-              icon="clock"
-              color={colors.primary}
+          {!expandSchedules ? (
+            <View style={styles.infoRow}>
+              <List.Icon
+                style={styles.infoIcon}
+                size={40}
+                icon="clock"
+                color={colors.primary}
+              />
+              <SchedulesPreview schedules={store.schedules} />
+            </View>
+          ) : (
+            <View style={styles.schedulesWrapper}>
+              <Schedules schedules={store.schedules} />
+            </View>
+          )}
+          {!expandSchedules && (
+            <List.Icon
+              icon="chevron-down"
+              color="grey"
+              style={styles.chevron}
             />
-            {!expandSchedules ? (
-              <View style={styles.infoText}>
-                <SchedulesPreview schedules={store.schedules} />
-              </View>
-            ) : (
-              <View style={styles.schedulesWrapper}>
-                <Schedules schedules={store.schedules} />
-              </View>
-            )}
-          </View>
-          {!expandSchedules && <IconButton icon="chevron-down" color="grey" />}
+          )}
         </View>
       </TouchableRipple>
       {expandSchedules && (
@@ -171,19 +192,32 @@ const StoreDetails = ({ navigation, store }) => {
         </View>
       </TouchableRipple>
       <Divider /> */}
-      <TouchableRipple onPress={editStore} rippleColor="rgba(0, 0, 0, .25)">
-        <View style={styles.infoRow}>
-          <Avatar.Icon
-            style={styles.infoIcon}
-            size={40}
-            icon="pencil"
-            color={colors.primary}
-          />
+      <ListInfo
+        onPress={editStore}
+        content={
           <Text style={styles.infoTextItalic}>Suggérer une modification</Text>
-        </View>
-      </TouchableRipple>
+        }
+        icon="pencil"
+        chevron={false}
+      />
       <Divider />
       <StoreProducts products={store.products} />
+      {store.website && (
+        <>
+          <ListInfo
+            onPress={() => Linking.openURL(store.website)}
+            content={getUrlHost(store.website)}
+            icon="earth"
+          />
+          <Divider />
+        </>
+      )}
+      {store.phone && (
+        <>
+          <ListInfo onPress={call} content={store.phone} icon="phone" />
+          <Divider />
+        </>
+      )}
       {/* <Subheading>Résumé des avis</Subheading>
       <Divider />
       <Subheading>Donner une note et un avis</Subheading>
@@ -265,9 +299,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  actionCaption: {
+    textAlign: 'center',
+  },
   infoRow: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   row: {
     display: 'flex',
@@ -277,18 +316,19 @@ const styles = StyleSheet.create({
   },
   infoIcon: {
     marginHorizontal: 10,
-    marginTop: 10,
     backgroundColor: 'transparent',
   },
   infoText: {
     flex: 1,
-    marginVertical: 20,
   },
   infoTextItalic: {
-    marginVertical: 20,
     fontStyle: 'italic',
   },
+  chevron: {
+    width: 30,
+  },
   schedulesWrapper: {
+    marginHorizontal: 20,
     marginTop: 20,
     flex: 1,
   },

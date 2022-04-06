@@ -12,6 +12,8 @@ const actions = {
 };
 const targets = {
   name: 'du nom',
+  phone: 'du téléphone',
+  website: 'du site internet',
   address: "de l'adresse",
   products: "d'une bière",
   schedules: 'des horaires',
