@@ -38,12 +38,12 @@ function Closed({ day }) {
 
 function SchedulesPreview({ schedules }) {
   const date = new Date();
-  const today = date.getDay() || 7;
+  const today = date.getDay() || 7; // 0 is sunday
   const now = date.getHours() * 3600 + date.getMinutes() * 60;
   const day = schedules.find(schedule => schedule.dayOfWeek === today);
 
   if (!day) {
-    return <Text />;
+    return <Open day={{}} />;
   }
 
   const { closed, opening, closing } = day;
