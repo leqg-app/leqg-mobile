@@ -17,7 +17,7 @@ import { useStore } from '../../store/context';
 
 const errors = {
   'Auth.form.error.email.taken':
-    'Cette adresse email est déjà utilisé, essayez de vous connecter',
+    'Cette adresse email est déjà utilisée, essayez de vous connecter',
   'Auth.form.error.username.taken':
     "Ce nom d'utilisateur est déjà utilisé, choisissez-en un autre",
   'Auth.form.error.invalid': 'Identifiant ou mot de passe incorrect',

@@ -16,8 +16,9 @@ import {
 } from '../api/users';
 import { storeToMap } from '../utils/formatStore';
 import { storage } from './storage';
+import { getErrorMessage } from '../utils/errorMessage';
 
-const versionRequest = getVersion().catch(err => (console.log(err), {}));
+const versionRequest = getVersion().catch(() => ({}));
 
 export const actionCreators = (dispatch, state) => {
   return {
@@ -83,16 +84,18 @@ export const actionCreators = (dispatch, state) => {
       }
     },
 
-    getStore: id => {
+    getStore: async id => {
       if (state.storesDetails[id]) {
         return;
       }
       dispatch({ type: 'GET_STORE' });
-      getStore(id)
-        .then(store => dispatch({ type: 'GET_STORE_SUCCESS', id, store }))
-        .catch(err =>
-          dispatch({ type: 'GET_STORE_FAIL', message: err.message }),
-        );
+      try {
+        const store = await getStore(id);
+        dispatch({ type: 'GET_STORE_SUCCESS', id, store });
+      } catch (err) {
+        const error = getErrorMessage(err.message, { unknown: true });
+        dispatch({ type: 'GET_STORE_FAIL', error });
+      }
     },
     getStores: async () => {
       // Get stores from device data
@@ -117,12 +120,10 @@ export const actionCreators = (dispatch, state) => {
         });
         dispatch({ type: 'GET_STORES_SUCCESS', stores });
       } catch (err) {
-        // Mostly network
-        // TODO: handle network failure
-        dispatch({ type: 'GET_STORES_FAIL', message: err.message });
+        const error = getErrorMessage(err.message);
+        dispatch({ type: 'GET_STORES_FAIL', error });
       }
     },
-    setStores: stores => dispatch({ type: 'SET_STORES', stores }),
 
     editStore: async (id, store) => {
       if (!state.user.jwt) {
@@ -177,7 +178,8 @@ export const actionCreators = (dispatch, state) => {
         });
         dispatch({ type: 'GET_PRODUCTS_SUCCESS', products });
       } catch (err) {
-        dispatch({ type: 'GET_PRODUCTS_FAIL', message: err.message });
+        const error = getErrorMessage(err.message);
+        dispatch({ type: 'GET_PRODUCTS_FAIL', error });
       }
     },
 
@@ -203,7 +205,8 @@ export const actionCreators = (dispatch, state) => {
         });
         dispatch({ type: 'GET_RATES_SUCCESS', rates });
       } catch (err) {
-        dispatch({ type: 'GET_RATES_FAIL', message: err.message });
+        const error = getErrorMessage(err.message);
+        dispatch({ type: 'GET_RATES_FAIL', error });
       }
     },
 
@@ -214,7 +217,7 @@ export const actionCreators = (dispatch, state) => {
       dispatch({ type: 'SET_STORE_EDITION', store });
     },
 
-    addFavorite: store => {
+    addFavorite: async store => {
       if (!state.user?.id) {
         return;
       }
@@ -222,11 +225,14 @@ export const actionCreators = (dispatch, state) => {
       const { user } = state;
       // Add store and get ids
       const favorites = [...user.favorites, store].map(store => store.id);
-      updateProfile(user.jwt, { favorites }).catch(() =>
-        dispatch({ type: 'REMOVE_FAVORITE', store }),
-      );
+      try {
+        await updateProfile(user.jwt, { favorites });
+      } catch (err) {
+        const error = getErrorMessage(err.message);
+        dispatch({ type: 'REMOVE_FAVORITE', store, error });
+      }
     },
-    removeFavorite: store => {
+    removeFavorite: async store => {
       if (!state.user?.id) {
         return;
       }
@@ -236,9 +242,15 @@ export const actionCreators = (dispatch, state) => {
       const favorites = user.favorites
         .filter(favorite => favorite.id !== store.id)
         .map(store => store.id);
-      updateProfile(user.jwt, { favorites }).catch(() =>
-        dispatch({ type: 'ADD_FAVORITE', store }),
-      );
+
+      try {
+        await updateProfile(user.jwt, { favorites });
+      } catch (err) {
+        const error = getErrorMessage(err.message);
+        dispatch({ type: 'ADD_FAVORITE', store, error });
+      }
     },
+
+    dismissError: () => dispatch({ type: 'DISMISS_ERROR' }),
   };
 };

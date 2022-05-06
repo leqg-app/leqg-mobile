@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { BackHandler, Platform, StatusBar, StyleSheet } from 'react-native';
-import { Snackbar } from 'react-native-paper';
+import { Portal, Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/core';
 import { useFocusEffect } from '@react-navigation/native';
@@ -105,6 +105,17 @@ const Map = ({ navigation, route }) => {
         onDismiss={() => navigation.setParams({ contribute: false })}>
         Merci pour votre contribution !
       </Snackbar>
+      <Portal>
+        <Snackbar
+          visible={state.error}
+          duration={2000}
+          action={{
+            label: 'OK',
+          }}
+          onDismiss={() => actions.dismissError()}>
+          {state.error}
+        </Snackbar>
+      </Portal>
     </SafeAreaView>
   );
 };

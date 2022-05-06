@@ -29,7 +29,7 @@ export const reducer = (state, action) => {
     case 'GET_STORE_FAIL': {
       return {
         ...state,
-        error: action.message,
+        error: action.error,
       };
     }
 
@@ -50,7 +50,7 @@ export const reducer = (state, action) => {
     case 'GET_STORES_FAIL': {
       return {
         ...state,
-        error: action.message,
+        error: action.error,
         loading: false,
       };
     }
@@ -69,7 +69,7 @@ export const reducer = (state, action) => {
     case 'GET_PRODUCTS_FAIL': {
       return {
         ...state,
-        error: action.message,
+        error: action.error,
         loading: false,
       };
     }
@@ -127,6 +127,7 @@ export const reducer = (state, action) => {
           ...state.user,
           favorites: [...state.user.favorites, action.store],
         },
+        ...(action.error && { error: action.error }),
       };
     }
     case 'REMOVE_FAVORITE': {
@@ -138,7 +139,12 @@ export const reducer = (state, action) => {
             favorite => favorite.id !== action.store.id,
           ),
         },
+        ...(action.error && { error: action.error }),
       };
+    }
+
+    case 'DISMISS_ERROR': {
+      return { ...state, error: undefined };
     }
 
     default:
