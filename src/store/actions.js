@@ -106,7 +106,7 @@ export const actionCreators = (dispatch, state) => {
       // Check if we need to get stores from API
       const apiVersions = await versionRequest;
       const versions = storage.getObject('versions', {});
-      if (versions.stores === apiVersions?.stores) {
+      if (stores?.length && versions.stores === apiVersions?.stores) {
         return;
       }
       // Load, display & save new stores
@@ -170,7 +170,7 @@ export const actionCreators = (dispatch, state) => {
       }
       dispatch({ type: 'GET_PRODUCTS' });
       try {
-        const products = await getProducts();
+        const products = await getProducts(apiVersions?.products);
         storage.setObject('products', products);
         storage.setObject('versions', {
           ...versions,
@@ -192,12 +192,12 @@ export const actionCreators = (dispatch, state) => {
       // Check if we need to get rates from API
       const apiVersions = await versionRequest;
       const versions = storage.getObject('versions', {});
-      if (!apiVersions.rates || versions.rates === apiVersions?.rates) {
+      if (!apiVersions?.rates || versions.rates === apiVersions.rates) {
         return;
       }
       dispatch({ type: 'GET_RATES' });
       try {
-        const rates = await getRates();
+        const rates = await getRates(apiVersions.rates);
         storage.setObject('rates', rates);
         storage.setObject('versions', {
           ...versions,
