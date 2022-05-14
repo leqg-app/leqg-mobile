@@ -2,5 +2,5 @@
   "name": "leqg",
   "displayName": "leqg",
   "api": "https://api.leqg.app",
-  "apis": "http://10.0.2.2:1337"
+  "apis": "http://10.0.2.2:3000"
 }
