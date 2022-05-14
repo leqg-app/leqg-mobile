@@ -125,7 +125,7 @@ const EditProducts = ({ navigation, route }) => {
     }
 
     // Replace beer if this one was already added on this store
-    const products = (Array.from(state.storeEdition?.products) || []).filter(
+    const products = Array.from(state.storeEdition?.products || []).filter(
       sP => {
         if (!sP.product && sP.productName) {
           return sP.productName !== productName;
