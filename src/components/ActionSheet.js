@@ -62,7 +62,8 @@ const ActionSheet = React.forwardRef(
             onClose={onDismiss}
             onChange={onChange}
             backdropComponent={backdrop && renderBackdrop}
-            topInset={topbarHeight}>
+            topInset={topbarHeight}
+            footerComponent={footer}>
             <BottomSheetScrollView>{children}</BottomSheetScrollView>
           </BottomSheet>
         </Portal>
