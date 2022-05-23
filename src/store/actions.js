@@ -14,6 +14,7 @@ import {
   updateProfile,
   resetPassword,
 } from '../api/users';
+import { getFeatures } from '../api/features';
 import { storeToMap } from '../utils/formatStore';
 import { storage } from './storage';
 import { getErrorMessage } from '../utils/errorMessage';
@@ -207,6 +208,36 @@ export const actionCreators = (dispatch, state) => {
       } catch (err) {
         const error = getErrorMessage(err.message);
         dispatch({ type: 'GET_RATES_FAIL', error });
+      }
+    },
+
+    getFeatures: async () => {
+      // Get rates from device data
+      const features = storage.getObject('features', []);
+      if (features?.length) {
+        dispatch({ type: 'GET_FEATURES_SUCCESS', features });
+      }
+      // Check if we need to get features from API
+      const apiVersions = await versionRequest;
+      const versions = storage.getObject('versions', {});
+      if (
+        !apiVersions?.features ||
+        versions.features === apiVersions.features
+      ) {
+        return;
+      }
+      dispatch({ type: 'GET_FEATURES' });
+      try {
+        const features = await getFeatures(apiVersions.features);
+        storage.setObject('features', features);
+        storage.setObject('versions', {
+          ...versions,
+          features: apiVersions.features,
+        });
+        dispatch({ type: 'GET_FEATURES_SUCCESS', features });
+      } catch (err) {
+        const error = getErrorMessage(err.message);
+        dispatch({ type: 'GET_FEATURES_FAIL', error });
       }
     },
 

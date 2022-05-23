@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Portal } from 'react-native-paper';
 import BottomSheet, {
   BottomSheetBackdrop,
+  BottomSheetScrollView,
   BottomSheetView,
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
@@ -11,7 +12,7 @@ import BottomSheet, {
 let currentIndex = -1;
 
 const ActionSheet = React.forwardRef(
-  ({ children, onDismiss = () => {}, backdrop }, ref) => {
+  ({ children, onDismiss = () => {}, backdrop, snaps, footer }, ref) => {
     const { top } = useSafeAreaInsets();
 
     const topbarHeight = useMemo(() => top + 30, []);
@@ -49,6 +50,24 @@ const ActionSheet = React.forwardRef(
       [],
     );
     const onChange = useCallback(index => (currentIndex = index), []);
+
+    if (snaps) {
+      return (
+        <Portal>
+          <BottomSheet
+            ref={ref}
+            index={-1}
+            snapPoints={snaps}
+            enablePanDownToClose
+            onClose={onDismiss}
+            onChange={onChange}
+            backdropComponent={backdrop && renderBackdrop}
+            topInset={topbarHeight}>
+            <BottomSheetScrollView>{children}</BottomSheetScrollView>
+          </BottomSheet>
+        </Portal>
+      );
+    }
 
     return (
       <Portal>

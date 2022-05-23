@@ -20,9 +20,10 @@ export const initialState = {
   },
   rates: [],
   stores: [],
+  products: [],
+  features: [],
   storeEdition: createStoreEdition(),
   storesDetails: {},
-  products: [],
 };
 
 export const StoreContext = createContext(undefined);

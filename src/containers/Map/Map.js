@@ -98,13 +98,13 @@ const Map = ({ navigation, route }) => {
         store={selectedStore}
         dismissStore={() => selectStore(false)}
       />
-      <Snackbar
-        visible={params?.contribute}
-        duration={2000}
-        onDismiss={() => navigation.setParams({ contribute: false })}>
-        Merci pour votre contribution !
-      </Snackbar>
       <Portal>
+        <Snackbar
+          visible={params?.contribute}
+          duration={2000}
+          onDismiss={() => navigation.setParams({ contribute: false })}>
+          Merci pour votre contribution !
+        </Snackbar>
         <Snackbar
           visible={state.error}
           duration={2000}

@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/core';
 
 import { useStore } from '../../store/context';
 import PriceFilter from './PriceFilter';
+import FeatureFilter from './FeatureFilter';
 
 function getPrice(priceRangeFilter) {
   if (!priceRangeFilter) {
@@ -29,6 +30,8 @@ const Filters = ({ onChange }) => {
   const route = useRoute();
   const [priceModal, setPriceModal] = useState(false);
   const [priceRangeFilter, setPriceFilter] = useState(undefined);
+  const [featureModal, setFeatureModal] = useState(false);
+  const [featureFilter, setFeatureFilter] = useState(undefined);
   const [beerFilter, setBeerFilter] = useState(undefined);
   const [openNow, setOpenFilter] = useState(false);
 
@@ -76,8 +79,11 @@ const Filters = ({ onChange }) => {
         ],
       );
     }
+    if (featureFilter) {
+      filters.push(...featureFilter.map(id => ['in', id, ['get', 'f']]));
+    }
     onChange(filters);
-  }, [priceRangeFilter, beerFilter, openNow]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [priceRangeFilter, beerFilter, openNow, featureFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (beerFilter !== route.params?.productFilter) {
@@ -118,12 +124,25 @@ const Filters = ({ onChange }) => {
             mode="outlined">
             Ouvert
           </Chip>
+          <Chip
+            style={styles.filter}
+            onPress={() => setFeatureModal(true)}
+            onClose={featureFilter && (() => setFeatureFilter(undefined))}
+            mode="outlined">
+            Caractéristique
+          </Chip>
         </View>
       </ScrollView>
       <PriceFilter
         visible={priceModal}
         onClose={() => setPriceModal(false)}
         onPrice={priceRange => setPriceFilter(priceRange)}
+      />
+      <FeatureFilter
+        visible={featureModal}
+        features={featureFilter}
+        onClose={() => setFeatureModal(false)}
+        onChange={features => setFeatureFilter(features)}
       />
     </>
   );
@@ -139,7 +158,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     marginTop: 15,
-    marginLeft: 25,
+    marginLeft: 20,
     marginRight: 15,
   },
   filter: {
