@@ -139,6 +139,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2080936442
         versionName "1.0.1"
+        resValue "string", "build_config_package", "com.leqg"
     }
     splits {
         abi {
@@ -160,6 +161,7 @@ android {
         debug {
             signingConfig signingConfigs.debug
             debuggable true
+            applicationIdSuffix ".debug"
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
