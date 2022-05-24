@@ -114,9 +114,10 @@ const EditStore = ({ route, navigation }) => {
       setLoading(false);
       navigation.navigate('MapScreen', { contribute: true });
     } else {
-      const focusStore = await actions.addStore(state.storeEdition);
+      const store = await actions.addStore(state.storeEdition);
       setLoading(false);
-      navigation.navigate('MapScreen', { contribute: true, focusStore });
+      actions.setSheetStore(store);
+      navigation.navigate('MapScreen', { contribute: true });
     }
   };
 
@@ -170,7 +171,11 @@ const EditStore = ({ route, navigation }) => {
         <View style={styles.center}>
           <View>
             <Paragraph>Veuillez vous connecter pour contribuer</Paragraph>
-            <Button onPress={() => navigation.navigate('AccountTab')}>
+            <Button
+              onPress={() => {
+                actions.setSheetStore();
+                navigation.navigate('AccountTab');
+              }}>
               Connexion
             </Button>
           </View>

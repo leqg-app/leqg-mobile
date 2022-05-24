@@ -19,8 +19,6 @@ import SearchStore from './SearchStore';
 const Map = ({ navigation, route }) => {
   const [state, actions] = useStore();
   const isFocused = useIsFocused();
-  const sheet = useRef(null);
-  const [selectedStore, selectStore] = useState(false);
   const [filters, setFilters] = useState([]);
   const { params } = route;
 
@@ -37,9 +35,8 @@ const Map = ({ navigation, route }) => {
     const event = BackHandler.addEventListener(
       'hardwareBackPress',
       function () {
-        if (selectedStore) {
-          selectStore(false);
-          sheet.current.close();
+        if (state.sheetStore) {
+          actions.setSheetStore();
           return true;
         }
         return false;
@@ -60,44 +57,16 @@ const Map = ({ navigation, route }) => {
     }
   }, [isFocused]);
 
-  useEffect(() => {
-    if (params?.focusStore) {
-      selectStore(params?.focusStore);
-      sheet.current.snapToIndex(0);
-    }
-  }, [params?.focusStore]);
-
   return (
     <SafeAreaView style={styles.container}>
-      <Mapbox
-        filters={filters}
-        selectedStore={selectedStore}
-        onPress={store => {
-          selectStore(store);
-          if (store) {
-            sheet.current.snapToIndex(0);
-          } else {
-            sheet.current.close();
-          }
-        }}
-      />
+      <Mapbox filters={filters} />
       <SearchBar
         onSearch={() => navigation.navigate('SearchStore')}
-        onBack={
-          selectedStore &&
-          (() => {
-            selectStore(false);
-            sheet.current.close();
-          })
-        }
+        onBack={state.sheetStore && (() => actions.setSheetStore())}
         loading={state.loading}
       />
       <Filters onChange={filters => setFilters(filters)} />
-      <StoreSheet
-        sheet={sheet}
-        store={selectedStore}
-        dismissStore={() => selectStore(false)}
-      />
+      <StoreSheet />
       <Portal>
         <Snackbar
           visible={params?.contribute}

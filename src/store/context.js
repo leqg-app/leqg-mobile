@@ -24,6 +24,7 @@ export const initialState = {
   features: [],
   storeEdition: createStoreEdition(),
   storesDetails: {},
+  sheetStore: null,
 };
 
 export const StoreContext = createContext(undefined);

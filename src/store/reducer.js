@@ -150,6 +150,10 @@ export const reducer = (state, action) => {
       };
     }
 
+    case 'SET_SHEET_STORE': {
+      return { ...state, sheetStore: action.store };
+    }
+
     case 'DISMISS_ERROR': {
       return { ...state, error: undefined };
     }

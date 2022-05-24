@@ -31,9 +31,9 @@ if (__DEV__) {
 
 const storedMapPosition = storage.getObject('mapPosition', {});
 
-const Mapbox = ({ filters, onPress, selectedStore }) => {
+const Mapbox = ({ filters }) => {
   const camera = useRef();
-  const [state] = useStore();
+  const [state, actions] = useStore();
   const { colors } = useTheme();
 
   const [createStore, setCreateStore] = useState();
@@ -77,12 +77,12 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
   }, []);
 
   useEffect(() => {
-    if (selectedStore && camera.current) {
+    if (state.sheetStore && camera.current) {
       setCreateStore();
       setMap({ isFollowing: false });
-      camera.current.flyTo([selectedStore.lng, selectedStore.lat]);
+      camera.current.flyTo([state.sheetStore.lng, state.sheetStore.lat]);
     }
-  }, [selectedStore]);
+  }, [state.sheetStore]);
 
   const moveTo = centerCoordinate => {
     if (!camera.current) {
@@ -111,7 +111,9 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
   };
 
   const onMapPress = () => {
-    onPress();
+    if (state.sheetStore) {
+      actions.setSheetStore();
+    }
     if (createStore) {
       setCreateStore();
     }
@@ -162,7 +164,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
 
   const searchPoint = async ({ geometry: { coordinates } }) => {
     const [longitude, latitude] = coordinates;
-    onPress();
+    actions.setSheetStore();
     setCreateStore({ loading: true, longitude, latitude });
     try {
       const { address, countryCode } = await searchPlace(longitude, latitude);
@@ -204,7 +206,7 @@ const Mapbox = ({ filters, onPress, selectedStore }) => {
         <MapboxGL.ShapeSource
           id="stores"
           shape={storesShape}
-          onPress={e => onPress(e.features[0].properties)}>
+          onPress={e => actions.setSheetStore(e.features[0].properties)}>
           <MapboxGL.SymbolLayer
             id="store"
             filter={filters && ['all', ...filters]}

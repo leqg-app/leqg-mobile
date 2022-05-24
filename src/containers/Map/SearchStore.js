@@ -24,7 +24,7 @@ function RowStore({ store, onSelect }) {
 }
 
 function SearchStore({ navigation }) {
-  const [state] = useStore();
+  const [state, actions] = useStore();
   const [searchHistory = [], setSearchHistory] = useMMKVObject(
     'searchHistory',
     storage,
@@ -57,7 +57,8 @@ function SearchStore({ navigation }) {
       .slice(0, 4);
     history.unshift({ ...focusStore, history: true });
     setSearchHistory(history);
-    navigation.navigate('MapScreen', { focusStore });
+    actions.setSheetStore(focusStore);
+    navigation.navigate('MapScreen');
   };
 
   return (

@@ -282,6 +282,8 @@ export const actionCreators = (dispatch, state) => {
       }
     },
 
+    setSheetStore: store => dispatch({ type: 'SET_SHEET_STORE', store }),
+
     dismissError: () => dispatch({ type: 'DISMISS_ERROR' }),
   };
 };

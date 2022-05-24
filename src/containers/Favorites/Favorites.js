@@ -33,9 +33,9 @@ const Favorites = ({ navigation }) => {
 
   const navigate = store => {
     const { id, name, longitude: lng, latitude: lat } = store;
+    actions.setSheetStore({ id, name, lng, lat });
     navigation.navigate('MapTab', {
       screen: 'MapScreen',
-      params: { focusStore: { id, name, lng, lat } },
     });
   };
 

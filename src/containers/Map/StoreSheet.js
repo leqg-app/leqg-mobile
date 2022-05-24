@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   ActivityIndicator,
@@ -19,7 +19,8 @@ import { useStore } from '../../store/context';
 import SchedulesPreview from '../Store/SchedulesPreview';
 import Store from '../Store/Store';
 
-const StoreSheet = props => {
+const StoreSheet = () => {
+  const sheet = useRef(null);
   const navigation = useNavigation();
   const [previewHeight, setPreviewHeight] = useState(0);
   const [state, actions] = useStore();
@@ -69,12 +70,18 @@ const StoreSheet = props => {
   );
 
   useEffect(() => {
-    if (props.store?.id) {
-      actions.getStore(props.store?.id);
+    if (!sheet.current) {
+      return;
     }
-  }, [props.store?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (state.sheetStore) {
+      actions.getStore(state.sheetStore.id);
+      sheet.current.snapToIndex(0);
+    } else {
+      sheet.current.close();
+    }
+  }, [state.sheetStore]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const store = state.storesDetails[props.store?.id];
+  const store = state.storesDetails[state.sheetStore?.id];
   return (
     <Portal>
       <Animated.View style={topBarStyle}>
@@ -82,25 +89,25 @@ const StoreSheet = props => {
           size={30}
           style={styles.arrow}
           icon="chevron-down"
-          onPress={() => props.sheet.current.snapToIndex(0)}
+          onPress={() => sheet.current.snapToIndex(0)}
         />
       </Animated.View>
       <BottomSheet
-        ref={props.sheet}
+        ref={sheet}
         index={-1}
         snapPoints={initialSnapPoints}
         animatedIndex={sheetPosition}
         topInset={topbarHeight - 20}
         bottomInset={bottom}
         enablePanDownToClose
-        onClose={props.dismissStore}>
+        onClose={() => state.sheetStore && actions.setSheetStore()}>
         <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
           <Pressable
-            onPress={() => props.sheet.current.snapToIndex(1)}
+            onPress={() => sheet.current.snapToIndex(1)}
             onLayout={getPreviewHeight}>
             <View style={styles.previewContainer}>
               <Title numberOfLines={1} style={styles.title}>
-                {store?.name || props.store?.name}
+                {store?.name || state.sheetStore?.name}
               </Title>
               {store ? (
                 <View style={styles.preview}>
