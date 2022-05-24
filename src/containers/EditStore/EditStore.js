@@ -33,6 +33,8 @@ import EditProduct from './EditProduct';
 import History from './History';
 import Schedules from '../Store/Schedules';
 import SelectCurrency from './SelectCurrency';
+import StoreFeatures from '../Store/StoreFeatures';
+import EditFeatures from './EditFeatures';
 
 const types = {
   draft: 'Pression',
@@ -98,10 +100,11 @@ const EditStore = ({ route, navigation }) => {
     longitude,
     latitude,
     schedules = [],
+    features = [],
   } = state.storeEdition;
 
   const validAddress = address && longitude && latitude;
-  const validForm = name && validAddress;
+  const validForm = name && validAddress && state.user.jwt;
 
   const save = async () => {
     setLoading(true);
@@ -275,7 +278,9 @@ const EditStore = ({ route, navigation }) => {
 
             <Title style={styles.title}>Horaires</Title>
             {!schedules.length ? (
-              <Paragraph>Aucun horaire renseigné pour le moment</Paragraph>
+              <Paragraph style={styles.emptyText}>
+                Aucun horaire renseigné pour le moment
+              </Paragraph>
             ) : (
               <Pressable onPress={() => navigation.navigate('EditSchedules')}>
                 <Schedules schedules={schedules} />
@@ -286,6 +291,25 @@ const EditStore = ({ route, navigation }) => {
               uppercase={false}
               onPress={() => navigation.navigate('EditSchedules')}>
               Modifier les horaires
+            </Button>
+          </View>
+
+          <View style={styles.horizontalMargin}>
+            <Title style={styles.title}>Caractéristiques</Title>
+            {!features.length ? (
+              <Paragraph style={styles.emptyText}>
+                Aucune caractéristique pour le moment
+              </Paragraph>
+            ) : (
+              <Pressable onPress={() => navigation.navigate('EditFeatures')}>
+                <StoreFeatures features={features} />
+              </Pressable>
+            )}
+            <Button
+              mode="contained"
+              uppercase={false}
+              onPress={() => navigation.navigate('EditFeatures')}>
+              Modifier les caractéristiques
             </Button>
           </View>
         </View>
@@ -357,6 +381,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   addButton: { marginTop: 20, zIndex: 0, position: 'relative' },
+  emptyText: {
+    marginBottom: 15,
+  },
 });
 
 const AddStack = createNativeStackNavigator();
@@ -385,6 +412,11 @@ export default () => (
       options={{ title: 'Modifier les horaires' }}
       name="EditSchedules"
       component={EditSchedules}
+    />
+    <AddStack.Screen
+      options={{ title: 'Modifier les caractéristiques' }}
+      name="EditFeatures"
+      component={EditFeatures}
     />
     <AddStack.Screen
       options={{ title: 'Ajouter une bière' }}

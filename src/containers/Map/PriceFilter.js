@@ -50,7 +50,7 @@ function getStats({ stores, rates }) {
 function PriceFilter({ visible, onClose, onPrice }) {
   const sheet = useRef();
   const [values, setValues] = useState([0, 20]);
-  const [state] = useStore();
+  const [state, actions] = useStore();
 
   const userCurrencyCode = storage.getString('userCurrencyCode') || 'EUR';
   const currencySymbol = currencies[userCurrencyCode]?.symbol || '€';
@@ -62,6 +62,7 @@ function PriceFilter({ visible, onClose, onPrice }) {
 
   useEffect(() => {
     if (visible) {
+      actions.setSheetStore();
       sheet.current.snapToIndex(0);
     } else {
       sheet.current?.close();

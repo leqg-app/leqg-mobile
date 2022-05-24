@@ -21,6 +21,7 @@ import SchedulesPreview from './SchedulesPreview';
 import Schedules from './Schedules';
 import { theme } from '../../constants';
 import { getUrlHost } from '../../utils/url';
+import StoreFeatures from './StoreFeatures';
 
 function ActionButton({ name, icon, onPress, color = 'white' }) {
   return (
@@ -178,20 +179,6 @@ const StoreDetails = ({ navigation, store }) => {
         </Button>
       )}
       <Divider />
-      {/* <TouchableRipple
-        onPress={openAddress}
-        rippleColor="rgba(0, 0, 0, .25)">
-        <View style={styles.infoRow}>
-          <Avatar.Icon
-            style={styles.infoIcon}
-            size={40}
-            icon="earth"
-            color={colors.primary}
-          />
-          <Text style={styles.infoText}>https://google.com/</Text>
-        </View>
-      </TouchableRipple>
-      <Divider /> */}
       <ListInfo
         onPress={editStore}
         content={
@@ -218,6 +205,14 @@ const StoreDetails = ({ navigation, store }) => {
           <Divider />
         </>
       )}
+      {store.features.length ? (
+        <>
+          <Text style={styles.title}>Caractéristiques</Text>
+          <View style={styles.features}>
+            <StoreFeatures features={store.features} />
+          </View>
+        </>
+      ) : null}
       {/* <Subheading>Résumé des avis</Subheading>
       <Divider />
       <Subheading>Donner une note et un avis</Subheading>
@@ -331,6 +326,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 20,
     flex: 1,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 15,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  features: {
+    marginHorizontal: 15,
   },
 });
 

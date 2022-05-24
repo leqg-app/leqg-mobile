@@ -1,22 +1,15 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Title } from 'react-native-paper';
 import { BottomSheetFooter } from '@gorhom/bottom-sheet';
 
 import ActionButtons from '../../components/ActionButtons';
 import ActionSheet from '../../components/ActionSheet';
-import Badge from '../../components/Badge';
+import FeaturesList from '../../components/FeaturesList';
 import { useStore } from '../../store/context';
 
 function FeatureFilter({ visible, features, onClose, onChange }) {
   const sheet = useRef();
-  const [state] = useStore();
+  const [, actions] = useStore();
   const [filters, setFilters] = useState([]);
 
   useEffect(() => {
@@ -30,6 +23,7 @@ function FeatureFilter({ visible, features, onClose, onChange }) {
       return;
     }
     if (visible) {
+      actions.setSheetStore();
       sheet.current.snapToIndex(0);
     } else {
       sheet.current.close();
@@ -40,14 +34,6 @@ function FeatureFilter({ visible, features, onClose, onChange }) {
     sheet.current.close();
     onClose();
   }, []);
-
-  const selectFilter = id => {
-    if (filters.includes(id)) {
-      setFilters(filters.filter(featureId => featureId !== id));
-    } else {
-      setFilters(filters.concat(id));
-    }
-  };
 
   const submit = useCallback(() => {
     onChange(filters.length && filters);
@@ -73,21 +59,7 @@ function FeatureFilter({ visible, features, onClose, onChange }) {
       snaps={['80%']}
       footer={renderFooter}>
       <View style={styles.sheet}>
-        {state.features.map(({ name, features }) => (
-          <View key={name}>
-            <Title style={styles.title}>{name}</Title>
-            <View style={styles.featureList}>
-              {features.map(feature => (
-                <Badge
-                  key={feature.id}
-                  selected={filters.includes(feature.id)}
-                  onSelect={() => selectFilter(feature.id)}>
-                  {feature.name}
-                </Badge>
-              ))}
-            </View>
-          </View>
-        ))}
+        <FeaturesList initialSelected={filters} onChange={setFilters} />
       </View>
     </ActionSheet>
   );
@@ -102,14 +74,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: 'grey',
-  },
-  title: {
-    marginVertical: 10,
-  },
-  featureList: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
   },
   actionButtons: {
     backgroundColor: 'white',
