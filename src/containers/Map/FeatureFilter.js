@@ -36,7 +36,7 @@ function FeatureFilter({ visible, features, onClose, onChange }) {
   }, []);
 
   const submit = useCallback(() => {
-    onChange(filters.length && filters);
+    onChange(filters.length && filters.map(({ id }) => id));
     close();
   }, [filters]);
 

@@ -1,15 +1,24 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { daysFull } from '../../constants';
 
 import { inHours, secondToTime } from '../../utils/time';
 
-function Open({ day }) {
-  const { closing, openingSpecial, closingSpecial } = day;
+function findNextOpenDay(schedules, currentDay) {
+  const days = Array.from(schedules).sort((a, b) => a.dayOfWeek - b.dayOfWeek);
+  const nextDays = days.slice(currentDay).concat(days.slice(0, currentDay));
+  return nextDays.find(schedule => !schedule.closed);
+}
+
+function Open({ today }) {
+  const { closing = null, openingSpecial, closingSpecial } = today;
   return (
-    <View style={styles.infoScheduleState}>
+    <View>
       <Text>
         <Text style={styles.scheduleOpen}>Ouvert</Text>
-        {closing !== null && <Text> jusqu'à {secondToTime(closing)}</Text>}
+        {closing !== null && (
+          <Text> jusqu'à {secondToTime(closing, { short: true })}</Text>
+        )}
       </Text>
       {openingSpecial && (
         <Text style={styles.schedules}>
@@ -24,51 +33,64 @@ function Open({ day }) {
   );
 }
 
-function Closed({ day }) {
-  const { opening, closing } = day;
+function Closed({ today, nextOpenDay }) {
+  const { opening } = today;
+
+  const date = new Date();
+  const now = date.getHours() * 3600 + date.getMinutes() * 60;
+
   return (
-    <View style={styles.infoScheduleState}>
+    <View style={styles.flex}>
       <Text style={styles.scheduleClosed}>Fermé</Text>
-      {opening && opening < closing && (
-        <Text> Ouvre à {secondToTime(opening)}</Text>
+      {opening && now < opening ? (
+        <Text> – Ouvre à {secondToTime(opening, { short: true })}</Text>
+      ) : (
+        nextOpenDay && (
+          <>
+            <Text> – Ouvre {daysFull[nextOpenDay.dayOfWeek - 1]} prochain</Text>
+            {nextOpenDay.opening && (
+              <Text>
+                {' '}
+                à {secondToTime(nextOpenDay.opening, { short: true })}
+              </Text>
+            )}
+          </>
+        )
       )}
     </View>
   );
 }
 
-function SchedulesPreview({ schedules }) {
+function SchedulesPreview({ schedules = [] }) {
   const date = new Date();
-  const today = date.getDay() || 7; // 0 is sunday
-  const now = date.getHours() * 3600 + date.getMinutes() * 60;
-  const day = schedules.find(schedule => schedule.dayOfWeek === today);
 
-  if (!day) {
-    return <Open day={{}} />;
+  const currentDay = date.getDay() || 7; // 0 is sunday
+
+  const today = schedules.find(schedule => schedule.dayOfWeek === currentDay);
+  const nextOpenDay = findNextOpenDay(schedules, currentDay);
+
+  if (!today) {
+    return <Open today={{}} />;
   }
 
-  const { closed, opening, closing } = day;
+  const { closed, opening, closing } = today;
 
   if (closed) {
-    return <Closed day={day} />;
+    return <Closed today={today} nextOpenDay={nextOpenDay} />;
   }
   if (opening) {
     if (inHours(opening, closing)) {
-      return <Open day={day} />;
+      return <Open today={today} />;
     }
-    if (now < opening) {
-      return <Closed day={day} />;
-    }
-    // TODO: find next day
-    return <Closed day={day} />;
+    return <Closed today={today} nextOpenDay={nextOpenDay} />;
   }
-  return <Open day={day} />;
+  return <Open today={today} />;
 }
 
 const styles = StyleSheet.create({
-  infoScheduleState: {
+  flex: {
     display: 'flex',
-    justifyContent: 'center',
-    marginVertical: 10,
+    flexDirection: 'row',
   },
   schedules: {
     marginTop: 4,

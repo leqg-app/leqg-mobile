@@ -3,12 +3,13 @@ import { SafeAreaView } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Searchbar } from 'react-native-paper';
 import Config from 'react-native-config';
+import { useRecoilState } from 'recoil';
 
-import { useStore } from '../../store/context';
 import { getCountryCode } from '../../utils/searchPlace';
+import { storeEditionState } from '../../store/atoms';
 
 const EditAddress = ({ navigation }) => {
-  const [, actions] = useStore();
+  const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
   const addressInput = useRef();
 
   useEffect(() => {
@@ -22,7 +23,8 @@ const EditAddress = ({ navigation }) => {
         debounce={100}
         onPress={(data, details) => {
           const { lat: latitude, lng: longitude } = details.geometry.location;
-          actions.setStoreEdition({
+          setStoreEdition({
+            ...storeEdition,
             address: data.description,
             latitude,
             longitude,

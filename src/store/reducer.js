@@ -1,4 +1,4 @@
-import { storeToMap } from '../utils/formatStore';
+import { decompressStore, storeToMap } from '../utils/formatStore';
 import { createStoreEdition } from './context';
 
 export const reducer = (state, action) => {
@@ -43,7 +43,7 @@ export const reducer = (state, action) => {
       return {
         ...state,
         error: undefined,
-        stores: action.stores,
+        stores: action.stores.map(decompressStore),
         loading: false,
       };
     }
@@ -89,41 +89,17 @@ export const reducer = (state, action) => {
     }
 
     case 'SET_STORE': {
-      const { id, store, contributed } = action;
-      const stores = state.stores.filter(s => id !== s.id);
-      stores.push(storeToMap(store));
+      const { store } = action;
+      const stores = state.stores.filter(s => store.id !== s.id).concat(store);
 
       return {
         ...state,
         stores,
         storesDetails: {
           ...state.storesDetails,
-          [id || store.id]: store,
+          [store.id]: store,
         },
-        ...(contributed && {
-          user: {
-            ...state.user,
-            contributions: state.user.contributions + 1,
-          },
-        }),
         storeEdition: {},
-      };
-    }
-
-    case 'SET_STORE_EDITION': {
-      const { store } = action;
-      return {
-        ...state,
-        storeEdition: {
-          ...state.storeEdition,
-          ...store,
-        },
-      };
-    }
-    case 'RESET_STORE_EDITION': {
-      return {
-        ...state,
-        storeEdition: createStoreEdition(),
       };
     }
 

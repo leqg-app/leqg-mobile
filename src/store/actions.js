@@ -107,7 +107,7 @@ export const actionCreators = (dispatch, state) => {
       // Check if we need to get stores from API
       const apiVersions = await versionRequest;
       const versions = storage.getObject('versions', {});
-      if (stores?.length && versions.stores === apiVersions?.stores) {
+      if (stores?.length && versions.stores >= apiVersions?.stores) {
         return;
       }
       // Load, display & save new stores
@@ -126,34 +126,48 @@ export const actionCreators = (dispatch, state) => {
       }
     },
 
-    editStore: async (id, store) => {
+    addStore: async body => {
       if (!state.user.jwt) {
         return;
       }
       try {
-        const edition = await editStore(id, store, { jwt: state.user.jwt });
-        if (edition?.store) {
-          dispatch({ type: 'SET_STORE', id, ...edition });
-        } else {
-          dispatch({ type: 'SET_STORE', id, store });
+        const response = await addStore(body, { jwt: state.user.jwt });
+        if (response.error) {
+          throw response.error;
         }
+        const { store, reputation, version } = response;
+        // Update store
+        dispatch({ type: 'SET_STORE', store });
+        // Upgrade version
+        const versions = storage.getObject('versions', {});
+        storage.setObject('versions', { ...versions, stores: version });
+        // Won reputation
+        dispatch({ type: 'USER_REPUTATION', reputation });
+        return { store, reputation };
       } catch (err) {
-        return { error: err.message };
+        return { error: getErrorMessage(err.message, { unknown: true }) };
       }
     },
-    addStore: async details => {
+    editStore: async (id, body) => {
       if (!state.user.jwt) {
         return;
       }
       try {
-        const response = await addStore(details, { jwt: state.user.jwt });
+        const response = await editStore(id, body, { jwt: state.user.jwt });
         if (response.error) {
-          return response.message;
+          throw response.error;
         }
-        dispatch({ type: 'SET_STORE', store: response, contributed: true });
-        return storeToMap(response);
+        const { store, reputation, version } = response;
+        // Update store
+        dispatch({ type: 'SET_STORE', store });
+        // Upgrade version
+        const versions = storage.getObject('versions', {});
+        storage.setObject('versions', { ...versions, stores: version });
+        // Won reputation
+        dispatch({ type: 'USER_REPUTATION', reputation });
+        return { store, reputation };
       } catch (err) {
-        return { error: err.message };
+        return { error: getErrorMessage(err.message, { unknown: true }) };
       }
     },
 
@@ -239,13 +253,6 @@ export const actionCreators = (dispatch, state) => {
         const error = getErrorMessage(err.message);
         dispatch({ type: 'GET_FEATURES_FAIL', error });
       }
-    },
-
-    resetStoreEdition: () => {
-      dispatch({ type: 'RESET_STORE_EDITION' });
-    },
-    setStoreEdition: store => {
-      dispatch({ type: 'SET_STORE_EDITION', store });
     },
 
     addFavorite: async store => {

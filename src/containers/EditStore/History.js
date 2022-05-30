@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import formatDistance from 'date-fns/formatDistance';
 import dateLocale from 'date-fns/locale/fr';
 
+import { utcDate } from '../../utils/date';
 import { sortBy } from '../../utils/sorter';
 
 const actions = {
@@ -17,9 +18,10 @@ const targets = {
   address: "de l'adresse",
   products: "d'une bière",
   schedules: 'des horaires',
+  features: "d'une caractéristique",
 };
 
-const RevisionEdition = ({ revision }) => {
+const RevisionEdition = memo(({ revision }) => {
   if (revision.type === 'initial') {
     return (
       <View>
@@ -36,11 +38,11 @@ const RevisionEdition = ({ revision }) => {
       </Text>
     </View>
   );
-};
+});
 
-const RevisionRow = ({ revision }) => {
-  const author = revision.author?.username || 'anonyme';
-  const date = formatDistance(new Date(revision.created_at), new Date(), {
+const RevisionRow = memo(({ revision }) => {
+  const author = revision.user?.username || 'anonyme';
+  const date = formatDistance(utcDate(revision.createdAt), Date.now(), {
     addSuffix: true,
     locale: dateLocale,
   });
@@ -58,7 +60,7 @@ const RevisionRow = ({ revision }) => {
       </View>
     </View>
   );
-};
+});
 
 const History = ({ route }) => {
   const { store } = route.params;

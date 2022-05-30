@@ -14,10 +14,11 @@ import {
   List,
 } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useRecoilState } from 'recoil';
 
-import { useStore } from '../../store/context';
 import { secondToHour, secondToTime } from '../../utils/time';
 import { daysFull, daysShort, theme } from '../../constants';
+import { storeEditionState } from '../../store/atoms';
 
 const newSchedule = () => ({
   closed: true,
@@ -174,15 +175,14 @@ const EditSchedulesModal = props => {
 };
 
 const EditSchedules = ({ navigation }) => {
-  const [state, actions] = useStore();
+  const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
   const [schedules, setSchedules] = React.useState(
-    state.storeEdition.schedules ||
-      new Array(7).fill().map(() => newSchedule()),
+    storeEdition.schedules || new Array(7).fill().map(() => newSchedule()),
   );
   const [editingDays, setEditingDay] = React.useState(false);
 
   const save = () => {
-    actions.setStoreEdition({ schedules });
+    setStoreEdition({ ...storeEdition, schedules });
     navigation.goBack();
   };
   const goBack = () => {

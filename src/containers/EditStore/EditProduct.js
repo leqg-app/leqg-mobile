@@ -1,5 +1,12 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
+import {
+  Alert,
+  InteractionManager,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   Button,
   IconButton,
@@ -9,12 +16,14 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
-import { theme } from '../../constants';
+import { useRecoilState } from 'recoil';
 
+import { theme } from '../../constants';
 import countries from '../../assets/countries.json';
 import currencies from '../../assets/currencies.json';
 import { useStore } from '../../store/context';
 import { displayPrice, parsePrice } from '../../utils/price';
+import { storeEditionState } from '../../store/atoms';
 
 const productTypes = [
   {
@@ -28,7 +37,8 @@ const productTypes = [
 ];
 
 const EditProducts = ({ navigation, route }) => {
-  const [state, actions] = useStore();
+  const [state] = useStore();
+  const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
   const { colors } = useTheme();
   const [storeProduct, setProduct] = useState({
     product: null,
@@ -36,7 +46,7 @@ const EditProducts = ({ navigation, route }) => {
     volume: 50,
     price: '',
     specialPrice: '',
-    currencyCode: countries[state.storeEdition.countryCode || 'FR'],
+    currencyCode: countries[storeEdition.countryCode || 'FR'],
   });
 
   useEffect(() => {
@@ -52,26 +62,23 @@ const EditProducts = ({ navigation, route }) => {
         ...product,
         price: displayPrice(product.price),
         specialPrice: displayPrice(product.specialPrice),
-        product: product.product?.id || null,
+        productId: product.product?.id || null,
       });
       return;
     }
     if (productId) {
       // New product with id
-      const found = state.products.find(product => product.id === productId);
-      if (found) {
-        setProduct({
-          ...storeProduct,
-          product: found.id,
-        });
-      }
+      setProduct({
+        ...storeProduct,
+        productId,
+      });
       return;
     }
     if (productName) {
       // New product with name
       setProduct({
         ...storeProduct,
-        product: null,
+        productId: null,
         productName,
       });
       return;
@@ -94,7 +101,7 @@ const EditProducts = ({ navigation, route }) => {
   };
 
   const {
-    product,
+    productId,
     productName,
     type,
     volume,
@@ -103,7 +110,7 @@ const EditProducts = ({ navigation, route }) => {
     currencyCode,
   } = storeProduct;
   const validForm = Boolean(
-    (product || productName) && type && volume && parseFloat(price),
+    (productId || productName) && type && volume && parseFloat(price),
   );
 
   useLayoutEffect(() => {
@@ -125,31 +132,24 @@ const EditProducts = ({ navigation, route }) => {
     }
 
     // Replace beer if this one was already added on this store
-    const products = Array.from(state.storeEdition?.products || []).filter(
-      sP => {
-        if (!sP.product && sP.productName) {
-          return sP.productName !== productName;
-        }
-        if (sP.product && !sP.productName) {
-          return sP.product !== product;
-        }
-        return true;
-      },
+    const products = (storeEdition?.products || []).filter(
+      ({ id, tmpId }) =>
+        (!storeProduct.id || storeProduct.id !== id) &&
+        (!storeProduct.tmpId || storeProduct.tmpId !== tmpId),
     );
 
     // Format price
     storeProduct.price = parsePrice(storeProduct.price);
     storeProduct.specialPrice = parsePrice(storeProduct.specialPrice);
+    storeProduct.tmpId = Math.random().toString(36);
 
     products.push(storeProduct);
 
-    actions.setStoreEdition({
-      products,
-    });
+    setStoreEdition({ ...storeEdition, products });
     navigation.goBack();
   };
 
-  const selectedProduct = state.products.find(({ id }) => id === product);
+  const selectedProduct = state.products.find(({ id }) => id === productId);
 
   const removeProduct = () => {
     Alert.alert('Confirmation', 'Voulez-vous vraiment supprimer ce produit ?', [
@@ -160,15 +160,13 @@ const EditProducts = ({ navigation, route }) => {
       {
         text: 'OK',
         onPress: () => {
-          const storeProducts = state.storeEdition?.products || [];
+          const storeProducts = storeEdition?.products || [];
           const products = storeProducts.filter(storeProduct =>
             storeProduct.product?.id
-              ? storeProduct.product !== product
+              ? storeProduct.product !== productId
               : storeProduct.productName !== productName,
           );
-          actions.setStoreEdition({
-            products,
-          });
+          setStoreEdition({ ...storeEdition, products });
           navigation.goBack();
         },
       },
@@ -202,6 +200,7 @@ const EditProducts = ({ navigation, route }) => {
       />
       <View style={styles.flexPrice}>
         <TextInput
+          autoFocus={!!(route.params?.productId || route.params?.productName)}
           style={styles.textInput}
           label="Prix"
           mode="flat"
@@ -229,7 +228,7 @@ const EditProducts = ({ navigation, route }) => {
         returnKeyType="done"
         right={<TextInput.Affix text={currencies[currencyCode].symbol} />}
       />
-      {storeProduct.id && (
+      {(storeProduct.id || storeProduct.tmpId) && (
         <Button
           mode="contained"
           color={theme.colors.danger}

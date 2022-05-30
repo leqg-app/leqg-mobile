@@ -12,11 +12,13 @@ function StoreFeatures({ features }) {
     return <View />;
   }
 
+  const featuresId = features.map(({ id }) => id);
+
   return (
     <View style={styles.container}>
       {state.features.map(category => {
         const feats = category.features.filter(({ id }) =>
-          features.includes(id),
+          featuresId.includes(id),
         );
         if (!feats.length) {
           return;
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
   },
   category: {
     borderBottomColor: '#ddd',
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   categoryName: {
     fontSize: 14,

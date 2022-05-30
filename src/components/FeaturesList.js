@@ -5,7 +5,7 @@ import { Title } from 'react-native-paper';
 import { useStore } from '../store/context';
 import Badge from './Badge';
 
-const FeaturesList = ({ initialSelected, onChange }) => {
+const FeaturesList = ({ initialSelected = [], onChange }) => {
   const [state] = useStore();
   const [selected, setSelected] = useState(initialSelected);
 
@@ -13,10 +13,10 @@ const FeaturesList = ({ initialSelected, onChange }) => {
   useEffect(() => onChange(selected), [selected]);
 
   const onSelect = id => {
-    if (selected.includes(id)) {
-      setSelected(selected.filter(selectedId => selectedId !== id));
+    if (selected.some(feature => feature.id === id)) {
+      setSelected(selected.filter(feature => feature.id !== id));
     } else {
-      setSelected(selected.concat(id));
+      setSelected(selected.concat({ id }));
     }
   };
 
@@ -27,7 +27,7 @@ const FeaturesList = ({ initialSelected, onChange }) => {
         {features.map(feature => (
           <Badge
             key={feature.id}
-            selected={selected.includes(feature.id)}
+            selected={selected.some(({ id }) => feature.id === id)}
             onSelect={() => onSelect(feature.id)}>
             {feature.name}
           </Badge>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -15,11 +15,14 @@ import {
   Button,
   Caption,
   Paragraph,
+  Portal,
+  Snackbar,
   Text,
   TextInput,
   Title,
   TouchableRipple,
 } from 'react-native-paper';
+import { useRecoilState } from 'recoil';
 
 import { sortByPrices } from '../../utils/price';
 import { theme } from '../../constants';
@@ -35,13 +38,14 @@ import Schedules from '../Store/Schedules';
 import SelectCurrency from './SelectCurrency';
 import StoreFeatures from '../Store/StoreFeatures';
 import EditFeatures from './EditFeatures';
+import { storeEditionState } from '../../store/atoms';
 
 const types = {
   draft: 'Pression',
   bottle: 'Bouteille',
 };
 
-const Product = ({ product, onPress }) => {
+const Product = memo(({ product, onPress }) => {
   const { price, specialPrice, productName, type, volume, currencyCode } =
     product;
   return (
@@ -86,13 +90,14 @@ const Product = ({ product, onPress }) => {
       </TouchableRipple>
     </View>
   );
-};
+});
 
 const EditStore = ({ route, navigation }) => {
   const [state, actions] = useStore();
   const nameInput = useRef();
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
 
   const {
     name = '',
@@ -101,7 +106,7 @@ const EditStore = ({ route, navigation }) => {
     latitude,
     schedules = [],
     features = [],
-  } = state.storeEdition;
+  } = storeEdition;
 
   const validAddress = address && longitude && latitude;
   const validForm = name && validAddress && state.user.jwt;
@@ -112,14 +117,24 @@ const EditStore = ({ route, navigation }) => {
       setError('Missing field');
       return;
     }
-    if (state.storeEdition.id) {
-      await actions.editStore(state.storeEdition.id, state.storeEdition);
-      setLoading(false);
-      navigation.navigate('MapScreen', { contribute: true });
+    let response = {};
+    if (storeEdition.id) {
+      response = await actions.editStore(storeEdition.id, storeEdition);
     } else {
-      const store = await actions.addStore(state.storeEdition);
-      setLoading(false);
-      actions.setSheetStore(store);
+      response = await actions.addStore(storeEdition);
+    }
+    setLoading(false);
+    if (response.error) {
+      setError(response.error);
+      return;
+    }
+    const { store, reputation } = response;
+    if (!storeEdition.id) {
+      actions.setSheetStore({ ...store, focus: true });
+    }
+    if (reputation.total) {
+      navigation.replace('WonReputation', { reputation });
+    } else {
       navigation.navigate('MapScreen', { contribute: true });
     }
   };
@@ -127,14 +142,12 @@ const EditStore = ({ route, navigation }) => {
   useEffect(() => {
     setLoading(false);
     if (route.params?.store) {
-      actions.setStoreEdition(route.params.store);
       if (!route.params.store.name && nameInput.current) {
         nameInput.current.focus();
       }
     }
-    return navigation.addListener('beforeRemove', function () {
+    return navigation.addListener('beforeRemove', function (e) {
       // TODO: confirmation if data was edited
-      actions.resetStoreEdition();
     });
   }, [route.params]);
 
@@ -188,11 +201,13 @@ const EditStore = ({ route, navigation }) => {
   }
 
   const products =
-    state.storeEdition?.products
+    storeEdition?.products
       ?.map(storeProduct => ({
         ...storeProduct,
-        ...(storeProduct.product && {
-          product: state.products.find(({ id }) => id === storeProduct.product),
+        ...(storeProduct.productId && {
+          product: state.products.find(
+            ({ id }) => id === storeProduct.productId,
+          ),
         }),
       }))
       .sort(sortByPrices) || [];
@@ -207,13 +222,13 @@ const EditStore = ({ route, navigation }) => {
         backgroundColor="transparent"
       />
       <ScrollView keyboardShouldPersistTaps="always">
-        {state.storeEdition?.revisions?.length ? (
+        {storeEdition?.revisions?.length ? (
           <Menu>
             <Menu.Item
               name="Voir l'historique des modifications"
               icon="clock-outline"
               onPress={() =>
-                navigation.navigate('History', { store: state.storeEdition })
+                navigation.navigate('History', { store: storeEdition })
               }
               last
             />
@@ -227,7 +242,7 @@ const EditStore = ({ route, navigation }) => {
               label="Nom"
               mode="flat"
               textContentType="name"
-              onChangeText={name => actions.setStoreEdition({ name })}
+              onChangeText={name => setStoreEdition({ ...storeEdition, name })}
               value={name}
               returnKeyType="done"
             />
@@ -313,6 +328,17 @@ const EditStore = ({ route, navigation }) => {
             </Button>
           </View>
         </View>
+        <Portal>
+          <Snackbar
+            visible={error}
+            duration={3000}
+            action={{
+              label: 'OK',
+            }}
+            onDismiss={() => setError()}>
+            {error}
+          </Snackbar>
+        </Portal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -352,8 +378,8 @@ const styles = StyleSheet.create({
   productRow: {
     display: 'flex',
     flexDirection: 'row',
-    borderColor: '#ddd',
-    borderWidth: 0.5,
+    borderTopColor: '#ddd',
+    borderTopWidth: 0.5,
   },
   productDetails: {
     flex: 1,

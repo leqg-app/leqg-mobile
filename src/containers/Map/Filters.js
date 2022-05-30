@@ -6,6 +6,7 @@ import { useNavigation, useRoute } from '@react-navigation/core';
 import { useStore } from '../../store/context';
 import PriceFilter from './PriceFilter';
 import FeatureFilter from './FeatureFilter';
+import { OPEN_STORE_EXPRESSION } from '../../utils/map';
 
 function getPrice(priceRangeFilter) {
   if (!priceRangeFilter) {
@@ -40,47 +41,20 @@ const Filters = ({ onChange }) => {
     if (priceRangeFilter) {
       const [min, max] = priceRangeFilter;
       if (min > 0) {
-        filters.push(['>=', ['get', 'price'], min]);
+        filters.push(['>=', CHEAPEST_PRICE_EXPRESSION, min]);
       }
       if (max < 10) {
-        filters.push(['<=', ['get', 'price'], max]);
+        filters.push(['<=', CHEAPEST_PRICE_EXPRESSION, max]);
       }
     }
     if (beerFilter) {
       filters.push(['in', beerFilter, ['get', 'products']]);
     }
     if (openNow) {
-      const date = new Date();
-      const today = date.getDay() ? date.getDay() - 1 : 6;
-      const day = ['at', today, ['get', 's']];
-      const time = date.getHours() * 3600 + date.getMinutes() * 60;
-      filters.push(
-        ['!', ['get', 'cd', day]],
-        [
-          'any',
-          ['!', ['has', 'o', day]], // if no schedule
-          // else
-          [
-            'case',
-            ['<', ['get', 'o', day], ['get', 'c', day]],
-            // if open < close (classic)
-            [
-              'all',
-              ['>', time, ['get', 'o', day]], // time > open
-              ['<', time, ['get', 'c', day]], // AND time < close
-            ],
-            // else open > close (reverted)
-            [
-              'any',
-              ['<', time, ['get', 'c', day]], // time < close
-              ['>', time, ['get', 'o', day]], // OR time > open
-            ],
-          ],
-        ],
-      );
+      filters.push(OPEN_STORE_EXPRESSION);
     }
     if (featureFilter) {
-      filters.push(...featureFilter.map(id => ['in', id, ['get', 'f']]));
+      filters.push(...featureFilter.map(id => ['in', id, ['get', 'features']]));
     }
     onChange(filters);
   }, [priceRangeFilter, beerFilter, openNow, featureFilter]); // eslint-disable-line react-hooks/exhaustive-deps

@@ -1,17 +1,18 @@
 import React, { useLayoutEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
+import { useRecoilState } from 'recoil';
 
-import { useStore } from '../../store/context';
 import FeaturesList from '../../components/FeaturesList';
+import { storeEditionState } from '../../store/atoms';
 
 const EditFeatures = ({ navigation }) => {
-  const [state, actions] = useStore();
+  const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <IconButton color="white" icon="send" onPress={navigation.goBack} />
+        <IconButton color="white" icon="check" onPress={navigation.goBack} />
       ),
     });
   }, []);
@@ -26,8 +27,10 @@ const EditFeatures = ({ navigation }) => {
       <ScrollView>
         <View style={{ marginHorizontal: 15, marginBottom: 15 }}>
           <FeaturesList
-            initialSelected={state.storeEdition.features}
-            onChange={features => actions.setStoreEdition({ features })}
+            initialSelected={storeEdition.features}
+            onChange={features =>
+              setStoreEdition({ ...storeEdition, features })
+            }
           />
         </View>
       </ScrollView>

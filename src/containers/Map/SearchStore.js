@@ -1,27 +1,34 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { FlatList, StatusBar, StyleSheet } from 'react-native';
-import { List, Searchbar } from 'react-native-paper';
+import React, { useState, useEffect, useRef, useMemo, memo } from 'react';
+import { FlatList, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { List, Searchbar, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMMKVObject } from 'react-native-mmkv';
 
 import { useStore } from '../../store/context';
 import { storage } from '../../store/storage';
+import SchedulesPreview from '../Store/SchedulesPreview';
 
-function RowStore({ store, onSelect }) {
+const RowStore = memo(({ store, onSelect }) => {
+  const { name, address, schedules, history } = store;
   return (
-    <List.Item
-      onPress={() => onSelect(store)}
-      title={store.name}
-      left={props => (
-        <List.Icon
-          {...props}
-          icon={store.history ? 'clock-outline' : 'store'}
-        />
-      )}
-      style={styles.rowStore}
-    />
+    <TouchableRipple onPress={() => onSelect(store)}>
+      <View style={styles.rowStore}>
+        <List.Icon icon={history ? 'clock-outline' : 'store'} />
+        <View style={styles.rowInformation}>
+          <Text numberOfLines={1} style={styles.rowTitle}>
+            {name}
+          </Text>
+          {address && (
+            <Text numberOfLines={1} style={styles.rowDescription}>
+              {address}
+            </Text>
+          )}
+          {schedules && <SchedulesPreview schedules={schedules} short />}
+        </View>
+      </View>
+    </TouchableRipple>
   );
-}
+});
 
 function SearchStore({ navigation }) {
   const [state, actions] = useStore();
@@ -57,7 +64,7 @@ function SearchStore({ navigation }) {
       .slice(0, 4);
     history.unshift({ ...focusStore, history: true });
     setSearchHistory(history);
-    actions.setSheetStore(focusStore);
+    actions.setSheetStore({ ...focusStore, focus: true });
     navigation.navigate('MapScreen');
   };
 
@@ -72,6 +79,7 @@ function SearchStore({ navigation }) {
         clearButtonMode="always"
         icon="arrow-left"
         onIconPress={() => navigation.goBack()}
+        inputStyle={styles.searchbarInput}
       />
       <FlatList
         keyboardShouldPersistTaps="always"
@@ -100,9 +108,27 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     marginBottom: 10,
   },
+  searchbarInput: {
+    paddingLeft: 9,
+  },
   rowStore: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  rowInformation: {
+    paddingVertical: 10,
+    paddingRight: 10,
     borderBottomColor: '#bbb',
     borderBottomWidth: StyleSheet.hairlineWidth,
+    flex: 1,
+  },
+  rowTitle: {
+    fontSize: 16,
+  },
+  rowDescription: {
+    color: '#777',
+    marginTop: 5,
+    marginBottom: 2,
   },
 });
 

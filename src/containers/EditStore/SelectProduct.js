@@ -66,6 +66,7 @@ const SelectProduct = ({ navigation }) => {
           offset: ITEM_HEIGHT * index,
           index,
         })}
+        keyboardShouldPersistTaps="always"
       />
     </SafeAreaView>
   );

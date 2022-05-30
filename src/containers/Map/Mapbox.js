@@ -12,6 +12,7 @@ import searchPlace from '../../utils/searchPlace';
 import CreateStoreSheet from './CreateStoreSheet';
 import { storage } from '../../store/storage';
 import getLocation from '../../utils/location';
+import { CHEAPEST_PRICE_EXPRESSION } from '../../utils/map';
 
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
@@ -77,11 +78,16 @@ const Mapbox = ({ filters }) => {
   }, []);
 
   useEffect(() => {
-    if (state.sheetStore && camera.current) {
-      setCreateStore();
-      setMap({ isFollowing: false });
-      camera.current.flyTo([state.sheetStore.lng, state.sheetStore.lat]);
+    if (!state.sheetStore?.focus || !camera.current) {
+      return;
     }
+    setCreateStore();
+    setMap({ isFollowing: false });
+    camera.current.setCamera({
+      centerCoordinate: [state.sheetStore.longitude, state.sheetStore.latitude],
+      zoomLevel: 17,
+      animationDuration: 1000,
+    });
   }, [state.sheetStore]);
 
   const moveTo = centerCoordinate => {
@@ -90,7 +96,7 @@ const Mapbox = ({ filters }) => {
     }
     camera.current.setCamera({
       centerCoordinate,
-      zoomLevel: 13,
+      zoomLevel: 15,
       animationDuration: 1500,
     });
   };
@@ -119,15 +125,12 @@ const Mapbox = ({ filters }) => {
     }
   };
 
-  const onMove = ({ properties }) => {
-    if (properties.isUserInteraction && isFollowing) {
-      setMap({ isFollowing: false });
-    }
-  };
-
   const didMove = ({ geometry, properties }) => {
     const { coordinates } = geometry;
     const { isUserInteraction, zoomLevel } = properties;
+    if (properties.isUserInteraction && isFollowing) {
+      setMap({ isFollowing: false });
+    }
     storage.setObject('mapPosition', {
       followUser: isFollowing && isUserInteraction ? false : isFollowing,
       coordinates,
@@ -150,7 +153,7 @@ const Mapbox = ({ filters }) => {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [store.lng, store.lat],
+          coordinates: [store.longitude, store.latitude],
         },
         properties: store,
       })),
@@ -187,11 +190,10 @@ const Mapbox = ({ filters }) => {
         style={styles.absolute}
         localizeLabels={true}
         pitchEnabled={false}
+        rotateEnabled={false}
         styleURL={isDark ? MapboxGL.StyleURL.Dark : undefined}
         onPress={onMapPress}
         onLongPress={searchPoint}
-        compassViewPosition={2}
-        onRegionIsChanging={onMove}
         onRegionDidChange={didMove}>
         <MapboxGL.Camera
           ref={camera}
@@ -215,11 +217,39 @@ const Mapbox = ({ filters }) => {
           <MapboxGL.SymbolLayer
             id="storeName"
             belowLayerID="store"
-            minZoomLevel={15}
+            minZoomLevel={9}
             filter={filters && ['all', ...filters]}
             style={layerStyles.storeName}
           />
         </MapboxGL.ShapeSource>
+
+        <MapboxGL.ShapeSource
+          id="storeFocus"
+          shape={{
+            type: 'FeatureCollection',
+            features: state.sheetStore
+              ? [
+                  {
+                    type: 'Feature',
+                    geometry: {
+                      type: 'Point',
+                      coordinates: [
+                        state.sheetStore.longitude,
+                        state.sheetStore.latitude,
+                      ],
+                    },
+                    properties: state.sheetStore,
+                  },
+                ]
+              : [],
+          }}>
+          <MapboxGL.CircleLayer
+            id="storeFocusCircle"
+            aboveLayerID="store"
+            style={layerStyles.focusStore}
+          />
+        </MapboxGL.ShapeSource>
+
         {createStore && (
           <MapboxGL.ShapeSource
             id="newStoreSource"
@@ -243,29 +273,30 @@ const Mapbox = ({ filters }) => {
         )}
         {position && (
           <>
-            <MapboxGL.ShapeSource
-              id="textSource"
-              shape={{
-                type: 'Feature',
-                geometry: {
-                  type: 'Point',
-                  coordinates: [position[0], position[1] + 0.0095],
-                  properties: {},
-                },
-              }}>
+            <MapboxGL.ShapeSource id="near15" shape={circle(position, 1)}>
               <MapboxGL.SymbolLayer
-                id="nearText"
-                minZoomLevel={12.5}
-                maxZoomLevel={13.5}
-                style={layerStyles.nearText}
+                id="nearText15"
+                belowLayerID="store"
+                style={{ ...layerStyles.nearText, textField: '15 MIN' }}
+                minZoomLevel={11}
+              />
+              <MapboxGL.LineLayer
+                id="nearLine15"
+                minZoomLevel={11}
+                style={layerStyles.nearLine}
               />
             </MapboxGL.ShapeSource>
-            <MapboxGL.ShapeSource id="lineSource" shape={circle(position, 1)}>
-              <MapboxGL.LineLayer
-                id="nearLine"
-                minZoomLevel={10.5}
-                style={layerStyles.nearLine}
+            <MapboxGL.ShapeSource id="near5" shape={circle(position, 0.25)}>
+              <MapboxGL.SymbolLayer
+                id="nearText5"
                 belowLayerID="store"
+                style={{ ...layerStyles.nearText, textField: '5 MIN' }}
+                minZoomLevel={14.6}
+              />
+              <MapboxGL.LineLayer
+                id="nearLine5"
+                minZoomLevel={14.6}
+                style={layerStyles.nearLine}
               />
             </MapboxGL.ShapeSource>
           </>
@@ -291,34 +322,6 @@ const Mapbox = ({ filters }) => {
   );
 };
 
-const date = new Date();
-const today = date.getDay() ? date.getDay() - 1 : 6;
-const day = ['object', ['at', today, ['get', 's']]];
-const time = date.getHours() * 3600 + date.getMinutes() * 60;
-const textField = [
-  'case',
-  [
-    'all',
-    ['has', 'specialPrice'], // if has special price AND
-    [
-      'any',
-      [
-        'all',
-        ['has', 'os', day],
-        // TODO: case of reverted special schedule
-        ['>', time, ['get', 'os', day]], // AND time > special open
-        ['<', time, ['get', 'cs', day]], // AND time < special close
-      ],
-      // OR don't has regular price
-      ['!', ['to-boolean', ['get', 'price']]],
-    ],
-  ],
-  // then display special price
-  ['to-string', ['get', 'specialPrice']],
-  // else display price
-  ['to-string', ['get', 'price']],
-];
-
 const layerStyles = {
   storePrice: {
     iconImage: tooltipIcon,
@@ -326,25 +329,32 @@ const layerStyles = {
     iconSize: 0.5,
     iconAllowOverlap: true,
     iconIgnorePlacement: true,
-    symbolSortKey: ['get', 'price'],
+    symbolSortKey: CHEAPEST_PRICE_EXPRESSION,
 
-    textField,
+    textField: ['to-string', CHEAPEST_PRICE_EXPRESSION],
     textColor: '#fff',
     textTranslate: [0, -13],
     textSize: 13,
-    textAllowOverlap: false,
-    textIgnorePlacement: false,
   },
   storeName: {
-    textField: '{name}',
-    textSize: 14,
-    textAnchor: 'bottom-left',
-    textTranslate: [18, -5],
+    textField: ['get', 'name'],
+    textSize: 12,
+    textTranslate: [0, -11],
     textHaloColor: '#fff',
     textHaloWidth: 2,
-    textAllowOverlap: true,
-    textIgnorePlacement: true,
+    textJustify: 'auto',
     textOptional: true,
+    textVariableAnchor: [
+      'left',
+      'right',
+      'top',
+      'bottom',
+      'top-left',
+      'top-right',
+      'bottom-left',
+      'bottom-right',
+    ],
+    textRadialOffset: 1,
   },
   nearLine: {
     lineColor: theme.colors.primary,
@@ -353,11 +363,21 @@ const layerStyles = {
     lineDasharray: [5, 5],
   },
   nearText: {
-    textField: '15min',
+    symbolPlacement: 'line-center',
     textSize: 13,
     textColor: theme.colors.primary,
     textHaloColor: theme.colors.primary,
-    textHaloWidth: 0.3,
+    textHaloWidth: 0.4,
+    textOffset: [0, 1],
+    textLetterSpacing: 0.1,
+  },
+  focusStore: {
+    circleRadius: 6,
+    circleColor: theme.colors.primary,
+    circleOpacity: 0.5,
+    circleStrokeWidth: 3,
+    circleStrokeColor: theme.colors.primary,
+    circleTranslate: [0, 1],
   },
 };
 

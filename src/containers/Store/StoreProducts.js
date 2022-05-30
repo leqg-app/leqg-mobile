@@ -30,7 +30,7 @@ function StoreProducts({ products }) {
           const { volume, price, specialPrice, productName, currencyCode } =
             product;
           const productDetail = state.products.find(
-            ({ id }) => id === product.product,
+            ({ id }) => id === product.productId,
           );
           return (
             <View key={i} style={styles.row}>

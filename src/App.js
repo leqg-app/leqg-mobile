@@ -4,6 +4,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Sentry from '@sentry/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { RecoilRoot } from 'recoil';
 
 import { StoreProvider } from './store/context';
 import Routes from './Routes';
@@ -28,7 +29,9 @@ const App = () => {
       <StoreProvider>
         <PaperProvider theme={theme}>
           <SafeAreaProvider>
-            <Routes />
+            <RecoilRoot>
+              <Routes />
+            </RecoilRoot>
           </SafeAreaProvider>
         </PaperProvider>
       </StoreProvider>

@@ -6,6 +6,7 @@ import { useMMKVBoolean } from 'react-native-mmkv';
 import { theme } from './constants';
 import EditStore from './containers/EditStore/EditStore';
 import IntroStack from './containers/Intro/Intro';
+import WonReputation from './containers/Account/WonReputation';
 import { storage } from './store/storage';
 import TabNavigator from './Tabs';
 
@@ -27,6 +28,7 @@ const Routes = () => {
         {!firstOpen && <Main.Screen name="IntroStack" component={IntroStack} />}
         <Main.Screen name="TabNavigator" component={TabNavigator} />
         <Main.Screen name="EditStoreScreen" component={EditStore} />
+        <Main.Screen name="WonReputation" component={WonReputation} />
       </Main.Navigator>
     </NavigationContainer>
   );

@@ -13,6 +13,7 @@ import {
   useTheme,
 } from 'react-native-paper';
 import Share from 'react-native-share';
+import { useSetRecoilState } from 'recoil';
 
 import { useStore } from '../../store/context';
 
@@ -22,6 +23,7 @@ import Schedules from './Schedules';
 import { theme } from '../../constants';
 import { getUrlHost } from '../../utils/url';
 import StoreFeatures from './StoreFeatures';
+import { storeEditionState } from '../../store/atoms';
 
 function ActionButton({ name, icon, onPress, color = 'white' }) {
   return (
@@ -80,6 +82,7 @@ const StoreDetails = ({ navigation, store }) => {
   const [state, actions] = useStore();
   const { colors } = useTheme();
   const [modalLogin, setModalLogin] = useState(false);
+  const useSetStoreEdition = useSetRecoilState(storeEditionState);
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
 
@@ -103,11 +106,13 @@ const StoreDetails = ({ navigation, store }) => {
     return favorites.some(favorite => favorite.id === store.id);
   }, [state.user]);
 
-  const editStore = () =>
+  const editStore = () => {
+    useSetStoreEdition(store);
     navigation.navigate('EditStoreScreen', {
       screen: 'EditStore',
       params: { store },
     });
+  };
 
   const share = () => {
     const message = `Retrouvons nous au ${store.name}\n\n${store.address}`;

@@ -37,7 +37,7 @@ function getStats({ stores, rates }) {
       continue;
     }
     const price =
-      (store.price / getRate(store.currency, rates)) * userCurrencyRate;
+      (store.price / getRate(store.currencyCode, rates)) * userCurrencyRate;
     const step = Math.min(Math.round(price * 2), 20) - 1;
     snaps[step]++;
     storeCount++;

@@ -1,11 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import {
-  ActivityIndicator,
-  IconButton,
-  Portal,
-  Title,
-} from 'react-native-paper';
+import { IconButton, Portal, Title } from 'react-native-paper';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -98,7 +93,6 @@ const StoreSheet = () => {
         snapPoints={initialSnapPoints}
         animatedIndex={sheetPosition}
         topInset={topbarHeight - 20}
-        bottomInset={bottom}
         enablePanDownToClose
         onClose={() => state.sheetStore && actions.setSheetStore()}>
         <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
@@ -109,16 +103,18 @@ const StoreSheet = () => {
               <Title numberOfLines={1} style={styles.title}>
                 {store?.name || state.sheetStore?.name}
               </Title>
-              {store ? (
-                <View style={styles.preview}>
-                  <View style={styles.previewSchedules}>
-                    <SchedulesPreview schedules={store.schedules} />
-                  </View>
-                  <Text numberOfLines={1}>{store.address}</Text>
+              <View style={styles.preview}>
+                <View style={styles.previewSchedules}>
+                  {state.sheetStore?.schedules && (
+                    <SchedulesPreview
+                      schedules={store?.schedules || state.sheetStore.schedules}
+                    />
+                  )}
                 </View>
-              ) : (
-                <ActivityIndicator style={styles.loading} />
-              )}
+                <Text numberOfLines={1}>
+                  {store?.address || state.sheetStore?.address}
+                </Text>
+              </View>
             </View>
           </Pressable>
           <Animated.View style={contentStyle}>
@@ -158,7 +154,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   previewSchedules: {
-    marginBottom: 7,
+    marginTop: 10,
+    marginBottom: 17,
   },
   loading: {
     marginTop: 10,

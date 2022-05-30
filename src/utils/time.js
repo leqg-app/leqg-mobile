@@ -7,12 +7,16 @@ function pad2(n) {
   return String(n).padStart(2, '0');
 }
 
-export function secondToTime(seconds) {
+export function secondToTime(seconds, options = {}) {
+  const { short = false } = options;
   if (!seconds) {
-    return '00:00';
+    return short ? '00h' : '00:00';
   }
   const hour = Math.floor(seconds / 3600);
   const minute = Math.floor((seconds % 3600) / 60);
+  if (short && minute === 0) {
+    return `${hour}h`;
+  }
   return `${pad2(hour)}:${pad2(minute)}`;
 }
 

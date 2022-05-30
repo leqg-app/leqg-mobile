@@ -32,8 +32,7 @@ const Favorites = ({ navigation }) => {
   const [{ user }, actions] = useStore();
 
   const navigate = store => {
-    const { id, name, longitude: lng, latitude: lat } = store;
-    actions.setSheetStore({ id, name, lng, lat });
+    actions.setSheetStore({ ...store, focus: true });
     navigation.navigate('MapTab', {
       screen: 'MapScreen',
     });
