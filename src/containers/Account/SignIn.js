@@ -36,7 +36,7 @@ const SignIn = ({ navigation }) => {
     setState({ error: undefined, loading: true });
     try {
       const { error, ...user } = await api.signIn({
-        identifier: username,
+        identifier: username.trim(),
         password,
       });
       if (error) {

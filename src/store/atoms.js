@@ -1,6 +1,7 @@
 import { atom, selector } from 'recoil';
 
 import { getStore } from '../api/stores';
+import { getContributions } from '../api/users';
 import { decompressStore } from '../utils/formatStore';
 import { storage } from './storage';
 
@@ -45,39 +46,39 @@ const storeState = selector({
 
 const storesState = atom({
   key: 'storesState',
-  default: selector({
-    key: 'storesState/default',
-    get: () => storage.getObject('stores', []).map(decompressStore),
-  }),
+  default: storage.getObject('stores', []).map(decompressStore),
 });
 
 const productsState = atom({
   key: 'productsState',
-  default: selector({
-    key: 'productsState/default',
-    get: () => storage.getObject('products', []),
-  }),
+  default: storage.getObject('products', []),
 });
 
 const ratesState = atom({
   key: 'ratesState',
-  default: selector({
-    key: 'ratesState/default',
-    get: () => storage.getObject('rates', []),
-  }),
+  default: storage.getObject('rates', []),
 });
 
 const featuresState = atom({
   key: 'featuresState',
-  default: selector({
-    key: 'featuresState/default',
-    get: () => storage.getObject('features', []),
-  }),
+  default: storage.getObject('features', []),
 });
 
 const storeLoadingState = atom({
   key: 'storeLoadingState',
   default: false,
+});
+
+const contributionsState = selector({
+  key: 'contributionsState',
+  get: async ({ get }) => {
+    get(storeQueryRequestIDState);
+    const user = get(userState);
+    if (!user) {
+      return;
+    }
+    return getContributions(user.jwt);
+  },
 });
 
 export {
@@ -91,4 +92,5 @@ export {
   ratesState,
   featuresState,
   storeLoadingState,
+  contributionsState,
 };

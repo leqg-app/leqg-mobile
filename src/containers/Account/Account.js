@@ -11,6 +11,7 @@ import Anonym from './Anonym';
 import AnimatedCircle from '../../components/AnimatedCircle';
 import VersionName from '../../components/VersionName';
 import { theme } from '../../constants';
+import Contributions from './Contributions';
 
 const Account = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
@@ -26,12 +27,16 @@ const Account = ({ navigation }) => {
         },
         {
           text: 'OK',
-          onPress: () => setUser({}),
+          onPress: () => setUser(null),
         },
       ],
       { cancelable: true },
     );
   };
+
+  if (!user) {
+    return <View />;
+  }
 
   const { username, contributions } = user;
   const reputation = contributions.reduce(
@@ -60,7 +65,7 @@ const Account = ({ navigation }) => {
           <Menu.Item
             name="Mes contributions"
             icon="thumb-up"
-            onPress={() => navigation.navigate('SettingsStack')}
+            onPress={() => navigation.navigate('Contributions')}
             value={contributions.length}
           />
           <Menu.Item
@@ -127,6 +132,7 @@ export default () => {
           component={Anonym}
         />
       )}
+      <AccountStack.Screen name="Contributions" component={Contributions} />
       <AccountStack.Screen
         options={{ headerShown: false }}
         name="SettingsStack"

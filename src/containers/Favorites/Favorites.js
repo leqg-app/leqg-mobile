@@ -44,7 +44,7 @@ const Favorites = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {user.jwt ? (
+      {user?.jwt ? (
         user.favorites.length ? (
           <View style={styles.container}>
             <FlatList
