@@ -8,12 +8,13 @@ import React, {
 import { StyleSheet, View } from 'react-native';
 import { Paragraph, Title } from 'react-native-paper';
 import { BarRheostat } from 'react-native-rheostat';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import ActionSheet from '../../components/ActionSheet';
 import ActionButtons from '../../components/ActionButtons';
-import { useStore } from '../../store/context';
 import { storage } from '../../store/storage';
 import currencies from '../../assets/currencies.json';
+import { ratesState, sheetStoreState, storesState } from '../../store/atoms';
 
 // TODO: use only stores visible on map
 
@@ -26,7 +27,7 @@ function getRate(currencyCode, rates) {
   return rates.find(rate => rate.code === currencyCode)?.rate || 1;
 }
 
-function getStats({ stores, rates }) {
+function getStats(stores, rates) {
   const userCurrencyCode = storage.getString('userCurrencyCode') || 'EUR';
   const userCurrencyRate = getRate(userCurrencyCode, rates);
   const snaps = new Array(20).fill(0);
@@ -49,20 +50,22 @@ function getStats({ stores, rates }) {
 
 function PriceFilter({ visible, onClose, onPrice }) {
   const sheet = useRef();
+  const setSheetStore = useSetRecoilState(sheetStoreState);
   const [values, setValues] = useState([0, 20]);
-  const [state, actions] = useStore();
+  const stores = useRecoilValue(storesState);
+  const rates = useRecoilValue(ratesState);
 
   const userCurrencyCode = storage.getString('userCurrencyCode') || 'EUR';
   const currencySymbol = currencies[userCurrencyCode]?.symbol || '€';
 
-  const { snaps, average } = useMemo(getStats(state), [
-    state.stores,
+  const { snaps, average } = useMemo(getStats(stores, rates), [
+    stores,
     userCurrencyCode,
   ]);
 
   useEffect(() => {
     if (visible) {
-      actions.setSheetStore();
+      setSheetStore();
       sheet.current.snapToIndex(0);
     } else {
       sheet.current?.close();
@@ -100,7 +103,7 @@ function PriceFilter({ visible, onClose, onPrice }) {
           values={values}
           min={0}
           max={20}
-          snapPoints={new Array(21).fill(0).map((_, i) => i)}
+          snapPoints={new Array(21).fill().map((_, i) => i)}
           snap={true}
           svgData={snaps}
           onValuesUpdated={({ values }) => {

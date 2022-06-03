@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Searchbar, TouchableRipple } from 'react-native-paper';
+import { useRecoilValue } from 'recoil';
 
-import { useStore } from '../../store/context';
+import { productsState } from '../../store/atoms';
 
 const ProductRow = ({ product, onSelect }) => (
   <TouchableRipple onPress={() => onSelect(product.id)}>
@@ -18,7 +19,7 @@ function sortByName(a, b) {
 }
 
 const SelectProduct = ({ navigation }) => {
-  const [state] = useStore();
+  const products = useRecoilValue(productsState);
   const [search, setSearch] = useState('');
 
   const onSelect = productId => {
@@ -29,16 +30,16 @@ const SelectProduct = ({ navigation }) => {
     }
   };
 
-  const products = useMemo(
+  const filteredProducts = useMemo(
     () =>
       search
-        ? state.products
+        ? products
             .filter(product =>
               product.name.toLowerCase().includes(search.toLowerCase()),
             )
             .sort(sortByName)
-        : Array.from(state.products).sort(sortByName),
-    [state.products, search],
+        : Array.from(products).sort(sortByName),
+    [products, search],
   );
 
   return (
@@ -56,7 +57,7 @@ const SelectProduct = ({ navigation }) => {
         </TouchableRipple>
       ) : null}
       <FlatList
-        data={products}
+        data={filteredProducts}
         renderItem={({ item }) => (
           <ProductRow product={item} onSelect={onSelect} />
         )}

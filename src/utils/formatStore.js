@@ -1,10 +1,3 @@
-function decompressProducts(compressedProduct) {
-  return compressedProduct.reduce((products, product) => {
-    const [productId, price, specialPrice, volume] = product;
-    return products.concat({ productId, price, specialPrice, volume });
-  }, []);
-}
-
 function decompressSchedules(compressedSchedule) {
   return compressedSchedule.reduce((schedules, schedule, day) => {
     if (schedule === 0) {
@@ -47,7 +40,10 @@ export function decompressStore(compressedStore) {
     price,
     specialPrice,
     currencyCode,
-    products: decompressProducts(products),
+    productsId: products.map(product => product[0]),
+    productsPrice: products.map(product => product[1]),
+    productsSpecialPrice: products.map(product => product[2]),
+    productsVolume: products.map(product => product[3]),
     schedules: decompressSchedules(schedules),
     features,
   };

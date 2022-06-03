@@ -2,17 +2,17 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { List } from 'react-native-paper';
 
-const Item = ({ name, onPress = () => {}, last, icon, value }) => (
+const Item = ({ name, onPress = () => {}, last, icon, value, arrow }) => (
   <List.Item
     style={[styles.menu, last && styles.last]}
     title={name}
     onPress={onPress}
     left={props => icon && <List.Icon {...props} icon={icon} />}
-    {...(value && {
+    {...((value || arrow) && {
       right: props => (
         <>
-          <Text style={styles.rightValue}>{value}</Text>
-          <List.Icon {...props} icon="chevron-right" />
+          {value && <Text style={styles.rightValue}>{value}</Text>}
+          {arrow && <List.Icon {...props} icon="chevron-right" />}
         </>
       ),
     })}
@@ -29,12 +29,20 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   last: {
-    borderTopWidth: 0,
     borderBottomColor: '#777',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   rightValue: {
-    marginVertical: 10,
+    marginTop: 5,
+    backgroundColor: '#DDD',
+    paddingTop: 6,
+    height: 30,
+    marginRight: 20,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+  },
+  arrow: {
+    margin: 0,
   },
 });
 

@@ -1,9 +1,11 @@
 import React from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Button, IconButton, List, Paragraph } from 'react-native-paper';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { theme } from '../../constants';
-import { useStore } from '../../store/context';
+import { sheetStoreState, userState } from '../../store/atoms';
+import { useFavoriteState } from '../../store/hooks';
 
 const AuthRequired = ({ navigation }) => (
   <>
@@ -29,10 +31,12 @@ const Row = ({ store, onPress, onRemove }) => (
 );
 
 const Favorites = ({ navigation }) => {
-  const [{ user }, actions] = useStore();
+  const user = useRecoilValue(userState);
+  const setSheetStore = useSetRecoilState(sheetStoreState);
+  const { removeFavorite } = useFavoriteState();
 
   const navigate = store => {
-    actions.setSheetStore({ ...store, focus: true });
+    setSheetStore({ ...store, focus: true });
     navigation.navigate('MapTab', {
       screen: 'MapScreen',
     });
@@ -49,7 +53,7 @@ const Favorites = ({ navigation }) => {
                 <Row
                   store={item}
                   onPress={navigate}
-                  onRemove={actions.removeFavorite}
+                  onRemove={removeFavorite}
                 />
               )}
               keyExtractor={favorite => favorite.id}

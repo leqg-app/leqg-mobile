@@ -8,17 +8,16 @@ import Animated, {
 } from 'react-native-reanimated';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useRecoilState } from 'recoil';
 
-import { useStore } from '../../store/context';
 import SchedulesPreview from '../Store/SchedulesPreview';
 import Store from '../Store/Store';
+import { sheetStoreState } from '../../store/atoms';
 
 const StoreSheet = () => {
   const sheet = useRef(null);
-  const navigation = useNavigation();
+  const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const [previewHeight, setPreviewHeight] = useState(0);
-  const [state, actions] = useStore();
   const sheetPosition = useSharedValue(0);
   const { top, bottom } = useSafeAreaInsets();
 
@@ -68,15 +67,13 @@ const StoreSheet = () => {
     if (!sheet.current) {
       return;
     }
-    if (state.sheetStore) {
-      actions.getStore(state.sheetStore.id);
+    if (sheetStore) {
       sheet.current.snapToIndex(0);
     } else {
       sheet.current.close();
     }
-  }, [state.sheetStore]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sheetStore]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const store = state.storesDetails[state.sheetStore?.id];
   return (
     <Portal>
       <Animated.View style={topBarStyle}>
@@ -94,31 +91,27 @@ const StoreSheet = () => {
         animatedIndex={sheetPosition}
         topInset={topbarHeight - 20}
         enablePanDownToClose
-        onClose={() => state.sheetStore && actions.setSheetStore()}>
+        onClose={() => sheetStore && setSheetStore()}>
         <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
           <Pressable
             onPress={() => sheet.current.snapToIndex(1)}
             onLayout={getPreviewHeight}>
             <View style={styles.previewContainer}>
               <Title numberOfLines={1} style={styles.title}>
-                {store?.name || state.sheetStore?.name}
+                {sheetStore?.name}
               </Title>
               <View style={styles.preview}>
                 <View style={styles.previewSchedules}>
-                  {state.sheetStore?.schedules && (
-                    <SchedulesPreview
-                      schedules={store?.schedules || state.sheetStore.schedules}
-                    />
+                  {sheetStore?.schedules && (
+                    <SchedulesPreview schedules={sheetStore.schedules} />
                   )}
                 </View>
-                <Text numberOfLines={1}>
-                  {store?.address || state.sheetStore?.address}
-                </Text>
+                <Text numberOfLines={1}>{sheetStore?.address}</Text>
               </View>
             </View>
           </Pressable>
           <Animated.View style={contentStyle}>
-            {store && <Store navigation={navigation} store={store} />}
+            <Store />
           </Animated.View>
         </BottomSheetScrollView>
       </BottomSheet>

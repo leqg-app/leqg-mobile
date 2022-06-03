@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BottomSheetFooter } from '@gorhom/bottom-sheet';
+import { useSetRecoilState } from 'recoil';
 
 import ActionButtons from '../../components/ActionButtons';
 import ActionSheet from '../../components/ActionSheet';
 import FeaturesList from '../../components/FeaturesList';
-import { useStore } from '../../store/context';
+import { sheetStoreState } from '../../store/atoms';
 
 function FeatureFilter({ visible, features, onClose, onChange }) {
   const sheet = useRef();
-  const [, actions] = useStore();
+  const setSheetStore = useSetRecoilState(sheetStoreState);
   const [filters, setFilters] = useState([]);
 
   useEffect(() => {
@@ -23,7 +24,7 @@ function FeatureFilter({ visible, features, onClose, onChange }) {
       return;
     }
     if (visible) {
-      actions.setSheetStore();
+      setSheetStore();
       sheet.current.snapToIndex(0);
     } else {
       sheet.current.close();

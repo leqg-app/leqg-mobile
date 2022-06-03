@@ -3,10 +3,11 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Chip } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/core';
 
-import { useStore } from '../../store/context';
 import PriceFilter from './PriceFilter';
 import FeatureFilter from './FeatureFilter';
 import { OPEN_STORE_EXPRESSION } from '../../utils/map';
+import { useRecoilValue } from 'recoil';
+import { productsState } from '../../store/atoms';
 
 function getPrice(priceRangeFilter) {
   if (!priceRangeFilter) {
@@ -26,7 +27,7 @@ function getPrice(priceRangeFilter) {
 }
 
 const Filters = ({ onChange }) => {
-  const [state] = useStore();
+  const products = useRecoilValue(productsState);
   const navigation = useNavigation();
   const route = useRoute();
   const [priceModal, setPriceModal] = useState(false);
@@ -48,7 +49,7 @@ const Filters = ({ onChange }) => {
       }
     }
     if (beerFilter) {
-      filters.push(['in', beerFilter, ['get', 'products']]);
+      filters.push(['in', beerFilter, ['get', 'productsId']]);
     }
     if (openNow) {
       filters.push(OPEN_STORE_EXPRESSION);
@@ -87,7 +88,7 @@ const Filters = ({ onChange }) => {
             onClose={beerFilter && (() => setBeerFilter(undefined))}
             mode="outlined">
             {beerFilter
-              ? `Bière: ${state.products.find(p => p.id === beerFilter)?.name}`
+              ? `Bière: ${products.find(p => p.id === beerFilter)?.name}`
               : 'Bière'}
           </Chip>
           <Chip

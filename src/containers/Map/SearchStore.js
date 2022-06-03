@@ -3,10 +3,11 @@ import { FlatList, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { List, Searchbar, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMMKVObject } from 'react-native-mmkv';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useStore } from '../../store/context';
 import { storage } from '../../store/storage';
 import SchedulesPreview from '../Store/SchedulesPreview';
+import { sheetStoreState, storesState } from '../../store/atoms';
 
 const RowStore = memo(({ store, onSelect }) => {
   const { name, address, schedules, history } = store;
@@ -31,7 +32,8 @@ const RowStore = memo(({ store, onSelect }) => {
 });
 
 function SearchStore({ navigation }) {
-  const [state, actions] = useStore();
+  const stores = useRecoilValue(storesState);
+  const setSheetStore = useSetRecoilState(sheetStoreState);
   const [searchHistory = [], setSearchHistory] = useMMKVObject(
     'searchHistory',
     storage,
@@ -48,11 +50,11 @@ function SearchStore({ navigation }) {
     }, 500);
   }, [searchBar.current]);
 
-  const stores = useMemo(() => {
+  const filterResult = useMemo(() => {
     if (!text) {
       return searchHistory;
     }
-    return state.stores
+    return stores
       .filter(s => s.name.toLowerCase().includes(text.toLowerCase()))
       .slice(0, 5);
   }, [text]);
@@ -64,7 +66,7 @@ function SearchStore({ navigation }) {
       .slice(0, 4);
     history.unshift({ ...focusStore, history: true });
     setSearchHistory(history);
-    actions.setSheetStore({ ...focusStore, focus: true });
+    setSheetStore({ ...focusStore, focus: true });
     navigation.navigate('MapScreen');
   };
 
@@ -83,7 +85,7 @@ function SearchStore({ navigation }) {
       />
       <FlatList
         keyboardShouldPersistTaps="always"
-        data={stores}
+        data={filterResult}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <RowStore onSelect={selectStore} store={item} />

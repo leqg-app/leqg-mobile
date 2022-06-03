@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Title, IconButton, Card, Divider, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRecoilValue } from 'recoil';
 
+import { userState } from '../../store/atoms';
 import AnimatedCircle from '../../components/AnimatedCircle';
 import AnimatedText from '../../components/AnimatedText';
-import { useStore } from '../../store/context';
 
 const DISPLAY_FIELDS = {
   name: 'Nom',
@@ -31,12 +32,15 @@ function groupFields(fields, { fieldName, reputation }) {
 }
 
 const WonReputation = ({ navigation, route }) => {
-  const [state] = useStore();
+  const user = useRecoilValue(userState);
   const { reputation } = route.params;
 
   useEffect(() => StatusBar.setBarStyle('dark-content'), []);
 
-  const initial = state.user.reputation;
+  const userReputation = user.contributions.reduce(
+    (reputation, contribution) => reputation + contribution.reputation,
+    0,
+  );
   const won = reputation.total;
 
   const fields = Object.values(reputation.fields.reduce(groupFields, {}));
@@ -54,7 +58,7 @@ const WonReputation = ({ navigation, route }) => {
 
           <View style={styles.statistics}>
             <View style={styles.flex}>
-              <AnimatedCircle initial={initial} won={won} />
+              <AnimatedCircle initial={userReputation} won={won} />
             </View>
             <View style={styles.flex}>
               <Text>+ </Text>

@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   countText: {
     ...StyleSheet.absoluteFillObject,
     textAlign: 'center',
-    color: theme.colors.primary,
+    color: '#fff',
     fontWeight: '900',
   },
 });

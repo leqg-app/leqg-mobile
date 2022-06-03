@@ -1,23 +1,23 @@
 import { post, put, get } from './index';
 
 function signUp(data) {
-  return post('/auth/local/register', data);
+  return post('/v2/auth/local/register', data);
 }
 
 function signIn(data) {
-  return post('/auth/local', data);
+  return post('/v2/auth/local', data);
 }
 
 function resetPassword(data) {
-  return post('/auth/forgot-password', data);
+  return post('/v2/auth/forgot-password', data);
 }
 
 function getProfile(jwt) {
-  return get('/users/me', { Authorization: `Bearer ${jwt}` });
+  return get('/v2/users/me', { Authorization: `Bearer ${jwt}` });
 }
 
 function updateProfile(jwt, data) {
-  return put('/users/me', data, { Authorization: `Bearer ${jwt}` });
+  return put('/v2/users/me', data, { Authorization: `Bearer ${jwt}` });
 }
 
 export { signUp, signIn, getProfile, updateProfile, resetPassword };

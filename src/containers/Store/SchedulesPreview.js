@@ -47,7 +47,7 @@ function Closed({ today, nextOpenDay }) {
       ) : (
         nextOpenDay && (
           <>
-            <Text> – Ouvre {daysFull[nextOpenDay.dayOfWeek - 1]} prochain</Text>
+            <Text> – Ouvre {daysFull[nextOpenDay.dayOfWeek - 1]}</Text>
             {nextOpenDay.opening && (
               <Text>
                 {' '}

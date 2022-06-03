@@ -5,18 +5,11 @@ import { IconButton } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { theme } from '../../constants';
-import { useStore } from '../../store/context';
 import LocationPermission from './LocationPermission';
 
 function Intro({ navigation }) {
-  const [, actions] = useStore();
-
   useEffect(() => {
     RNBootSplash.hide({ fade: true });
-    actions.getUser();
-    actions.getStores();
-    actions.getProducts();
-    actions.getRates();
   }, []);
 
   const next = async () => {

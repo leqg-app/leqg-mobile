@@ -4,15 +4,16 @@ import MapboxGL, { Logger } from '@react-native-mapbox-gl/maps';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
 import Config from 'react-native-config';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import tooltipIcon from '../../assets/tooltip-50.png';
 import { DEFAULT_MAP, isDark, theme } from '../../constants';
-import { useStore } from '../../store/context';
 import searchPlace from '../../utils/searchPlace';
 import CreateStoreSheet from './CreateStoreSheet';
 import { storage } from '../../store/storage';
 import getLocation from '../../utils/location';
 import { CHEAPEST_PRICE_EXPRESSION } from '../../utils/map';
+import { sheetStoreState, storesState } from '../../store/atoms';
 
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
@@ -34,7 +35,8 @@ const storedMapPosition = storage.getObject('mapPosition', {});
 
 const Mapbox = ({ filters }) => {
   const camera = useRef();
-  const [state, actions] = useStore();
+  const stores = useRecoilValue(storesState);
+  const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const { colors } = useTheme();
 
   const [createStore, setCreateStore] = useState();
@@ -78,17 +80,17 @@ const Mapbox = ({ filters }) => {
   }, []);
 
   useEffect(() => {
-    if (!state.sheetStore?.focus || !camera.current) {
+    if (!sheetStore?.focus || !camera.current) {
       return;
     }
     setCreateStore();
     setMap({ isFollowing: false });
     camera.current.setCamera({
-      centerCoordinate: [state.sheetStore.longitude, state.sheetStore.latitude],
+      centerCoordinate: [sheetStore.longitude, sheetStore.latitude],
       zoomLevel: 17,
       animationDuration: 1000,
     });
-  }, [state.sheetStore]);
+  }, [sheetStore]);
 
   const moveTo = centerCoordinate => {
     if (!camera.current) {
@@ -117,8 +119,8 @@ const Mapbox = ({ filters }) => {
   };
 
   const onMapPress = () => {
-    if (state.sheetStore) {
-      actions.setSheetStore();
+    if (sheetStore) {
+      setSheetStore();
     }
     if (createStore) {
       setCreateStore();
@@ -149,7 +151,7 @@ const Mapbox = ({ filters }) => {
   const storesShape = useMemo(
     () => ({
       type: 'FeatureCollection',
-      features: state.stores.map(store => ({
+      features: stores.map(store => ({
         type: 'Feature',
         geometry: {
           type: 'Point',
@@ -158,7 +160,7 @@ const Mapbox = ({ filters }) => {
         properties: store,
       })),
     }),
-    [state.stores],
+    [stores],
   );
 
   if (!initialPosition) {
@@ -167,7 +169,7 @@ const Mapbox = ({ filters }) => {
 
   const searchPoint = async ({ geometry: { coordinates } }) => {
     const [longitude, latitude] = coordinates;
-    actions.setSheetStore();
+    setSheetStore();
     setCreateStore({ loading: true, longitude, latitude });
     try {
       const { address, countryCode } = await searchPlace(longitude, latitude);
@@ -208,7 +210,7 @@ const Mapbox = ({ filters }) => {
         <MapboxGL.ShapeSource
           id="stores"
           shape={storesShape}
-          onPress={e => actions.setSheetStore(e.features[0].properties)}>
+          onPress={e => setSheetStore(e.features[0].properties)}>
           <MapboxGL.SymbolLayer
             id="store"
             filter={filters && ['all', ...filters]}
@@ -227,18 +229,15 @@ const Mapbox = ({ filters }) => {
           id="storeFocus"
           shape={{
             type: 'FeatureCollection',
-            features: state.sheetStore
+            features: sheetStore
               ? [
                   {
                     type: 'Feature',
                     geometry: {
                       type: 'Point',
-                      coordinates: [
-                        state.sheetStore.longitude,
-                        state.sheetStore.latitude,
-                      ],
+                      coordinates: [sheetStore.longitude, sheetStore.latitude],
                     },
-                    properties: state.sheetStore,
+                    properties: sheetStore,
                   },
                 ]
               : [],
@@ -334,7 +333,12 @@ const layerStyles = {
     textField: ['to-string', CHEAPEST_PRICE_EXPRESSION],
     textColor: '#fff',
     textTranslate: [0, -13],
-    textSize: 13,
+    textSize: [
+      'case',
+      ['<', 3, ['length', ['to-string', CHEAPEST_PRICE_EXPRESSION]]],
+      11,
+      13,
+    ],
   },
   storeName: {
     textField: ['get', 'name'],
@@ -354,7 +358,7 @@ const layerStyles = {
       'bottom-left',
       'bottom-right',
     ],
-    textRadialOffset: 1,
+    textRadialOffset: 1.1,
   },
   nearLine: {
     lineColor: theme.colors.primary,

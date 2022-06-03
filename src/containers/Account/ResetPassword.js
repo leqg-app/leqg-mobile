@@ -1,27 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Alert, StyleSheet } from 'react-native';
 import { Title, TextInput, Button, HelperText } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import { useStore } from '../../store/context';
+import { resetPassword } from '../../api/users';
 
 const errors = {
   'Network request failed': 'Vérifiez votre connexion internet',
-  'Auth.form.error.email.format': 'Adresse email invalide',
-  'Auth.form.error.user.not-exist': "Cet email n'a pas de compte",
-  'Auth.form.error.user.blocked':
+  'email.format': 'Adresse email invalide',
+  'user.not-exist': "Cet email n'a pas de compte",
+  'user.blocked':
     "Ce compte a été désactivé, contactez-nous pour plus d'information",
 };
 
 const ResetPassword = ({ navigation }) => {
-  const [, actions] = useStore();
-
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     error: undefined,
     loading: false,
   });
 
-  const [email, setEmail] = React.useState('');
+  const [email, setEmail] = useState('');
 
   const submit = async () => {
     if (!email) {
@@ -29,11 +27,14 @@ const ResetPassword = ({ navigation }) => {
       return;
     }
     setState({ error: undefined, loading: true });
-    const error = await actions.resetPassword({
-      email,
-    });
-    if (error) {
-      setState({ error, loading: false });
+    try {
+      const { error } = await resetPassword({ email });
+      if (error) {
+        setState({ error, loading: false });
+        return;
+      }
+    } catch (err) {
+      setState({ error: err.message, loading: false });
       return;
     }
     Alert.alert(

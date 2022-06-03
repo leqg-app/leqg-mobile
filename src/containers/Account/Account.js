@@ -1,60 +1,99 @@
 import React from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { List, Subheading, Title, useTheme } from 'react-native-paper';
+import { IconButton, Text, Title, useTheme } from 'react-native-paper';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import Auth from './Auth';
 import Settings from './Settings';
-import { useStore } from '../../store/context';
 import Menu from '../../components/Menu';
+import { userState } from '../../store/atoms';
+import Anonym from './Anonym';
+import AnimatedCircle from '../../components/AnimatedCircle';
+import VersionName from '../../components/VersionName';
+import { theme } from '../../constants';
 
 const Account = ({ navigation }) => {
-  const [state, actions] = useStore();
+  const [user, setUser] = useRecoilState(userState);
 
   const signout = () => {
-    Alert.alert('Confirmation', 'Voulez-vous vraiment vous déconnecter ?', [
-      {
-        text: 'Annuler',
-        style: 'cancel',
-      },
-      {
-        text: 'OK',
-        onPress: () => actions.signOut(),
-      },
-    ]);
+    Alert.alert(
+      'Confirmation',
+      'Voulez-vous vraiment vous déconnecter ?',
+      [
+        {
+          text: 'Annuler',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => setUser({}),
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
-  const contributions = state.user.contributions || 0;
+  const { username, contributions } = user;
+  const reputation = contributions.reduce(
+    (reputation, contribution) => reputation + contribution.reputation,
+    1,
+  );
 
   return (
     <View>
-      <View style={styles.box}>
-        <Title>{state.user.username}</Title>
-        <Subheading>
-          {contributions} contribution
-          {contributions > 1 ? 's' : ''}
-        </Subheading>
+      <View style={styles.head}>
+        <View>
+          <View style={styles.icon}>
+            <IconButton icon="shield" color={theme.colors.primary} size={40} />
+          </View>
+          <View>
+            <AnimatedCircle initial={reputation} won={0} />
+          </View>
+        </View>
+        <View style={styles.name}>
+          <Title>{username}</Title>
+          <Text>Plus que 34 points pour atteindre le niveau 4</Text>
+        </View>
       </View>
       <View style={styles.menus}>
         <Menu>
           <Menu.Item
-            name="Paramètres"
+            name="Mes contributions"
+            icon="thumb-up"
+            onPress={() => navigation.navigate('SettingsStack')}
+            value={contributions.length}
+          />
+          <Menu.Item
+            name="Préférences"
             icon="cog-outline"
             onPress={() => navigation.navigate('SettingsStack')}
+            last
           />
           <Menu.Item name="Se déconnecter" icon="logout" onPress={signout} />
         </Menu>
+        <VersionName />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  box: {
-    padding: 20,
+  head: {
+    margin: 20,
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  icon: {
+    position: 'absolute',
+    margin: 4,
+  },
+  name: {
+    justifyContent: 'center',
+    marginHorizontal: 20,
+    flex: 1,
   },
   menus: {
-    marginTop: 30,
+    // marginTop: 10,
   },
   menu: {
     borderTopColor: '#777',
@@ -65,7 +104,7 @@ const styles = StyleSheet.create({
 const AccountStack = createNativeStackNavigator();
 
 export default () => {
-  const [state] = useStore();
+  const user = useRecoilValue(userState);
   const { colors } = useTheme();
   return (
     <AccountStack.Navigator
@@ -75,7 +114,7 @@ export default () => {
         },
         headerTintColor: '#fff',
       }}>
-      {state.user.jwt ? (
+      {user?.jwt ? (
         <AccountStack.Screen
           options={{ title: 'Mon compte' }}
           name="Account"
@@ -84,8 +123,8 @@ export default () => {
       ) : (
         <AccountStack.Screen
           options={{ headerShown: false }}
-          name="AuthStack"
-          component={Auth}
+          name="AnonymStack"
+          component={Anonym}
         />
       )}
       <AccountStack.Screen

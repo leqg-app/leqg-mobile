@@ -28,6 +28,7 @@ const Settings = ({ navigation, route }) => {
           onPress={() => navigation.navigate('SelectCurrency')}
           last
           value={currency}
+          arrow
         />
       </Menu>
     </ScrollView>

@@ -1,22 +1,23 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { IconButton, Title } from 'react-native-paper';
+import { useRecoilValue } from 'recoil';
+
 import { theme } from '../../constants';
+import { featuresState } from '../../store/atoms';
 
-import { useStore } from '../../store/context';
-
-function StoreFeatures({ features }) {
-  const [state] = useStore();
+function StoreFeatures(props) {
+  const features = useRecoilValue(featuresState);
 
   if (!features.length) {
     return <View />;
   }
 
-  const featuresId = features.map(({ id }) => id);
+  const featuresId = props.features.map(({ id }) => id);
 
   return (
     <View style={styles.container}>
-      {state.features.map(category => {
+      {features.map(category => {
         const feats = category.features.filter(({ id }) =>
           featuresId.includes(id),
         );

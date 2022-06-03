@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BackHandler, Platform, StatusBar, StyleSheet } from 'react-native';
 import { Portal, Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -6,8 +6,8 @@ import { useIsFocused } from '@react-navigation/core';
 import { useFocusEffect } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useStore } from '../../store/context';
 import { theme } from '../../constants';
 import ProductFilter from './ProductFilter';
 import Filters from './Filters';
@@ -15,19 +15,16 @@ import Mapbox from './Mapbox';
 import StoreSheet from './StoreSheet';
 import SearchBar from '../../components/SearchBar';
 import SearchStore from './SearchStore';
+import { sheetStoreState, storeLoadingState } from '../../store/atoms';
 
 const Map = ({ navigation, route }) => {
-  const [state, actions] = useStore();
   const isFocused = useIsFocused();
   const [filters, setFilters] = useState([]);
+  const storeLoading = useRecoilValue(storeLoadingState);
+  const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const { params } = route;
 
   useEffect(() => {
-    actions.getUser();
-    actions.getStores();
-    actions.getProducts();
-    actions.getFeatures();
-    actions.getRates();
     RNBootSplash.hide({ fade: true });
   }, []);
 
@@ -35,8 +32,8 @@ const Map = ({ navigation, route }) => {
     const event = BackHandler.addEventListener(
       'hardwareBackPress',
       function () {
-        if (state.sheetStore) {
-          actions.setSheetStore();
+        if (sheetStore) {
+          setSheetStore();
           return true;
         }
         return false;
@@ -62,8 +59,8 @@ const Map = ({ navigation, route }) => {
       <Mapbox filters={filters} />
       <SearchBar
         onSearch={() => navigation.navigate('SearchStore')}
-        onBack={state.sheetStore && (() => actions.setSheetStore())}
-        loading={state.loading}
+        onBack={sheetStore && (() => setSheetStore())}
+        loading={storeLoading}
       />
       <Filters onChange={filters => setFilters(filters)} />
       <StoreSheet />
@@ -73,15 +70,6 @@ const Map = ({ navigation, route }) => {
           duration={2000}
           onDismiss={() => navigation.setParams({ contribute: false })}>
           Merci pour votre contribution !
-        </Snackbar>
-        <Snackbar
-          visible={state.error}
-          duration={2000}
-          action={{
-            label: 'OK',
-          }}
-          onDismiss={() => actions.dismissError()}>
-          {state.error}
         </Snackbar>
       </Portal>
     </SafeAreaView>

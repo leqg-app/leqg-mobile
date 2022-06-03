@@ -1,19 +1,21 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Caption } from 'react-native-paper';
+import { useRecoilValue } from 'recoil';
 
-import { useStore } from '../../store/context';
 import Price from '../../components/Price';
 import { sortByPrices } from '../../utils/price';
+import { productsState } from '../../store/atoms';
 
 const types = {
   draft: 'Pression',
   bottle: 'Bouteille',
 };
 
-function StoreProducts({ products }) {
-  const [state] = useStore();
-  const hasHH = products.some(product => product.specialPrice);
+function StoreProducts(props) {
+  const products = useRecoilValue(productsState);
+
+  const hasHH = props.products.some(product => product.specialPrice);
   // TODO: bold happy hour if we currently are
   return (
     <View>
@@ -24,12 +26,12 @@ function StoreProducts({ products }) {
           {hasHH && <Text style={styles.pricesCell}>HH.</Text>}
         </View>
       </View>
-      {Array.from(products)
+      {Array.from(props.products)
         .sort(sortByPrices)
         .map((product, i) => {
           const { volume, price, specialPrice, productName, currencyCode } =
             product;
-          const productDetail = state.products.find(
+          const productDetail = products.find(
             ({ id }) => id === product.productId,
           );
           return (

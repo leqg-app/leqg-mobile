@@ -1,21 +1,20 @@
-import React, { useState, useMemo } from 'react';
-import { Platform, StyleSheet, Text, View, Linking } from 'react-native';
+import React, { useMemo, Suspense } from 'react';
+import { Alert, Platform, StyleSheet, Text, View, Linking } from 'react-native';
 import {
+  ActivityIndicator,
   Avatar,
   Button,
   Caption,
-  Dialog,
   Divider,
+  IconButton,
   List,
-  Paragraph,
-  Portal,
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
 import Share from 'react-native-share';
-import { useSetRecoilState } from 'recoil';
-
-import { useStore } from '../../store/context';
+import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
+import { ErrorBoundary } from 'react-error-boundary';
+import { useNavigation } from '@react-navigation/native';
 
 import StoreProducts from './StoreProducts';
 import SchedulesPreview from './SchedulesPreview';
@@ -23,7 +22,41 @@ import Schedules from './Schedules';
 import { theme } from '../../constants';
 import { getUrlHost } from '../../utils/url';
 import StoreFeatures from './StoreFeatures';
-import { storeEditionState } from '../../store/atoms';
+import {
+  sheetStoreState,
+  storeEditionState,
+  storeState,
+  userState,
+  storeQueryRequestIDState,
+} from '../../store/atoms';
+import { useFavoriteState } from '../../store/hooks';
+
+function OfflineMessage({ resetErrorBoundary }) {
+  return (
+    <View style={styles.contentCenter}>
+      <Text style={styles.offlineMessage}>
+        Veuillez vérifier votre connexion internet
+      </Text>
+      <IconButton icon="wifi-off" color="#888" />
+      <Button
+        style={styles.offlineRetryButton}
+        mode="outlined"
+        icon="reload"
+        onPress={resetErrorBoundary}
+        uppercase={false}>
+        Touchez ici pour réessayer
+      </Button>
+    </View>
+  );
+}
+
+function Loading() {
+  return (
+    <View style={styles.contentCenter}>
+      <ActivityIndicator color={theme.colors.primary} />
+    </View>
+  );
+}
 
 function ActionButton({ name, icon, onPress, color = 'white' }) {
   return (
@@ -78,75 +111,201 @@ function openAddress(store) {
   Linking.openURL(url);
 }
 
-const StoreDetails = ({ navigation, store }) => {
-  const [state, actions] = useStore();
-  const { colors } = useTheme();
-  const [modalLogin, setModalLogin] = useState(false);
-  const useSetStoreEdition = useSetRecoilState(storeEditionState);
+function share(store) {
+  Share.open({
+    title: 'Retrouvons nous',
+    message: `Retrouvons nous au ${store.name}\n\n${store.address}`,
+  }).catch(() => {});
+}
 
-  const [expandSchedules, setExpandSchedules] = React.useState(false);
+function call(store) {
+  if (store?.phone) {
+    Linking.openURL(`tel:${store.phone}`);
+  }
+}
 
-  const toggleFavorite = () => {
-    if (!state.user?.id) {
-      setModalLogin(true);
+function StoreActionButtons() {
+  const store = useRecoilValue(storeState);
+  const user = useRecoilValue(userState);
+  const setSheetStore = useSetRecoilState(sheetStoreState);
+  const navigation = useNavigation();
+  const { addFavorite, removeFavorite } = useFavoriteState();
+
+  const isFavorite = useMemo(() => {
+    if (!user) {
+      return;
+    }
+    const { favorites = [] } = user;
+    return favorites.some(favorite => favorite.id === store.id);
+  }, [user]);
+
+  const toggleFavorite = async () => {
+    if (!user) {
+      Alert.alert(
+        '',
+        'Vous devez être connecté pour enregistrer ce bar dans vos favoris',
+        [
+          {
+            text: 'Annuler',
+            style: 'cancel',
+          },
+          {
+            text: 'Connexion',
+            onPress: () => {
+              navigation.navigate('AccountTab');
+              setSheetStore();
+            },
+          },
+        ],
+        { cancelable: true },
+      );
       return;
     }
     if (isFavorite) {
-      actions.removeFavorite(store);
+      removeFavorite(store);
     } else {
-      actions.addFavorite(store);
+      addFavorite(store);
     }
   };
 
-  const isFavorite = useMemo(() => {
-    if (!state.user?.id) {
-      return;
-    }
-    const { favorites = [] } = state.user;
-    return favorites.some(favorite => favorite.id === store.id);
-  }, [state.user]);
+  return (
+    <>
+      <ActionButton
+        onPress={toggleFavorite}
+        name="Enregistrer"
+        color={isFavorite ? 'gold' : 'white'}
+        icon={isFavorite ? 'star' : 'star-outline'}
+        disabled
+      />
+      {store.phone && (
+        <ActionButton onPress={() => call(store)} name="Appeler" icon="phone" />
+      )}
+    </>
+  );
+}
+
+function StoreContent() {
+  const navigation = useNavigation();
+
+  const user = useRecoilValue(userState);
+  const store = useRecoilValue(storeState);
+  const setSheetStore = useSetRecoilState(sheetStoreState);
+  const setStoreEdition = useSetRecoilState(storeEditionState);
 
   const editStore = () => {
-    useSetStoreEdition(store);
+    if (!user) {
+      Alert.alert(
+        '',
+        'Vous devez être connecté pour modifier ce bar',
+        [
+          {
+            text: 'Annuler',
+            style: 'cancel',
+          },
+          {
+            text: 'Connexion',
+            onPress: () => {
+              navigation.navigate('AccountTab');
+              setSheetStore();
+            },
+          },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+    setStoreEdition(store);
     navigation.navigate('EditStoreScreen', {
       screen: 'EditStore',
       params: { store },
     });
   };
 
-  const share = () => {
-    const message = `Retrouvons nous au ${store.name}\n\n${store.address}`;
-    Share.open({
-      title: 'Retrouvons nous',
-      message: `${message}`,
-    }).catch(() => {});
-  };
+  return (
+    <>
+      {store.products && (
+        <>
+          <ListInfo
+            onPress={editStore}
+            content={
+              <Text style={styles.infoTextItalic}>
+                Suggérer une modification
+              </Text>
+            }
+            icon="pencil"
+            chevron={false}
+          />
+          <Divider />
+          <StoreProducts products={store.products} />
+        </>
+      )}
+      {store.website && (
+        <>
+          <ListInfo
+            onPress={() => Linking.openURL(store.website)}
+            content={getUrlHost(store.website)}
+            icon="earth"
+          />
+          <Divider />
+        </>
+      )}
+      {store.phone && (
+        <>
+          <ListInfo
+            onPress={() => call(store)}
+            content={store.phone}
+            icon="phone"
+          />
+          <Divider />
+        </>
+      )}
+      {store.features.length ? (
+        <>
+          <Text style={styles.title}>Caractéristiques</Text>
+          <View style={styles.features}>
+            <StoreFeatures features={store.features} />
+          </View>
+        </>
+      ) : null}
+    </>
+  );
+}
 
-  const call = () => store.phone && Linking.openURL(`tel:${store.phone}`);
+const Store = () => {
+  const { colors } = useTheme();
+  const sheetStore = useRecoilValue(sheetStoreState);
+  const [requestId, setRequestID] = useRecoilState(storeQueryRequestIDState);
+
+  const [expandSchedules, setExpandSchedules] = React.useState(false);
+  const refreshStore = () => setRequestID(requestId => requestId + 1);
+
+  if (!sheetStore) {
+    return <View />;
+  }
 
   return (
-    <View>
+    <>
       <View style={styles.actionsBar}>
         <ActionButton
-          onPress={() => openAddress(store)}
+          onPress={() => openAddress(sheetStore)}
           name="Itinéraire"
           icon="directions"
         />
-        <ActionButton onPress={share} name="Partager" icon="share-variant" />
         <ActionButton
-          onPress={toggleFavorite}
-          name="Enregistrer"
-          color={isFavorite ? 'gold' : 'white'}
-          icon={isFavorite ? 'star' : 'star-outline'}
+          onPress={() => share(sheetStore)}
+          name="Partager"
+          icon="share-variant"
         />
-        {store.phone && (
-          <ActionButton onPress={call} name="Appeler" icon="phone" />
-        )}
+        <ErrorBoundary fallback={<></>} resetKeys={[requestId]}>
+          <Suspense fallback={<></>}>
+            <StoreActionButtons />
+          </Suspense>
+        </ErrorBoundary>
       </View>
       <Divider />
       <ListInfo
-        onPress={() => openAddress(store)}
-        content={store.address}
+        onPress={() => openAddress(sheetStore)}
+        content={sheetStore.address}
         icon="map-marker"
       />
       <Divider />
@@ -162,11 +321,11 @@ const StoreDetails = ({ navigation, store }) => {
                 icon="clock"
                 color={colors.primary}
               />
-              <SchedulesPreview schedules={store.schedules} />
+              <SchedulesPreview schedules={sheetStore.schedules} />
             </View>
           ) : (
             <View style={styles.schedulesWrapper}>
-              <Schedules schedules={store.schedules} />
+              <Schedules schedules={sheetStore.schedules} />
             </View>
           )}
           {!expandSchedules && (
@@ -178,108 +337,13 @@ const StoreDetails = ({ navigation, store }) => {
           )}
         </View>
       </TouchableRipple>
-      {expandSchedules && (
-        <Button onPress={editStore} mode="text" uppercase={false}>
-          Ajouter ou modifier ces horaires
-        </Button>
-      )}
       <Divider />
-      <ListInfo
-        onPress={editStore}
-        content={
-          <Text style={styles.infoTextItalic}>Suggérer une modification</Text>
-        }
-        icon="pencil"
-        chevron={false}
-      />
-      <Divider />
-      <StoreProducts products={store.products} />
-      {store.website && (
-        <>
-          <ListInfo
-            onPress={() => Linking.openURL(store.website)}
-            content={getUrlHost(store.website)}
-            icon="earth"
-          />
-          <Divider />
-        </>
-      )}
-      {store.phone && (
-        <>
-          <ListInfo onPress={call} content={store.phone} icon="phone" />
-          <Divider />
-        </>
-      )}
-      {store.features.length ? (
-        <>
-          <Text style={styles.title}>Caractéristiques</Text>
-          <View style={styles.features}>
-            <StoreFeatures features={store.features} />
-          </View>
-        </>
-      ) : null}
-      {/* <Subheading>Résumé des avis</Subheading>
-      <Divider />
-      <Subheading>Donner une note et un avis</Subheading>
-      <Text>
-        Partagez votre expérience pour aider les autres utilisateurs dans leurs
-        recherches
-      </Text>
-      <View style={styles.infoRow}>
-        <IconButton
-          icon="star-outline"
-          color={colors.primary}
-          size={30}
-          onPress={() => console.log('Pressed')}
-        />
-        <IconButton
-          icon="star-outline"
-          color={colors.primary}
-          size={30}
-          onPress={() => console.log('Pressed')}
-        />
-        <IconButton
-          icon="star-outline"
-          color={colors.primary}
-          size={30}
-          onPress={() => console.log('Pressed')}
-        />
-        <IconButton
-          icon="star-outline"
-          color={colors.primary}
-          size={30}
-          onPress={() => console.log('Pressed')}
-        />
-        <IconButton
-          icon="star-outline"
-          color={colors.primary}
-          size={30}
-          onPress={() => console.log('Pressed')}
-        />
-      </View> */}
-      {modalLogin && (
-        <Portal>
-          <Dialog visible={true} onDismiss={() => setModalLogin(false)}>
-            <Dialog.Content>
-              <Paragraph>
-                Vous devez être connecté pour enregistrer ce bar dans vos
-                favoris
-              </Paragraph>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={() => setModalLogin(false)}>Annuler</Button>
-              <Button
-                onPress={() => {
-                  setModalLogin(false);
-                  navigation.navigate('AccountTab');
-                }}>
-                Connexion
-              </Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
-      )}
-    </View>
+      <ErrorBoundary FallbackComponent={OfflineMessage} onReset={refreshStore}>
+        <Suspense fallback={<Loading />}>
+          <StoreContent />
+        </Suspense>
+      </ErrorBoundary>
+    </>
   );
 };
 
@@ -342,6 +406,20 @@ const styles = StyleSheet.create({
   features: {
     marginHorizontal: 15,
   },
+  contentCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    height: 300,
+  },
+  offlineMessage: {
+    color: '#888',
+  },
+  offlineRetryButton: {
+    marginTop: 30,
+    color: '#fff',
+  },
 });
 
-export default StoreDetails;
+export default Store;

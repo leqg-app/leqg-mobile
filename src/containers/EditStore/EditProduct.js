@@ -21,9 +21,8 @@ import { useRecoilState } from 'recoil';
 import { theme } from '../../constants';
 import countries from '../../assets/countries.json';
 import currencies from '../../assets/currencies.json';
-import { useStore } from '../../store/context';
 import { displayPrice, parsePrice } from '../../utils/price';
-import { storeEditionState } from '../../store/atoms';
+import { productsState, storeEditionState } from '../../store/atoms';
 
 const productTypes = [
   {
@@ -37,7 +36,7 @@ const productTypes = [
 ];
 
 const EditProducts = ({ navigation, route }) => {
-  const [state] = useStore();
+  const products = useRecoilValue(productsState);
   const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
   const { colors } = useTheme();
   const [storeProduct, setProduct] = useState({
@@ -149,7 +148,7 @@ const EditProducts = ({ navigation, route }) => {
     navigation.goBack();
   };
 
-  const selectedProduct = state.products.find(({ id }) => id === productId);
+  const selectedProduct = products.find(({ id }) => id === productId);
 
   const removeProduct = () => {
     Alert.alert('Confirmation', 'Voulez-vous vraiment supprimer ce produit ?', [

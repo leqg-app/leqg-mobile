@@ -6,7 +6,6 @@ import * as Sentry from '@sentry/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RecoilRoot } from 'recoil';
 
-import { StoreProvider } from './store/context';
 import Routes from './Routes';
 import { theme } from './constants';
 
@@ -26,15 +25,13 @@ if (!__DEV__) {
 const App = () => {
   return (
     <GestureHandlerRootView style={styles.container}>
-      <StoreProvider>
-        <PaperProvider theme={theme}>
-          <SafeAreaProvider>
-            <RecoilRoot>
-              <Routes />
-            </RecoilRoot>
-          </SafeAreaProvider>
-        </PaperProvider>
-      </StoreProvider>
+      <PaperProvider theme={theme}>
+        <SafeAreaProvider>
+          <RecoilRoot>
+            <Routes />
+          </RecoilRoot>
+        </SafeAreaProvider>
+      </PaperProvider>
     </GestureHandlerRootView>
   );
 };

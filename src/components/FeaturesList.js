@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Title } from 'react-native-paper';
+import { useRecoilValue } from 'recoil';
 
-import { useStore } from '../store/context';
 import Badge from './Badge';
+import { featuresState } from '../store/atoms';
 
 const FeaturesList = ({ initialSelected = [], onChange }) => {
-  const [state] = useStore();
+  const features = useRecoilValue(featuresState);
   const [selected, setSelected] = useState(initialSelected);
 
   useEffect(() => setSelected(initialSelected), [initialSelected]);
@@ -20,7 +21,7 @@ const FeaturesList = ({ initialSelected = [], onChange }) => {
     }
   };
 
-  return state.features.map(({ name, features }) => (
+  return features.map(({ name, features }) => (
     <View key={name}>
       <Title style={styles.title}>{name}</Title>
       <View style={styles.featureList}>
