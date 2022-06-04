@@ -61,7 +61,7 @@ const Favorites = ({ navigation }) => {
           </View>
         ) : (
           <View style={styles.center}>
-            <Paragraph>Vous n'avez pas encore de bar favoris.</Paragraph>
+            <Paragraph>Vous n&apos;avez pas encore de bar favoris.</Paragraph>
             <Paragraph>
               Explorez la carte pour en ajouter de nouveaux !
             </Paragraph>

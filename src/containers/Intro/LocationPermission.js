@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, List, Title } from 'react-native-paper';
-import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DEFAULT_MAP, theme } from '../../constants';

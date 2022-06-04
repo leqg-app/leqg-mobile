@@ -17,7 +17,7 @@ function Open({ today }) {
       <Text>
         <Text style={styles.scheduleOpen}>Ouvert</Text>
         {closing !== null && (
-          <Text> jusqu'à {secondToTime(closing, { short: true })}</Text>
+          <Text> jusqu&apos;à {secondToTime(closing, { short: true })}</Text>
         )}
       </Text>
       {openingSpecial && (

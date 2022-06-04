@@ -52,7 +52,7 @@ const SelectProduct = ({ navigation }) => {
       {search ? (
         <TouchableRipple onPress={() => onSelect()}>
           <View style={styles.productRow}>
-            <Text style={styles.customName}>Ajouter "{search}"</Text>
+            <Text style={styles.customName}>Ajouter &quot;{search}&quot;</Text>
           </View>
         </TouchableRipple>
       ) : null}

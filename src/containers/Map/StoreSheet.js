@@ -72,7 +72,7 @@ const StoreSheet = () => {
     } else {
       sheet.current.close();
     }
-  }, [sheetStore]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sheetStore]);
 
   return (
     <Portal>

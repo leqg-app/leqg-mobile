@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Chip } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useRoute } from '@react-navigation/core';
 
 import PriceFilter from './PriceFilter';
 import FeatureFilter from './FeatureFilter';
-import { OPEN_STORE_EXPRESSION } from '../../utils/map';
+import {
+  CHEAPEST_PRICE_EXPRESSION,
+  OPEN_STORE_EXPRESSION,
+} from '../../utils/map';
 import { useRecoilValue } from 'recoil';
 import { productsState } from '../../store/atoms';
+import ProductFilter from './ProductFilter';
 
 function getPrice(priceRangeFilter) {
   if (!priceRangeFilter) {
@@ -28,13 +32,13 @@ function getPrice(priceRangeFilter) {
 
 const Filters = ({ onChange }) => {
   const products = useRecoilValue(productsState);
-  const navigation = useNavigation();
   const route = useRoute();
   const [priceModal, setPriceModal] = useState(false);
   const [priceRangeFilter, setPriceFilter] = useState(undefined);
   const [featureModal, setFeatureModal] = useState(false);
   const [featureFilter, setFeatureFilter] = useState(undefined);
-  const [beerFilter, setBeerFilter] = useState(undefined);
+  const [productModal, setProductModal] = useState(false);
+  const [productFilter, setProductFilter] = useState(undefined);
   const [openNow, setOpenFilter] = useState(false);
 
   useEffect(() => {
@@ -48,8 +52,8 @@ const Filters = ({ onChange }) => {
         filters.push(['<=', CHEAPEST_PRICE_EXPRESSION, max]);
       }
     }
-    if (beerFilter) {
-      filters.push(['in', beerFilter, ['get', 'productsId']]);
+    if (productFilter) {
+      filters.push(['in', productFilter, ['get', 'productsId']]);
     }
     if (openNow) {
       filters.push(OPEN_STORE_EXPRESSION);
@@ -58,13 +62,13 @@ const Filters = ({ onChange }) => {
       filters.push(...featureFilter.map(id => ['in', id, ['get', 'features']]));
     }
     onChange(filters);
-  }, [priceRangeFilter, beerFilter, openNow, featureFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [priceRangeFilter, productFilter, openNow, featureFilter]);
 
   useEffect(() => {
-    if (beerFilter !== route.params?.productFilter) {
-      setBeerFilter(route.params?.productFilter);
+    if (productFilter !== route.params?.productFilter) {
+      setProductFilter(route.params?.productFilter);
     }
-  }, [route.params?.productFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [route.params?.productFilter]);
 
   return (
     <>
@@ -84,11 +88,11 @@ const Filters = ({ onChange }) => {
           <Chip
             style={styles.filter}
             icon="beer-outline"
-            onPress={() => navigation.navigate('ProductFilter')}
-            onClose={beerFilter && (() => setBeerFilter(undefined))}
+            onPress={() => setProductModal(true)}
+            onClose={productFilter && (() => setProductFilter(undefined))}
             mode="outlined">
-            {beerFilter
-              ? `Bière: ${products.find(p => p.id === beerFilter)?.name}`
+            {productFilter
+              ? `Bière: ${products.find(p => p.id === productFilter)?.name}`
               : 'Bière'}
           </Chip>
           <Chip
@@ -118,6 +122,12 @@ const Filters = ({ onChange }) => {
         features={featureFilter}
         onClose={() => setFeatureModal(false)}
         onChange={features => setFeatureFilter(features)}
+      />
+      <ProductFilter
+        visible={productModal}
+        selected={productFilter}
+        onClose={() => setProductModal(false)}
+        onChange={products => setProductFilter(products)}
       />
     </>
   );

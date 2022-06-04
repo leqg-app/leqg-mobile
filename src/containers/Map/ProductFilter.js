@@ -1,57 +1,86 @@
-import React from 'react';
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
-import { useRecoilValue } from 'recoil';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { BottomSheetFooter, BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { useSetRecoilState } from 'recoil';
 
-import { productsState } from '../../store/atoms';
+import ActionButtons from '../../components/ActionButtons';
+import ActionSheet from '../../components/ActionSheet';
+import { sheetStoreState } from '../../store/atoms';
+import ProductsList from '../../components/ProductsList';
 
-const Row = ({ product, onSelect }) => (
-  <TouchableRipple onPress={() => onSelect(product.id)}>
-    <View style={styles.productRow}>
-      <Text>{product.name}</Text>
-    </View>
-  </TouchableRipple>
-);
+function ProductFilter({ visible, selected, onClose, onChange }) {
+  const sheet = useRef();
+  const setSheetStore = useSetRecoilState(sheetStoreState);
+  const [filters, setFilters] = useState([]);
 
-const ITEM_HEIGHT = 50;
+  useEffect(() => {
+    if (!selected) {
+      setFilters([]);
+    }
+  }, [selected]);
 
-function sortByName(a, b) {
-  return a.name > b.name ? 1 : -1;
-}
+  useEffect(() => {
+    if (!sheet.current) {
+      return;
+    }
+    if (visible) {
+      setSheetStore();
+      sheet.current.snapToIndex(0);
+    } else {
+      sheet.current.close();
+    }
+  }, [visible]);
 
-const ProductFilter = ({ navigation }) => {
-  const products = useRecoilValue(productsState);
+  const close = useCallback(() => {
+    sheet.current.close();
+    onClose();
+  }, []);
 
-  const onSelect = productFilter => {
-    navigation.navigate('MapScreen', { productFilter });
-  };
+  const submit = useCallback(() => {
+    onChange(filters.length && filters.map(({ id }) => id));
+    close();
+  }, [filters]);
+
+  const renderFooter = useCallback(
+    props => (
+      <BottomSheetFooter {...props}>
+        <View style={styles.actions}>
+          <ActionButtons onCancel={close} onSubmit={submit} submitLabel="OK" />
+        </View>
+      </BottomSheetFooter>
+    ),
+    [submit],
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={Array.from(products).sort(sortByName)}
-        renderItem={({ item }) => <Row product={item} onSelect={onSelect} />}
-        keyExtractor={product => product.id}
-        getItemLayout={(_, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
-          index,
-        })}
+    <ActionSheet
+      ref={sheet}
+      onDismiss={close}
+      backdrop
+      snaps={['80%']}
+      footer={renderFooter}>
+      <BottomSheetTextInput
+        style={styles.textInput}
+        placeholder="Rechercher une bière"
       />
-    </SafeAreaView>
+      <ProductsList initialSelected={filters} onChange={setFilters} />
+    </ActionSheet>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  actions: {
+    backgroundColor: '#fff',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'grey',
   },
-  productRow: {
-    height: ITEM_HEIGHT,
-    justifyContent: 'center',
-    paddingLeft: 20,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(0,0,0,0.12)',
+  textInput: {
+    alignSelf: 'stretch',
+    marginHorizontal: 12,
+    marginBottom: 12,
+    borderRadius: 12,
+    backgroundColor: '#EEE',
+    textAlign: 'left',
   },
 });
 

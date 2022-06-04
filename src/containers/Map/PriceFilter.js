@@ -95,7 +95,7 @@ function PriceFilter({ visible, onClose, onPrice }) {
           {currencySymbol}
         </Paragraph>
         <Paragraph>
-          Le prix moyen d'une pinte de bière est de {average}
+          Le prix moyen d&apos;une pinte de bière est de {average}
           {currencySymbol}
         </Paragraph>
         <BarRheostat

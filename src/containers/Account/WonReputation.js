@@ -81,8 +81,8 @@ const WonReputation = ({ navigation, route }) => {
 
           <Divider />
           <Text style={styles.helpText}>
-            Gagner des points vous permet d'accéder à de nouvelles
-            fonctionnalités de l'application
+            Gagner des points vous permet d&apos;accéder à de nouvelles
+            fonctionnalités de l&apos;application
           </Text>
         </Card.Content>
       </Card>

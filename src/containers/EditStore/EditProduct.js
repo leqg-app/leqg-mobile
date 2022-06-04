@@ -1,12 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
-import {
-  Alert,
-  InteractionManager,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   Button,
   IconButton,
@@ -16,7 +9,7 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { theme } from '../../constants';
 import countries from '../../assets/countries.json';
@@ -89,7 +82,7 @@ const EditProducts = ({ navigation, route }) => {
       });
     }
     // WTF?
-  }, [route.params]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [route.params]);
 
   const changeType = type => {
     setProduct({

@@ -18,6 +18,7 @@ import { sheetStoreState, storesState } from '../../store/atoms';
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
 // https://github.com/react-native-mapbox-gl/maps/issues/943
+// eslint-disable-next-line
 if (__DEV__) {
   Logger.setLogCallback(log => {
     const { message } = log;

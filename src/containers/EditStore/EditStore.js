@@ -148,7 +148,7 @@ const EditStore = ({ route, navigation }) => {
         nameInput.current.focus();
       }
     }
-    return navigation.addListener('beforeRemove', function (e) {
+    return navigation.addListener('beforeRemove', function () {
       // TODO: confirmation if data was edited
     });
   }, [route.params]);
@@ -212,8 +212,6 @@ const EditStore = ({ route, navigation }) => {
       }))
       .sort(sortByPrices) || [];
 
-  const hasHH = storeProducts.some(product => product.specialPrice);
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
@@ -265,7 +263,7 @@ const EditStore = ({ route, navigation }) => {
                 uppercase={false}
                 onPress={() => navigation.navigate('EditAddress')}
                 style={styles.addButton}>
-                {validAddress ? 'Modifier' : 'Préciser'} l'adresse
+                {validAddress ? 'Modifier' : 'Préciser'} l&apos;adresse
               </Button>
             </Card.Content>
           </Card>

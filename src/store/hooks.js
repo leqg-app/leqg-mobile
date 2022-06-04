@@ -3,6 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { updateProfile } from '../api/users';
 import { userState } from '../store/atoms';
+import { getErrorMessage } from '../utils/errorMessage';
 
 const useFavoriteState = () => {
   const [loading, setLoading] = useState();

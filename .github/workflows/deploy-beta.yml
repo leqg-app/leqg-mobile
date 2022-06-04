@@ -49,6 +49,9 @@ jobs:
           MAPBOX_API_KEY=${{ secrets.MAPBOX_API_KEY }}
           EOF
 
+      - name: Linter
+        run: yarn lint
+
       - name: Unit tests
         run: yarn test
 
@@ -124,6 +127,12 @@ jobs:
         if: steps.cache-nodejs-dependencies.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
+      - name: Linter
+        run: yarn lint
+
+      - name: Unit tests
+        run: yarn test
+
       - name: Create env file
         run: |
           cat << EOF > .env
@@ -141,9 +150,6 @@ jobs:
         if: steps.cache-ios-dependencies.outputs.cache-hit != 'true'
         run: pod install
         working-directory: ios
-
-      - name: Unit tests
-        run: yarn test
 
       - name: Get release version
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/v*}" | awk -F"-" '{print $1}' >> $GITHUB_ENV

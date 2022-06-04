@@ -18,6 +18,4 @@ function getCoordinatesDistance(cord1, cord2) {
   return dist;
 }
 
-module.exports = {
-  getCoordinatesDistance,
-};
+export { getCoordinatesDistance };

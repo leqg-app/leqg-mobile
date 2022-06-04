@@ -57,6 +57,7 @@
     "detox": "^19.7.1",
     "dotenv-cli": "^5.1.0",
     "eslint": "8.16.0",
+    "eslint-plugin-react": "^7.30.0",
     "jest": "^28.1.0",
     "metro-react-native-babel-preset": "^0.71.0",
     "react-native-cli-bump-version": "^1.4.0",

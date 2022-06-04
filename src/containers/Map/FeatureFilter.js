@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { BottomSheetFooter } from '@gorhom/bottom-sheet';
+import { BottomSheetFooter, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useSetRecoilState } from 'recoil';
 
 import ActionButtons from '../../components/ActionButtons';
@@ -59,9 +59,11 @@ function FeatureFilter({ visible, features, onClose, onChange }) {
       backdrop
       snaps={['80%']}
       footer={renderFooter}>
-      <View style={styles.sheet}>
-        <FeaturesList initialSelected={filters} onChange={setFilters} />
-      </View>
+      <BottomSheetScrollView>
+        <View style={styles.sheet}>
+          <FeaturesList initialSelected={filters} onChange={setFilters} />
+        </View>
+      </BottomSheetScrollView>
     </ActionSheet>
   );
 }
