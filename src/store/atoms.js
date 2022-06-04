@@ -1,15 +1,22 @@
 import { atom, selector } from 'recoil';
 
 import { getStore } from '../api/stores';
-import { getContributions } from '../api/users';
+import { getContributions, getProfile } from '../api/users';
 import { decompressStore } from '../utils/formatStore';
 import { storage } from './storage';
 
-function persistStorage(storageId) {
-  return function ({ setSelf, onSet }) {
-    setSelf(storage.getObject(storageId, {}));
-    onSet(newValue => storage.setObject(storageId, newValue));
-  };
+function persistUser({ setSelf, onSet }) {
+  const jwt = storage.getString('jwt');
+  if (jwt) {
+    setSelf(null);
+    getProfile(jwt).then(user => {
+      setSelf(user);
+      storage.set('jwt', '');
+      storage.setObject('userState', user);
+    });
+  }
+  setSelf(storage.getObject('userState', {}));
+  onSet(newValue => storage.setObject('userState', newValue));
 }
 
 const storeEditionState = atom({
@@ -19,7 +26,7 @@ const storeEditionState = atom({
 
 const userState = atom({
   key: 'userState',
-  effects_UNSTABLE: [persistStorage('userState')],
+  effects_UNSTABLE: [persistUser],
 });
 
 const sheetStoreState = atom({

@@ -18,6 +18,9 @@ function decompressSchedules(compressedSchedule) {
 }
 
 export function decompressStore(compressedStore) {
+  if (!Array.isArray(compressedStore)) {
+    return {};
+  }
   const [
     id,
     name,
