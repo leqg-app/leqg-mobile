@@ -42,6 +42,7 @@ function SearchStore({ navigation }) {
   const [text, setText] = useState('');
 
   useEffect(() => {
+    setSheetStore();
     setTimeout(() => {
       StatusBar.setBarStyle('dark-content');
       if (searchBar.current) {
