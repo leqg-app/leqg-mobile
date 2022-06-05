@@ -14,6 +14,7 @@ import { storage } from '../../store/storage';
 import getLocation from '../../utils/location';
 import { CHEAPEST_PRICE_EXPRESSION } from '../../utils/map';
 import { sheetStoreState, storesState } from '../../store/atoms';
+import { mapboxFiltersState } from '../../store/filterAtoms';
 
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
@@ -34,10 +35,11 @@ if (__DEV__) {
 
 const storedMapPosition = storage.getObject('mapPosition', {});
 
-const Mapbox = ({ filters }) => {
+const Mapbox = () => {
   const camera = useRef();
   const stores = useRecoilValue(storesState);
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
+  const filters = useRecoilValue(mapboxFiltersState);
   const { colors } = useTheme();
 
   const [createStore, setCreateStore] = useState();

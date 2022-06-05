@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BackHandler, Platform, StatusBar, StyleSheet } from 'react-native';
 import { Portal, Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,8 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { theme } from '../../constants';
-import ProductFilter from './ProductFilter';
-import Filters from './Filters';
+import Filters from './Filters/Filters';
 import Mapbox from './Mapbox';
 import StoreSheet from './StoreSheet';
 import SearchBar from '../../components/SearchBar';
@@ -19,7 +18,6 @@ import { sheetStoreState, storeLoadingState } from '../../store/atoms';
 
 const Map = ({ navigation, route }) => {
   const isFocused = useIsFocused();
-  const [filters, setFilters] = useState([]);
   const storeLoading = useRecoilValue(storeLoadingState);
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const { params } = route;
@@ -56,13 +54,13 @@ const Map = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Mapbox filters={filters} />
+      <Mapbox />
       <SearchBar
         onSearch={() => navigation.navigate('SearchStore')}
         onBack={sheetStore && (() => setSheetStore())}
         loading={storeLoading}
       />
-      <Filters onChange={filters => setFilters(filters)} />
+      <Filters />
       <StoreSheet />
       <Portal>
         <Snackbar
@@ -93,18 +91,11 @@ export default () => (
       },
       headerTintColor: '#fff',
     }}>
-    <MapStack.Group screenOptions={{ presentation: 'modal' }}>
-      <MapStack.Screen
-        name="MapScreen"
-        component={Map}
-        options={{ headerShown: false }}
-      />
-      <MapStack.Screen
-        options={{ title: 'Filtrer par bière' }}
-        name="ProductFilter"
-        component={ProductFilter}
-      />
-    </MapStack.Group>
+    <MapStack.Screen
+      name="MapScreen"
+      component={Map}
+      options={{ headerShown: false }}
+    />
     <MapStack.Group
       screenOptions={{ presentation: 'fullScreenModal', animation: 'fade' }}>
       <MapStack.Screen

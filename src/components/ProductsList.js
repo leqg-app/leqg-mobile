@@ -1,46 +1,40 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useRecoilValue } from 'recoil';
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 
-import { productsState } from '../store/atoms';
-import { TouchableRipple } from 'react-native-paper';
+import { IconButton, TouchableRipple } from 'react-native-paper';
 
 const ITEM_HEIGHT = 50;
 
-function sortByName(a, b) {
-  return a.name > b.name ? 1 : -1;
-}
-
-const ProductsList = ({ initialSelected = [], onChange }) => {
-  const products = useRecoilValue(productsState);
+const ProductsList = ({ initialSelected = [], products, onChange }) => {
   const [selected, setSelected] = useState(initialSelected);
 
   useEffect(() => setSelected(initialSelected), [initialSelected]);
   useEffect(() => onChange(selected), [selected]);
 
-  const onSelect = id => {
-    if (selected.some(feature => feature.id === id)) {
-      setSelected(selected.filter(feature => feature.id !== id));
+  const onSelect = item => {
+    if (selected.some(product => product === item)) {
+      setSelected(selected.filter(product => product !== item));
     } else {
-      setSelected(selected.concat({ id }));
+      setSelected(selected.concat(item));
     }
   };
 
   const renderItem = useCallback(
     ({ item }) => (
-      <TouchableRipple onPress={() => onSelect(item.id)}>
+      <TouchableRipple onPress={() => onSelect(item)}>
         <View style={styles.productRow}>
           <Text>{item.name}</Text>
+          {selected.includes(item) ? <IconButton icon="check" /> : null}
         </View>
       </TouchableRipple>
     ),
-    [],
+    [selected],
   );
 
   return (
     <BottomSheetFlatList
-      data={Array.from(products).sort(sortByName)}
+      data={products}
       renderItem={renderItem}
       keyExtractor={product => product.id}
       getItemLayout={(_, index) => ({
@@ -49,6 +43,8 @@ const ProductsList = ({ initialSelected = [], onChange }) => {
         index,
       })}
       contentContainerStyle={styles.contentContainer}
+      keyboardShouldPersistTaps="always"
+      style={{ marginBottom: 75 }}
     />
   );
 };
@@ -62,10 +58,13 @@ const styles = StyleSheet.create({
   },
   productRow: {
     height: ITEM_HEIGHT,
-    justifyContent: 'center',
     paddingLeft: 20,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: 'rgba(0,0,0,0.12)',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 
