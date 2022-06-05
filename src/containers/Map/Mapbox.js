@@ -14,7 +14,10 @@ import { storage } from '../../store/storage';
 import getLocation from '../../utils/location';
 import { CHEAPEST_PRICE_EXPRESSION } from '../../utils/map';
 import { sheetStoreState, storesState } from '../../store/atoms';
-import { mapboxFiltersState } from '../../store/filterAtoms';
+import {
+  mapboxFiltersState,
+  mapboxTextFieldState,
+} from '../../store/filterAtoms';
 
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
@@ -40,6 +43,7 @@ const Mapbox = () => {
   const stores = useRecoilValue(storesState);
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const filters = useRecoilValue(mapboxFiltersState);
+  const textField = useRecoilValue(mapboxTextFieldState);
   const { colors } = useTheme();
 
   const [createStore, setCreateStore] = useState();
@@ -217,7 +221,10 @@ const Mapbox = () => {
           <MapboxGL.SymbolLayer
             id="store"
             filter={filters && ['all', ...filters]}
-            style={layerStyles.storePrice}
+            style={{
+              ...layerStyles.storePrice,
+              textField,
+            }}
           />
           <MapboxGL.SymbolLayer
             id="storeName"
@@ -333,7 +340,7 @@ const layerStyles = {
     iconIgnorePlacement: true,
     symbolSortKey: CHEAPEST_PRICE_EXPRESSION,
 
-    textField: ['to-string', CHEAPEST_PRICE_EXPRESSION],
+    // textField: ['to-string', CHEAPEST_PRICE_EXPRESSION],
     textColor: '#fff',
     textTranslate: [0, -13],
     textSize: [
