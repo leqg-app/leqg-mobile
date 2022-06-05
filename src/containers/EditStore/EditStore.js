@@ -42,7 +42,7 @@ import {
   storeEditionState,
   userState,
 } from '../../store/atoms';
-import { addStore, editStore } from '../../api/stores';
+import { useStoreState } from '../../store/hooks';
 
 const types = {
   draft: 'Pression',
@@ -96,6 +96,7 @@ const EditStore = ({ route, navigation }) => {
   const user = useRecoilValue(userState);
   const setSheetStore = useSetRecoilState(sheetStoreState);
   const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
+  const { saveStore } = useStoreState();
 
   const {
     name = '',
@@ -107,7 +108,8 @@ const EditStore = ({ route, navigation }) => {
   } = storeEdition;
 
   const validAddress = address && longitude && latitude;
-  const validForm = name && validAddress && user;
+  const validForm =
+    name && validAddress && storeEdition.products?.length && user;
 
   const save = async () => {
     setLoading(true);
@@ -115,22 +117,12 @@ const EditStore = ({ route, navigation }) => {
       setError('Missing field');
       return;
     }
-    let response = {};
-    if (storeEdition.id) {
-      response = await editStore(storeEdition.id, storeEdition).catch(err => ({
-        error: err.message,
-      }));
-    } else {
-      response = await addStore(storeEdition).catch(err => ({
-        error: err.message,
-      }));
-    }
+    const { error, store, reputation } = await saveStore(storeEdition);
     setLoading(false);
-    if (response.error) {
-      setError(response.error);
+    if (error) {
+      setError(error);
       return;
     }
-    const { store, reputation } = response;
     if (!storeEdition.id) {
       setSheetStore({ ...store, focus: true });
     }
@@ -143,11 +135,8 @@ const EditStore = ({ route, navigation }) => {
 
   useEffect(() => {
     setLoading(false);
-    if (route.params?.store) {
-      setStoreEdition(route.params.store);
-      if (!route.params.store.name && nameInput.current) {
-        nameInput.current.focus();
-      }
+    if (route.params?.store && !route.params.store.name && nameInput.current) {
+      nameInput.current.focus();
     }
     return navigation.addListener('beforeRemove', function () {
       // TODO: confirmation if data was edited
