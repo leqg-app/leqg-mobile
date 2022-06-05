@@ -300,7 +300,9 @@ const EditStore = ({ route, navigation }) => {
                   Aucun horaire renseigné pour le moment
                 </Paragraph>
               ) : (
-                <Pressable onPress={() => navigation.navigate('EditSchedules')}>
+                <Pressable
+                  style={styles.schedules}
+                  onPress={() => navigation.navigate('EditSchedules')}>
                   <Schedules schedules={schedules} />
                 </Pressable>
               )}
@@ -419,6 +421,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 7,
     paddingLeft: 20,
+  },
+  schedules: {
+    marginBottom: 10,
   },
   flex: {
     display: 'flex',

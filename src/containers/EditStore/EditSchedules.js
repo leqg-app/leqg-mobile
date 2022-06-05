@@ -20,8 +20,9 @@ import { secondToHour, secondToTime } from '../../utils/time';
 import { daysFull, daysShort, theme } from '../../constants';
 import { storeEditionState } from '../../store/atoms';
 
-const newSchedule = () => ({
-  closed: true,
+const newSchedule = (_, i) => ({
+  ...(i !== undefined && { dayOfWeek: i + 1 }),
+  closed: false,
   opening: 17 * 3600,
   closing: 23 * 3600,
   openingSpecial: null,
@@ -49,7 +50,12 @@ function Time({ schedule }) {
 
 const DaySchedule = ({ schedule }) => {
   if (!schedule || schedule.closed) {
-    return <Text style={styles.hourCell}>Fermé</Text>;
+    return (
+      <>
+        <Text style={styles.hourCell}>Fermé</Text>
+        <View style={styles.hourCell} />
+      </>
+    );
   }
   const { opening, closing, openingSpecial, closingSpecial } = schedule;
   return (
@@ -142,6 +148,19 @@ const EditSchedulesModal = props => {
                   onPress={() => setTimePicker(type)}
                 />
               ))}
+              {(schedule.openingSpecial || schedule.closingSpecial) && (
+                <Button
+                  onPress={() => {
+                    setSchedule({
+                      ...schedule,
+                      openingSpecial: null,
+                      closingSpecial: null,
+                    });
+                  }}
+                  uppercase={false}>
+                  Effacer l&apos;happy hour
+                </Button>
+              )}
               {timePicker && (
                 <DateTimePicker
                   value={getPickerValue(schedule, timePicker)}
@@ -177,7 +196,7 @@ const EditSchedulesModal = props => {
 const EditSchedules = ({ navigation }) => {
   const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
   const [schedules, setSchedules] = React.useState(
-    storeEdition.schedules || new Array(7).fill().map(() => newSchedule()),
+    storeEdition.schedules || new Array(7).fill().map(newSchedule),
   );
   const [editingDays, setEditingDay] = React.useState(false);
 
@@ -318,7 +337,7 @@ const styles = StyleSheet.create({
     margin: 30,
   },
   modalScroll: {
-    maxHeight: 300,
+    maxHeight: 350,
   },
 });
 

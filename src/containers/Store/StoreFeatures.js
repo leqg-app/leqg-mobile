@@ -18,17 +18,17 @@ function StoreFeatures(props) {
   return (
     <View style={styles.container}>
       {features.map(category => {
-        const feats = category.features.filter(({ id }) =>
+        const categoryFeatures = category.features.filter(({ id }) =>
           featuresId.includes(id),
         );
-        if (!feats.length) {
+        if (!categoryFeatures.length) {
           return;
         }
         return (
           <View key={category.name} style={styles.category}>
             <Title style={styles.categoryName}>{category.name}</Title>
             <View style={styles.features}>
-              {feats.map(({ id, name }) => (
+              {categoryFeatures.map(({ id, name }) => (
                 <View key={id} style={styles.feature}>
                   <IconButton
                     size={18}
