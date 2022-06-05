@@ -43,7 +43,10 @@ function ProductFilter() {
   };
 
   const closeModal = () => {
-    searchInput.current?.blur?.();
+    if (searchInput.current) {
+      searchInput.current.blur();
+      searchInput.current.clear();
+    }
     sheet.current?.close();
     setSearch('');
   };
