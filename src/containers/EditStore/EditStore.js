@@ -144,6 +144,7 @@ const EditStore = ({ route, navigation }) => {
   useEffect(() => {
     setLoading(false);
     if (route.params?.store) {
+      setStoreEdition(route.params.store);
       if (!route.params.store.name && nameInput.current) {
         nameInput.current.focus();
       }
@@ -251,7 +252,9 @@ const EditStore = ({ route, navigation }) => {
           </Card>
 
           <Card style={styles.card}>
-            <Card.Title title="Adresse">Adresse</Card.Title>
+            <Card.Title titleStyle={styles.title} title="Adresse">
+              Adresse
+            </Card.Title>
             <Card.Content>
               <Text>
                 {validAddress
@@ -259,7 +262,7 @@ const EditStore = ({ route, navigation }) => {
                   : 'Aucune adresse renseignée pour le moment'}
               </Text>
               <Button
-                mode="contained"
+                mode="outlined"
                 uppercase={false}
                 onPress={() => navigation.navigate('EditAddress')}
                 style={styles.addButton}>
@@ -269,7 +272,7 @@ const EditStore = ({ route, navigation }) => {
           </Card>
 
           <Card style={styles.card}>
-            <Card.Title title="Bières" />
+            <Card.Title titleStyle={styles.title} title="Bières" />
             <Card.Content>
               {!storeProducts.length ? (
                 <Paragraph style={styles.horizontalMargin}>
@@ -291,7 +294,7 @@ const EditStore = ({ route, navigation }) => {
                 />
               ))}
               <Button
-                mode="contained"
+                mode="outlined"
                 uppercase={false}
                 onPress={() => navigation.navigate('SelectProduct')}
                 style={styles.addButton}>
@@ -301,7 +304,7 @@ const EditStore = ({ route, navigation }) => {
           </Card>
 
           <Card style={styles.card}>
-            <Card.Title title="Horaires" />
+            <Card.Title titleStyle={styles.title} title="Horaires" />
             <Card.Content>
               {!schedules.length ? (
                 <Paragraph style={styles.emptyText}>
@@ -313,7 +316,7 @@ const EditStore = ({ route, navigation }) => {
                 </Pressable>
               )}
               <Button
-                mode="contained"
+                mode="outlined"
                 uppercase={false}
                 onPress={() => navigation.navigate('EditSchedules')}>
                 Modifier les horaires
@@ -322,7 +325,7 @@ const EditStore = ({ route, navigation }) => {
           </Card>
 
           <Card style={styles.card}>
-            <Card.Title title="Caractéristiques" />
+            <Card.Title titleStyle={styles.title} title="Caractéristiques" />
             <Card.Content>
               {!features.length ? (
                 <Paragraph style={styles.emptyText}>
@@ -334,7 +337,7 @@ const EditStore = ({ route, navigation }) => {
                 </Pressable>
               )}
               <Button
-                mode="contained"
+                mode="outlined"
                 uppercase={false}
                 onPress={() => navigation.navigate('EditFeatures')}>
                 Modifier les caractéristiques
@@ -343,7 +346,7 @@ const EditStore = ({ route, navigation }) => {
           </Card>
 
           <Card style={styles.card}>
-            <Card.Title title="Autres informations" />
+            <Card.Title titleStyle={styles.title} title="Autres informations" />
             <Card.Content>
               <TextInput
                 style={styles.fieldName}
@@ -406,10 +409,10 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   card: {
-    marginTop: 15,
-    marginHorizontal: 20,
+    marginTop: 10,
+    marginHorizontal: 8,
   },
-  title: { marginTop: 30 },
+  title: { fontSize: 18 },
   headRow: {
     display: 'flex',
     flexDirection: 'row',
