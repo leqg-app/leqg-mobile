@@ -75,9 +75,6 @@ PODS:
   - glog (0.3.5)
   - hermes-engine (0.11.0)
   - libevent (2.1.12)
-  - Mapbox-iOS-SDK (5.9.0):
-    - MapboxMobileEvents (= 0.10.2)
-  - MapboxMobileEvents (0.10.2)
   - MMKV (1.2.13):
     - MMKVCore (~> 1.2.13)
   - MMKVCore (1.2.13)
@@ -316,20 +313,6 @@ PODS:
     - React-Core
   - react-native-geolocation-service (5.3.0-beta.4):
     - React
-  - react-native-mapbox-gl (8.5.0):
-    - Mapbox-iOS-SDK (~> 5.9.0)
-    - React
-    - React-Core
-    - react-native-mapbox-gl/DynamicLibrary (= 8.5.0)
-    - react-native-mapbox-gl/StaticLibraryFixer (= 8.5.0)
-  - react-native-mapbox-gl/DynamicLibrary (8.5.0):
-    - Mapbox-iOS-SDK (~> 5.9.0)
-    - React
-    - React-Core
-  - react-native-mapbox-gl/StaticLibraryFixer (8.5.0):
-    - Mapbox-iOS-SDK (~> 5.9.0)
-    - React
-    - React-Core
   - react-native-mmkv (2.4.1):
     - MMKV (>= 1.2.13)
     - React-Core
@@ -413,6 +396,13 @@ PODS:
   - RNDeviceInfo (8.7.1):
     - React-Core
   - RNGestureHandler (2.4.2):
+    - React-Core
+  - rnmapbox-maps (10.0.0-beta.11):
+    - React
+    - React-Core
+    - rnmapbox-maps/DynamicLibrary (= 10.0.0-beta.11)
+  - rnmapbox-maps/DynamicLibrary (10.0.0-beta.11):
+    - React
     - React-Core
   - RNPermissions (3.3.1):
     - React-Core
@@ -513,7 +503,6 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
-  - "react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)"
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -533,6 +522,7 @@ DEPENDENCIES:
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -557,8 +547,6 @@ SPEC REPOS:
     - fmt
     - hermes-engine
     - libevent
-    - Mapbox-iOS-SDK
-    - MapboxMobileEvents
     - MMKV
     - MMKVCore
     - OpenSSL-Universal
@@ -613,8 +601,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-config"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
-  react-native-mapbox-gl:
-    :path: "../node_modules/@react-native-mapbox-gl/maps"
   react-native-mmkv:
     :path: "../node_modules/react-native-mmkv"
   react-native-safe-area-context:
@@ -653,6 +639,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  rnmapbox-maps:
+    :path: "../node_modules/@rnmapbox/maps"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReanimated:
@@ -689,8 +677,6 @@ SPEC CHECKSUMS:
   glog: 476ee3e89abb49e07f822b48323c51c57124b572
   hermes-engine: 84e3af1ea01dd7351ac5d8689cbbea1f9903ffc3
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  Mapbox-iOS-SDK: a5915700ec84bc1a7f8b3e746d474789e35b7956
-  MapboxMobileEvents: 2bc0ca2eedb627b73cf403258dce2b2fa98074a6
   MMKV: aac95d817a100479445633f2b3ed8961b4ac5043
   MMKVCore: 3388952ded307e41b3ed8a05892736a236ed1b8e
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
@@ -712,7 +698,6 @@ SPEC CHECKSUMS:
   React-logger: a0833912d93b36b791b7a521672d8ee89107aff1
   react-native-config: 6502b1879f97ed5ac570a029961fc35ea606cd14
   react-native-geolocation-service: c0efb872258ed9240f1003a70fca9e9757e5c785
-  react-native-mapbox-gl: 955d2c064b56ef058b9cc0fbbf6cf743b05c928e
   react-native-mmkv: b5c7f9bc369eef2b8a2aa36e8a15949989fa823f
   react-native-safe-area-context: ebf8c413eb8b5f7c392a036a315eb7b46b96845f
   React-perflogger: a18b4f0bd933b8b24ecf9f3c54f9bf65180f3fe6
@@ -732,6 +717,7 @@ SPEC CHECKSUMS:
   RNDateTimePicker: 04b805a3cb4d386e5e6aff54b47ace7bad706fda
   RNDeviceInfo: aad3c663b25752a52bf8fce93f2354001dd185aa
   RNGestureHandler: 61628a2c859172551aa2100d3e73d1e57878392f
+  rnmapbox-maps: 7de55da9d7c367dc0b5f8e781f3cbe973590bd87
   RNPermissions: 34d678157c800b25b22a488e4d8babb57456e796
   RNReanimated: 64573e25e078ae6bec03b891586d50b9ec284393
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
