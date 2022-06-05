@@ -124,8 +124,8 @@ function call(store) {
   }
 }
 
-function StoreActionButtons() {
-  const store = useRecoilValue(storeState);
+function StoreActionButtons({ id }) {
+  const store = useRecoilValue(storeState(id));
   const user = useRecoilValue(userState);
   const setSheetStore = useSetRecoilState(sheetStoreState);
   const navigation = useNavigation();
@@ -184,11 +184,11 @@ function StoreActionButtons() {
   );
 }
 
-function StoreContent() {
+function StoreContent({ id }) {
   const navigation = useNavigation();
 
   const user = useRecoilValue(userState);
-  const store = useRecoilValue(storeState);
+  const store = useRecoilValue(storeState(id));
   const setSheetStore = useSetRecoilState(sheetStoreState);
   const setStoreEdition = useSetRecoilState(storeEditionState);
 
@@ -298,7 +298,7 @@ const Store = () => {
         />
         <ErrorBoundary fallback={<></>} resetKeys={[requestId]}>
           <Suspense fallback={<></>}>
-            <StoreActionButtons />
+            <StoreActionButtons id={sheetStore.id} />
           </Suspense>
         </ErrorBoundary>
       </View>
@@ -340,7 +340,7 @@ const Store = () => {
       <Divider />
       <ErrorBoundary FallbackComponent={OfflineMessage} onReset={refreshStore}>
         <Suspense fallback={<Loading />}>
-          <StoreContent />
+          <StoreContent id={sheetStore.id} />
         </Suspense>
       </ErrorBoundary>
     </>

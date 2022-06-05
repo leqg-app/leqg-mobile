@@ -1,4 +1,4 @@
-import { atom, selector } from 'recoil';
+import { atom, selector, selectorFamily } from 'recoil';
 
 import { getStore } from '../api/stores';
 import { getContributions, getProfile } from '../api/users';
@@ -15,7 +15,7 @@ function persistUser({ setSelf, onSet }) {
       storage.setObject('userState', user);
     });
   }
-  setSelf(storage.getObject('userState', {}));
+  setSelf(storage.getObject('userState', null));
   onSet(newValue => storage.setObject('userState', newValue));
 }
 
@@ -39,16 +39,14 @@ const storeQueryRequestIDState = atom({
   default: 0,
 });
 
-const storeState = selector({
+const storeState = selectorFamily({
   key: 'storeState',
-  get: async ({ get }) => {
-    get(storeQueryRequestIDState);
-    const sheetStore = get(sheetStoreState);
-    if (!sheetStore) {
-      return;
-    }
-    return getStore(sheetStore.id);
-  },
+  get:
+    storeId =>
+    async ({ get }) => {
+      get(storeQueryRequestIDState);
+      return getStore(storeId);
+    },
 });
 
 const storesState = atom({
