@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { BottomSheetFooter, BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Chip, Divider, Switch, Text } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -11,6 +11,7 @@ import ProductsList from '../../../components/ProductsList';
 import Filter from '../../../components/Filter';
 import { productFilterState } from '../../../store/filterAtoms';
 import { productsState, sheetStoreState } from '../../../store/atoms';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function sortByName(a, b) {
   return a.name > b.name ? 1 : -1;
@@ -36,6 +37,8 @@ function ProductFilter() {
   const [search, setSearch] = useState('');
   const [filterAll, setFilterAll] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const { bottom } = useSafeAreaInsets();
+  const [footerHeight, setFooterHeight] = useState(117);
 
   const openModal = () => {
     setSheetStore();
@@ -71,44 +74,6 @@ function ProductFilter() {
 
   const toggleType = () => setFilterAll(!filterAll);
 
-  const renderFooter = useCallback(
-    props => (
-      <BottomSheetFooter {...props}>
-        <View style={styles.actions}>
-          {selectedProducts.length ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.selectedProductsList}>
-              {selectedProducts.map(product => (
-                <Chip
-                  mode="outlined"
-                  key={product.id}
-                  style={styles.selectedProduct}
-                  onPress={() => unselectProduct(product)}
-                  onClose={() => unselectProduct(product)}>
-                  {product.name}
-                </Chip>
-              ))}
-            </ScrollView>
-          ) : null}
-          <View style={styles.filterType}>
-            <Text onPress={toggleType}>
-              Tous les critères doivent être présents:
-            </Text>
-            <Switch value={filterAll} onValueChange={toggleType} />
-          </View>
-          <ActionButtons
-            onCancel={closeModal}
-            onSubmit={submit}
-            submitLabel="OK"
-          />
-        </View>
-      </BottomSheetFooter>
-    ),
-    [selectedProducts, filterAll],
-  );
-
   const productsFiltered = useMemo(() => {
     if (!search) {
       return Array.from(products).sort(sortByName);
@@ -118,6 +83,9 @@ function ProductFilter() {
       .sort(sortByName);
   }, [search]);
 
+  const onLayoutFooter = event =>
+    setFooterHeight(event.nativeEvent.layout.height + bottom);
+
   return (
     <>
       <Filter
@@ -126,12 +94,7 @@ function ProductFilter() {
         onRemove={productFilter.products?.length && reset}>
         {getFilterName(productFilter)}
       </Filter>
-      <ActionSheet
-        ref={sheet}
-        onDismiss={closeModal}
-        backdrop
-        snaps={['90%']}
-        footer={renderFooter}>
+      <ActionSheet ref={sheet} onDismiss={closeModal} backdrop snaps={['90%']}>
         <BottomSheetTextInput
           ref={searchInput}
           style={styles.textInput}
@@ -140,11 +103,52 @@ function ProductFilter() {
           clearButtonMode="while-editing"
         />
         <Divider />
-        <ProductsList
-          initialSelected={selectedProducts}
-          products={productsFiltered}
-          onChange={setSelectedProducts}
-        />
+        <View style={{ flex: 1, marginBottom: footerHeight }}>
+          <ProductsList
+            initialSelected={selectedProducts}
+            products={productsFiltered}
+            onChange={setSelectedProducts}
+          />
+        </View>
+        <View
+          style={[styles.footerSheet, { paddingBottom: bottom }]}
+          onLayout={onLayoutFooter}>
+          <View style={styles.actions}>
+            {selectedProducts.length ? (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.selectedProductsList}>
+                {selectedProducts.map(product => (
+                  <Chip
+                    mode="outlined"
+                    key={product.id}
+                    style={styles.selectedProduct}
+                    onPress={() => unselectProduct(product)}
+                    onClose={() => unselectProduct(product)}>
+                    {product.name}
+                  </Chip>
+                ))}
+              </ScrollView>
+            ) : null}
+            <View style={styles.filterType}>
+              <Text onPress={toggleType}>
+                Tous les critères doivent être présents:
+              </Text>
+              <Switch
+                style={styles.switchFilterType}
+                value={filterAll}
+                onValueChange={toggleType}
+              />
+            </View>
+            <ActionButtons
+              onLayout={console.log}
+              onCancel={closeModal}
+              onSubmit={submit}
+              submitLabel="OK"
+            />
+          </View>
+        </View>
       </ActionSheet>
     </>
   );
@@ -164,6 +168,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginTop: 15,
   },
+  switchFilterType: {
+    marginLeft: 10,
+  },
   textInput: {
     alignSelf: 'stretch',
     paddingLeft: 20,
@@ -180,6 +187,12 @@ const styles = StyleSheet.create({
   selectedProduct: {
     marginHorizontal: 5,
     height: 33,
+  },
+  footerSheet: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
 

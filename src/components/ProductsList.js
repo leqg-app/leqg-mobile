@@ -44,7 +44,6 @@ const ProductsList = ({ initialSelected = [], products, onChange }) => {
       })}
       contentContainerStyle={styles.contentContainer}
       keyboardShouldPersistTaps="always"
-      style={{ marginBottom: 75 }}
     />
   );
 };
