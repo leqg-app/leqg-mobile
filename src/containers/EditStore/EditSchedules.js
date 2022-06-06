@@ -23,8 +23,8 @@ import { storeEditionState } from '../../store/atoms';
 const newSchedule = (_, i) => ({
   ...(i !== undefined && { dayOfWeek: i + 1 }),
   closed: false,
-  opening: 17 * 3600,
-  closing: 23 * 3600,
+  opening: null,
+  closing: null,
   openingSpecial: null,
   closingSpecial: null,
 });
@@ -264,10 +264,19 @@ const EditSchedules = ({ navigation }) => {
               for (const editedDay of editedDays) {
                 Object.assign(schedules[editedDay], {
                   closed,
-                  opening,
-                  closing,
-                  openingSpecial,
-                  closingSpecial,
+                  ...(closed
+                    ? {
+                        opening: null,
+                        closing: null,
+                        openingSpecial: null,
+                        closingSpecial: null,
+                      }
+                    : {
+                        opening,
+                        closing,
+                        openingSpecial,
+                        closingSpecial,
+                      }),
                 });
               }
               setEditingDay(false);

@@ -5,6 +5,7 @@ function getErrorMessage(error, options = {}) {
   if (options.unknown) {
     return 'Une erreur est survenue, merci de réessayer plus tard';
   }
+  return error;
 }
 
 export { getErrorMessage };

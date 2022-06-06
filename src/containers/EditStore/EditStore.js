@@ -43,6 +43,7 @@ import {
   userState,
 } from '../../store/atoms';
 import { useStoreState } from '../../store/hooks';
+import { getErrorMessage } from '../../utils/errorMessage';
 
 const types = {
   draft: 'Pression',
@@ -103,7 +104,12 @@ const EditStore = ({ route, navigation }) => {
     address,
     longitude,
     latitude,
-    schedules = [],
+    schedules = Array(7)
+      .fill(0)
+      .map((_, i) => ({
+        dayOfWeek: i + 1,
+        closed: false,
+      })),
     features = [],
   } = storeEdition;
 
@@ -120,7 +126,7 @@ const EditStore = ({ route, navigation }) => {
     const { error, store, reputation } = await saveStore(storeEdition);
     setLoading(false);
     if (error) {
-      setError(error);
+      setError(getErrorMessage(error));
       return;
     }
     if (!storeEdition.id) {
