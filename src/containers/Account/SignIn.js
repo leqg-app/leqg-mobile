@@ -60,6 +60,7 @@ const SignIn = ({ navigation }) => {
           textContentType="nickname"
           onChangeText={onChangeUsername}
           value={username}
+          maxLength={20}
           returnKeyType="next"
           onSubmitEditing={() => passwordInput.current.focus()}
           blurOnSubmit={false}
