@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Title, IconButton, Card, Divider, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { userState } from '../../store/atoms';
 import AnimatedCircle from '../../components/AnimatedCircle';
 import AnimatedText from '../../components/AnimatedText';
+import { getProfile } from '../../api/users';
 
 const DISPLAY_FIELDS = {
   name: 'Nom',
@@ -32,7 +33,7 @@ function groupFields(fields, { fieldName, reputation }) {
 }
 
 const WonReputation = ({ navigation, route }) => {
-  const user = useRecoilValue(userState);
+  const [user, setUser] = useRecoilState(userState);
   const { reputation } = route.params;
 
   useEffect(() => StatusBar.setBarStyle('dark-content'), []);
@@ -44,7 +45,10 @@ const WonReputation = ({ navigation, route }) => {
   const won = reputation.total;
 
   const fields = Object.values(reputation.fields.reduce(groupFields, {}));
-  const close = () => navigation.goBack();
+  const close = () => {
+    getProfile(user.jwt).then(setUser);
+    navigation.goBack();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
