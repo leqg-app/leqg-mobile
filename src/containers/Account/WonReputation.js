@@ -45,8 +45,10 @@ const WonReputation = ({ navigation, route }) => {
   const won = reputation.total;
 
   const fields = Object.values(reputation.fields.reduce(groupFields, {}));
+
+  const getProfileRequest = getProfile(user.jwt);
   const close = () => {
-    getProfile(user.jwt).then(setUser);
+    getProfileRequest.then(setUser);
     navigation.goBack();
   };
 

@@ -49,7 +49,9 @@ function DaySchedule({ day, hasSpecial }) {
 function Schedules({ schedules }) {
   const days = schedules.reduce(
     (days, schedule) => ((days[schedule.dayOfWeek - 1] = schedule), days),
-    [],
+    Array(7)
+      .fill(0)
+      .map((_, i) => ({ dayOfWeek: i + 1, closed: false })),
   );
   const hasSchedule = days.some(day => day.opening || day.openingSpecial);
   const hasSpecial = hasSchedule && days.some(day => day.openingSpecial);

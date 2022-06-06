@@ -104,12 +104,7 @@ const EditStore = ({ route, navigation }) => {
     address,
     longitude,
     latitude,
-    schedules = Array(7)
-      .fill(0)
-      .map((_, i) => ({
-        dayOfWeek: i + 1,
-        closed: false,
-      })),
+    schedules = [],
     features = [],
   } = storeEdition;
 

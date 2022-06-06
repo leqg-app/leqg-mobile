@@ -14,17 +14,12 @@ import { getVersion } from './api/stores';
 import { getFeatures } from './api/features';
 import { getProducts } from './api/products';
 import { getRates } from './api/rates';
-import { getStores } from './api/stores';
 import {
-  storesState,
   productsState,
   ratesState,
   featuresState,
   storeLoadingState,
 } from './store/atoms';
-import { decompressStore } from './utils/formatStore';
-
-const versionRequest = getVersion().catch(() => ({}));
 
 const Main = createNativeStackNavigator();
 
@@ -33,7 +28,6 @@ const Routes = () => {
 
   const loadedEntities = useRef(false);
 
-  const setStores = useSetRecoilState(storesState);
   const setProducts = useSetRecoilState(productsState);
   const setRates = useSetRecoilState(ratesState);
   const setFeatures = useSetRecoilState(featuresState);
@@ -49,7 +43,7 @@ const Routes = () => {
 
     (async () => {
       // Check if we need to get stores from API
-      const apiVersions = await versionRequest;
+      const apiVersions = await getVersion;
       const versions = storage.getObject('versions', {});
 
       async function loadEntity(name, getEntity, setEntity) {
@@ -71,10 +65,6 @@ const Routes = () => {
         return loaded;
       }
 
-      const stores = await loadEntity('stores', getStores);
-      if (stores) {
-        setStores(stores.map(decompressStore));
-      }
       loadEntity('products', getProducts, setProducts);
       loadEntity('rates', getRates, setRates);
       loadEntity('features', getFeatures, setFeatures);

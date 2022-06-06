@@ -1,11 +1,13 @@
 import { get, post, put } from './index';
 
-function getVersion() {
-  return get(`/v1/version`, { 'cache-control': 'no-store' });
-}
+const getVersion = get(`/v1/version`, { 'cache-control': 'no-store' });
 
 function getStores(version) {
   return get(`/v2/stores?v=${version || 1}`);
+}
+
+function getStoresVersion(currentVersion, nextVersion) {
+  return get(`/v2/stores/versions/${currentVersion}..${nextVersion}`);
 }
 
 function getStore(id) {
@@ -20,4 +22,11 @@ function editStore(id, data, { jwt }) {
   return put(`/v2/stores/${id}`, data, { Authorization: `bearer ${jwt}` });
 }
 
-export { getVersion, getStores, getStore, addStore, editStore };
+export {
+  getVersion,
+  getStores,
+  getStoresVersion,
+  getStore,
+  addStore,
+  editStore,
+};
