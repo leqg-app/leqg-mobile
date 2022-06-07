@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { IconButton, Text, Title, useTheme } from 'react-native-paper';
+import { Text, Title, useTheme } from 'react-native-paper';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import Settings from './Settings';
@@ -10,7 +10,6 @@ import { userState } from '../../store/atoms';
 import Anonym from './Anonym';
 import AnimatedCircle from '../../components/AnimatedCircle';
 import VersionName from '../../components/VersionName';
-import { theme } from '../../constants';
 import Contributions from './Contributions';
 
 const Account = ({ navigation }) => {
