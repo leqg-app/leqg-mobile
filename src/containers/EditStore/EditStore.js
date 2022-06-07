@@ -50,7 +50,7 @@ const types = {
   bottle: 'Bouteille',
 };
 
-const Product = memo(({ product, onPress }) => {
+const Product = memo(({ product, onPress, hasHH }) => {
   const { price, specialPrice, productName, type, volume, currencyCode } =
     product;
   return (
@@ -74,13 +74,15 @@ const Product = memo(({ product, onPress }) => {
               <Text style={styles.price}>
                 {price ? <Price amount={price} currency={currencyCode} /> : '-'}
               </Text>
-              <Text style={styles.price}>
-                {specialPrice ? (
-                  <Price amount={specialPrice} currency={currencyCode} />
-                ) : (
-                  ' '
-                )}
-              </Text>
+              {hasHH && (
+                <Text style={styles.price}>
+                  {specialPrice ? (
+                    <Price amount={specialPrice} currency={currencyCode} />
+                  ) : (
+                    ' '
+                  )}
+                </Text>
+              )}
             </View>
           </View>
         </View>
@@ -203,6 +205,12 @@ const EditStore = ({ route, navigation }) => {
       }))
       .sort(sortByPrices) || [];
 
+  const hasHH =
+    storeProducts.some(({ specialPrice }) => specialPrice) ||
+    schedules.some(
+      schedule => schedule.openingSpecial || schedule.closingSpecial,
+    );
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
@@ -271,7 +279,7 @@ const EditStore = ({ route, navigation }) => {
               ) : (
                 <View style={styles.headRow}>
                   <Text style={styles.price}>Prix</Text>
-                  <Text style={styles.price}>HH.</Text>
+                  {hasHH && <Text style={styles.price}>HH.</Text>}
                 </View>
               )}
               {storeProducts.map((product, i) => (
@@ -281,6 +289,7 @@ const EditStore = ({ route, navigation }) => {
                   onPress={() =>
                     navigation.navigate('EditProduct', { product })
                   }
+                  hasHH={hasHH}
                 />
               ))}
               <Button
