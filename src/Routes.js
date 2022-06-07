@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useMMKVBoolean } from 'react-native-mmkv';
-import { useSetRecoilState } from 'recoil';
 
 import { theme } from './constants';
 import EditStore from './containers/EditStore/EditStore';
@@ -10,67 +9,21 @@ import IntroStack from './containers/Intro/Intro';
 import WonReputation from './containers/Account/WonReputation';
 import { storage } from './store/storage';
 import TabNavigator from './Tabs';
-import { getVersion } from './api/stores';
-import { getFeatures } from './api/features';
-import { getProducts } from './api/products';
-import { getRates } from './api/rates';
-import {
-  productsState,
-  ratesState,
-  featuresState,
-  storeLoadingState,
-} from './store/atoms';
+import { useEntitiesAction } from './store/entitiesActions';
 
 const Main = createNativeStackNavigator();
 
 const Routes = () => {
   const [firstOpen] = useMMKVBoolean('firstOpen', storage);
-
   const loadedEntities = useRef(false);
-
-  const setProducts = useSetRecoilState(productsState);
-  const setRates = useSetRecoilState(ratesState);
-  const setFeatures = useSetRecoilState(featuresState);
-  const setStoreLoading = useSetRecoilState(storeLoadingState);
+  const { loadEntities } = useEntitiesAction();
 
   useEffect(() => {
     if (loadedEntities.current) {
       return;
     }
     loadedEntities.current = true;
-
-    setStoreLoading(true);
-
-    (async () => {
-      // Check if we need to get stores from API
-      const apiVersions = await getVersion;
-      const versions = storage.getObject('versions', {});
-
-      async function loadEntity(name, getEntity, setEntity) {
-        if (!apiVersions?.[name] || versions[name] >= apiVersions[name]) {
-          return;
-        }
-        const loaded = await getEntity(apiVersions[name]).catch(() => false);
-        if (!loaded) {
-          return;
-        }
-        if (setEntity) {
-          setEntity(loaded);
-        }
-        storage.setObject(name, loaded);
-        storage.setObject('versions', {
-          ...versions,
-          [name]: apiVersions[name],
-        });
-        return loaded;
-      }
-
-      loadEntity('products', getProducts, setProducts);
-      loadEntity('rates', getRates, setRates);
-      loadEntity('features', getFeatures, setFeatures);
-
-      setStoreLoading(false);
-    })();
+    loadEntities();
   }, []);
 
   return (

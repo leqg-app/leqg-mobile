@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { addStore, editStore } from '../api/stores';
+import { addStore, editStore, getStoresVersion } from '../api/stores';
 import { updateProfile } from '../api/users';
 import { storesState, userState } from '../store/atoms';
 import { getErrorMessage } from '../utils/errorMessage';
-import { formatStoreToMap } from '../utils/formatStore';
+import { decompressStore, formatStoreToMap } from '../utils/formatStore';
+import { storage } from './storage';
 
 const useStoreState = () => {
   const user = useRecoilValue(userState);
@@ -29,8 +30,38 @@ const useStoreState = () => {
       if (response.error) {
         return response;
       }
+
+      const versions = storage.getObject('versions', {});
       const store = formatStoreToMap(response.store);
-      setStores(stores => stores.concat(store));
+
+      if (versions.stores + 1 === response.version) {
+        setStores(stores => {
+          if (!storeEdition.id) {
+            return stores.concat(store);
+          }
+          return stores
+            .filter(({ id }) => id !== storeEdition.id)
+            .concat(store);
+        });
+      } else {
+        // Another changes were made before, get them all
+        const { updated } = await getStoresVersion(
+          versions.stores,
+          response.version,
+        );
+
+        setStores(stores => {
+          return stores
+            .filter(store => updated.every(([id]) => store.id !== id))
+            .concat(updated.map(decompressStore));
+        });
+      }
+
+      storage.setObject('versions', {
+        ...versions,
+        stores: response.version,
+      });
+
       return { ...response, store };
     } catch (err) {
       return { error: err.message };
