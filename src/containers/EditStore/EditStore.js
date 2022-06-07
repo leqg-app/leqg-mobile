@@ -42,7 +42,7 @@ import {
   storeEditionState,
   userState,
 } from '../../store/atoms';
-import { useStoreState } from '../../store/hooks';
+import { useStoreActions } from '../../store/storeActions';
 import { getErrorMessage } from '../../utils/errorMessage';
 
 const types = {
@@ -99,7 +99,7 @@ const EditStore = ({ route, navigation }) => {
   const user = useRecoilValue(userState);
   const setSheetStore = useSetRecoilState(sheetStoreState);
   const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
-  const { saveStore } = useStoreState();
+  const { saveStore } = useStoreActions();
 
   const {
     name = '',

@@ -46,17 +46,19 @@ function useEntitiesAction() {
       !localStores.length
     ) {
       // Load all stores
-      const loaded = await getStores(apiVersions.stores);
-      const stores = loaded.map(decompressStore);
-      setStores(stores);
+      const stores = await getStores(apiVersions.stores);
+      setStores(stores.map(decompressStore));
     } else {
       // Load only updated stores
       const { updated } = await getStoresVersion(
         localVersions.stores,
         apiVersions.stores,
       );
-      const updatedStores = localStores.concat(updated.map(decompressStore));
-      setStores(updatedStores);
+      setStores(
+        localStores
+          .filter(store => updated.every(([id]) => store.id !== id))
+          .concat(updated.map(decompressStore)),
+      );
     }
 
     storage.set('appVersion', version);

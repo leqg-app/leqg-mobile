@@ -24,12 +24,12 @@ import { getUrlHost } from '../../utils/url';
 import StoreFeatures from './StoreFeatures';
 import {
   sheetStoreState,
-  storeEditionState,
   storeState,
   userState,
   storeQueryRequestIDState,
 } from '../../store/atoms';
 import { useFavoriteState } from '../../store/hooks';
+import { useStoreActions } from '../../store/storeActions';
 
 function OfflineMessage({ resetErrorBoundary }) {
   return (
@@ -111,7 +111,7 @@ function openAddress(store) {
   Linking.openURL(url);
 }
 
-function share(store) {
+export function shareStore(store) {
   Share.open({
     title: 'Retrouvons nous',
     message: `Retrouvons nous au ${store.name}\n\n${store.address}`,
@@ -185,48 +185,15 @@ function StoreActionButtons({ id }) {
 }
 
 function StoreContent({ id }) {
-  const navigation = useNavigation();
-
-  const user = useRecoilValue(userState);
+  const { editStoreScreen } = useStoreActions();
   const store = useRecoilValue(storeState(id));
-  const setSheetStore = useSetRecoilState(sheetStoreState);
-  const setStoreEdition = useSetRecoilState(storeEditionState);
-
-  const editStore = () => {
-    if (!user) {
-      Alert.alert(
-        '',
-        'Vous devez être connecté pour modifier ce bar',
-        [
-          {
-            text: 'Annuler',
-            style: 'cancel',
-          },
-          {
-            text: 'Connexion',
-            onPress: () => {
-              navigation.navigate('AccountTab');
-              setSheetStore();
-            },
-          },
-        ],
-        { cancelable: true },
-      );
-      return;
-    }
-    setStoreEdition(store);
-    navigation.navigate('EditStoreScreen', {
-      screen: 'EditStore',
-      params: { store },
-    });
-  };
 
   return (
     <>
       {store.products && (
         <>
           <ListInfo
-            onPress={editStore}
+            onPress={() => editStoreScreen(store)}
             content={
               <Text style={styles.infoTextItalic}>
                 Suggérer une modification
@@ -292,7 +259,7 @@ const Store = () => {
           icon="directions"
         />
         <ActionButton
-          onPress={() => share(sheetStore)}
+          onPress={() => shareStore(sheetStore)}
           name="Partager"
           icon="share-variant"
         />
