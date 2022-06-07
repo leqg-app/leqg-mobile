@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Animated, Easing, StyleSheet, TextInput, View } from 'react-native';
+import { IconButton } from 'react-native-paper';
 import Svg, { Circle, G } from 'react-native-svg';
 
 import { theme } from '../constants';
@@ -29,12 +30,17 @@ function AnimatedCircle({ initial, won }) {
   };
 
   return (
-    <CircleAnimate
-      initial={initialPercent}
-      target={Math.min(100, percentage)}
-      text={index}
-      onComplete={onComplete}
-    />
+    <View>
+      <View style={styles.icon}>
+        <IconButton icon="shield" color={theme.colors.primary} size={40} />
+      </View>
+      <CircleAnimate
+        initial={initialPercent}
+        target={Math.min(100, percentage)}
+        text={index}
+        onComplete={onComplete}
+      />
+    </View>
   );
 }
 
@@ -122,6 +128,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#fff',
     fontWeight: '900',
+  },
+  icon: {
+    position: 'absolute',
+    margin: 4.5,
   },
 });
 

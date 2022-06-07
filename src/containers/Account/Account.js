@@ -48,12 +48,7 @@ const Account = ({ navigation }) => {
     <View>
       <View style={styles.head}>
         <View>
-          <View style={styles.icon}>
-            <IconButton icon="shield" color={theme.colors.primary} size={40} />
-          </View>
-          <View>
-            <AnimatedCircle initial={reputation} won={0} />
-          </View>
+          <AnimatedCircle initial={reputation} won={0} />
         </View>
         <View style={styles.name}>
           <Title>{username}</Title>
@@ -87,10 +82,6 @@ const styles = StyleSheet.create({
     margin: 20,
     display: 'flex',
     flexDirection: 'row',
-  },
-  icon: {
-    position: 'absolute',
-    margin: 4,
   },
   name: {
     justifyContent: 'center',
