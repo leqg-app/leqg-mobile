@@ -1,5 +1,6 @@
 import { useSetRecoilState } from 'recoil';
 
+import { version } from '../../package.json';
 import { getFeatures } from '../api/features';
 import { getProducts } from '../api/products';
 import { getRates } from '../api/rates';
@@ -25,21 +26,25 @@ function useEntitiesAction() {
 
   async function loadStores() {
     const apiVersions = await getVersion;
-    const versions = storage.getObject('versions', {});
-    const stores = storage.getObject('stores', []);
-
-    if (stores.length) {
-      setStores(stores);
-    }
+    const localVersions = storage.getObject('versions', {});
+    const localStores = storage.getObject('stores', []);
+    const localVersion = storage.getString('appVersion');
 
     if (
-      stores.length &&
-      (!apiVersions?.stores || versions.stores >= apiVersions.stores)
+      !apiVersions?.stores ||
+      (localVersion === version &&
+        localStores.length &&
+        localVersions.stores == apiVersions.stores)
     ) {
+      // We quit, stores default value is local storage
       return;
     }
 
-    if (!versions.stores || !stores.length) {
+    if (
+      localVersion !== version ||
+      !localVersions.stores ||
+      !localStores.length
+    ) {
       // Load all stores
       const loaded = await getStores(apiVersions.stores);
       const stores = loaded.map(decompressStore);
@@ -47,15 +52,16 @@ function useEntitiesAction() {
     } else {
       // Load only updated stores
       const { updated } = await getStoresVersion(
-        versions.stores,
+        localVersions.stores,
         apiVersions.stores,
       );
-      const updatedStores = stores.concat(updated.map(decompressStore));
+      const updatedStores = localStores.concat(updated.map(decompressStore));
       setStores(updatedStores);
     }
 
+    storage.set('appVersion', version);
     storage.setObject('versions', {
-      ...versions,
+      ...localVersions,
       stores: apiVersions.stores,
     });
   }

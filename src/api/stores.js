@@ -1,6 +1,8 @@
 import { get, post, put } from './index';
 
-const getVersion = get(`/v1/version`, { 'cache-control': 'no-store' });
+const getVersion = get(`/v1/version`, { 'cache-control': 'no-store' }).catch(
+  () => ({}),
+);
 
 function getStores(version) {
   return get(`/v2/stores?v=${version || 1}`);

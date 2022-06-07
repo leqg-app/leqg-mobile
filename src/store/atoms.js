@@ -57,7 +57,7 @@ const storeState = selectorFamily({
 
 const storesState = atom({
   key: 'storesState',
-  default: [],
+  default: storage.getObject('stores', []),
   effects_UNSTABLE: [getAllStores],
 });
 
