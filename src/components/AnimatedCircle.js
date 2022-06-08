@@ -8,23 +8,25 @@ import { theme } from '../constants';
 const steps = [0, 10, 50, 100, 500, 1000];
 
 function AnimatedCircle({ initial, won }) {
-  const [index, setIndex] = useState(1);
-  const [initialPercent, setInitialPercent] = useState(initial);
+  const initialLevel = steps.findIndex(step => initial < step);
+  const [level, setLevel] = useState(initialLevel);
+  const previousStep = steps[level - 1];
+  const initialPercentage =
+    ((initial - previousStep) / (steps[level] - previousStep)) * 100;
+  const [initialPercent, setInitialPercent] = useState(initialPercentage);
   const finalScore = initial + won;
-  const lastIndex = steps.findIndex(step => finalScore < step);
+  const finalPercentage =
+    ((finalScore - previousStep) / (steps[level] - previousStep)) * 100;
+  const lastLevel = steps.findIndex(step => finalScore < step);
 
   useEffect(
-    () => setIndex(steps.findIndex(step => initial < step)),
+    () => setLevel(steps.findIndex(step => initial < step)),
     [initial, won],
   );
 
-  const previousStep = steps[index - 1];
-  const percentage =
-    ((finalScore - previousStep) / (steps[index] - previousStep)) * 100;
-
   const onComplete = () => {
-    if (index < lastIndex) {
-      setIndex(index + 1);
+    if (level < lastLevel) {
+      setLevel(level + 1);
       setInitialPercent(0);
     }
   };
@@ -36,8 +38,8 @@ function AnimatedCircle({ initial, won }) {
       </View>
       <CircleAnimate
         initial={initialPercent}
-        target={Math.min(100, percentage)}
-        text={index}
+        target={Math.min(100, finalPercentage)}
+        text={level}
         onComplete={onComplete}
       />
     </View>
