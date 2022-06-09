@@ -33,8 +33,6 @@ function StoreValidate({ id }) {
   const store = useRecoilValue(storeState(id));
   const user = useRecoilValue(userState);
 
-  console.log(store);
-
   const validate = async () => {
     if (!user) {
       Alert.alert(
@@ -74,7 +72,6 @@ function StoreValidate({ id }) {
         userPosition,
         user,
       );
-      console.log(reputation);
       if (error) {
         throw error;
       }

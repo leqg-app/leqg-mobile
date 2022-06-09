@@ -24,6 +24,7 @@ const Row = ({ contribution }) => {
     addSuffix: true,
     locale: dateLocale,
   });
+  const store = (contribution.revision || contribution.validation).store;
   return (
     <View style={styles.contributionRow}>
       <View style={styles.head}>
@@ -32,7 +33,7 @@ const Row = ({ contribution }) => {
         </Text>
         <Text style={styles.grey}>{date}</Text>
       </View>
-      <Text style={styles.storeName}>{contribution.revision.store.name}</Text>
+      <Text style={styles.storeName}>{store.name}</Text>
     </View>
   );
 };
