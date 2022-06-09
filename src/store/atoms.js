@@ -1,4 +1,4 @@
-import { atom, selector, selectorFamily } from 'recoil';
+import { atom, atomFamily, selector } from 'recoil';
 
 import { getStore } from '../api/stores';
 import { getContributions, getProfile } from '../api/users';
@@ -45,14 +45,16 @@ const storeQueryRequestIDState = atom({
   default: 0,
 });
 
-const storeState = selectorFamily({
+const storeState = atomFamily({
   key: 'storeState',
-  get:
-    storeId =>
-    async ({ get }) => {
-      get(storeQueryRequestIDState);
-      return getStore(storeId);
+  default: null,
+  effects: storeId => [
+    ({ setSelf, trigger }) => {
+      if (trigger === 'get') {
+        setSelf(getStore(storeId));
+      }
     },
+  ],
 });
 
 const storesState = atom({

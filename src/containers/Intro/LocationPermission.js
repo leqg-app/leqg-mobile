@@ -33,13 +33,13 @@ function LocationPermission() {
         zoom: 13,
       });
     } catch (e) {
-      console.log(e);
-      // TODO: toast error
       storage.setObject('mapPosition', {
         followUser: false,
         coordinates: DEFAULT_MAP.CENTER_COORDINATES,
         zoom: DEFAULT_MAP.ZOOM_LEVEL,
       });
+    } finally {
+      setLoading(false);
     }
     next();
   };

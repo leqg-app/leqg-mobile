@@ -1,10 +1,11 @@
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   sheetStoreState,
   storeEditionState,
   storesState,
+  storeState,
   userState,
 } from './atoms';
 import { addStore, editStore, getStoresVersion } from '../api/stores';
@@ -17,6 +18,9 @@ function useStoreActions() {
   const setStoreEdition = useSetRecoilState(storeEditionState);
   const setStores = useSetRecoilState(storesState);
   const user = useRecoilValue(userState);
+  const updateStoreState = useRecoilCallback(({ set }) => (id, store) => {
+    set(storeState(id), store);
+  });
 
   const editStoreScreen = store => {
     if (!user) {
@@ -91,6 +95,8 @@ function useStoreActions() {
             .concat(updated.map(decompressStore));
         });
       }
+
+      updateStoreState(response.store.id, response.store);
 
       storage.setObject('versions', {
         ...versions,

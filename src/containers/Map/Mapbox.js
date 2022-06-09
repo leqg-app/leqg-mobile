@@ -119,8 +119,6 @@ const Mapbox = () => {
         isFollowing: true,
       });
     } catch (e) {
-      console.log(e);
-      // TODO: display error message
       setMap({ position: undefined });
     }
   };

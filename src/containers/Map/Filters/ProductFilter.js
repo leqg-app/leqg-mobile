@@ -142,7 +142,6 @@ function ProductFilter() {
               />
             </View>
             <ActionButtons
-              onLayout={console.log}
               onCancel={closeModal}
               onSubmit={submit}
               submitLabel="OK"

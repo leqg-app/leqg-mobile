@@ -226,7 +226,7 @@ function StoreContent({ id }) {
           <Divider />
         </>
       )}
-      {store.features.length ? (
+      {store.features?.length ? (
         <>
           <Text style={styles.title}>Caractéristiques</Text>
           <View style={styles.features}>
