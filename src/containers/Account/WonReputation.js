@@ -19,6 +19,13 @@ const DISPLAY_FIELDS = {
   features: 'Caractéristique',
 };
 
+const REASONS = {
+  'store.creation': "Ajout d'un lieu",
+  'store.edition': "Modification d'un lieu",
+  'store.validation.creation': "Validation d'un lieu",
+  'store.rate.creation': 'Note',
+};
+
 function groupFields(fields, { fieldName, reputation }) {
   if (!fields[fieldName]) {
     fields[fieldName] = {
@@ -44,7 +51,9 @@ const WonReputation = ({ navigation, route }) => {
   );
   const won = reputation.total;
 
-  const fields = Object.values(reputation.fields.reduce(groupFields, {}));
+  const fields = reputation.fields
+    ? Object.values(reputation.fields.reduce(groupFields, {}))
+    : [];
 
   const getProfileRequest = getProfile(user.jwt);
   const close = () => {
@@ -74,15 +83,22 @@ const WonReputation = ({ navigation, route }) => {
           </View>
 
           <View style={styles.details}>
-            {fields.map(({ fieldName, reputation, count }) => (
-              <View key={fieldName} style={styles.detailRow}>
-                <Text>
-                  {count} {fieldName}
-                  {count > 1 ? 's' : ''}
-                </Text>
-                <Text>+{reputation}</Text>
+            {fields.length ? (
+              fields.map(({ fieldName, reputation, count }) => (
+                <View key={fieldName} style={styles.detailRow}>
+                  <Text>
+                    {count} {fieldName}
+                    {count > 1 ? 's' : ''}
+                  </Text>
+                  <Text>+{reputation}</Text>
+                </View>
+              ))
+            ) : (
+              <View style={styles.detailRow}>
+                <Text>{REASONS[reputation.reason]}</Text>
+                <Text>+{reputation.total}</Text>
               </View>
-            ))}
+            )}
           </View>
 
           <Divider />

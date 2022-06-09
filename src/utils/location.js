@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Alert, Linking, Platform } from 'react-native';
 import {
   checkMultiple,
   requestMultiple,
@@ -6,8 +6,14 @@ import {
 } from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
 
+const errorMessages = {
+  denied: 'position.denied',
+  blocked: 'position.blocked',
+};
+
 async function getLocation(options = {}) {
   const { timeout = 2000, askedByUser = false } = options;
+
   const permission = Platform.select({
     ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
     android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
@@ -18,7 +24,7 @@ async function getLocation(options = {}) {
     PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
   ]);
   if (!askedByUser && status[permission] !== 'granted') {
-    throw status[permission];
+    throw errorMessages[status[permission]] || status[permission];
   }
   const asked = await requestMultiple([
     PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
@@ -26,12 +32,29 @@ async function getLocation(options = {}) {
     PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
   ]);
   if (asked[permission] !== 'granted') {
-    throw asked[permission];
+    if (status[permission] === 'blocked' && askedByUser) {
+      Alert.alert(
+        '',
+        'La géolocalisation est désactivée pour cette application, vous devez changer ce paramètre dans les réglages. Voulez-vous le faire maintenant ?',
+        [
+          {
+            text: 'Annuler',
+            style: 'cancel',
+          },
+          {
+            text: 'Activer',
+            onPress: () => Linking.openSettings(),
+          },
+        ],
+        { cancelable: true },
+      );
+    }
+    throw errorMessages[asked[permission]] || asked[permission];
   }
   return new Promise((res, rej) => {
     Geolocation.getCurrentPosition(
       ({ coords }) => res([coords.longitude, coords.latitude]),
-      error => rej(error),
+      error => rej(errorMessages[error] || error),
       {
         timeout,
       },

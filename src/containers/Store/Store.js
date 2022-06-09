@@ -29,6 +29,7 @@ import {
   storeQueryRequestIDState,
 } from '../../store/atoms';
 import { useFavoriteState } from '../../store/hooks';
+import StoreValidate from './StoreValidate';
 import { useStoreActions } from '../../store/storeActions';
 
 function OfflineMessage({ resetErrorBoundary }) {
@@ -269,6 +270,11 @@ const Store = () => {
           </Suspense>
         </ErrorBoundary>
       </View>
+      <ErrorBoundary fallback={<></>} resetKeys={[requestId]}>
+        <Suspense fallback={<></>}>
+          <StoreValidate id={sheetStore.id} />
+        </Suspense>
+      </ErrorBoundary>
       <Divider />
       <ListInfo
         onPress={() => openAddress(sheetStore)}

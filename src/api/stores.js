@@ -24,6 +24,12 @@ function editStore(id, data, { jwt }) {
   return put(`/v2/stores/${id}`, data, { Authorization: `bearer ${jwt}` });
 }
 
+function validateStore(id, data, { jwt }) {
+  return post(`/v2/stores/${id}/validate`, data, {
+    Authorization: `bearer ${jwt}`,
+  });
+}
+
 export {
   getVersion,
   getStores,
@@ -31,4 +37,5 @@ export {
   getStore,
   addStore,
   editStore,
+  validateStore,
 };
