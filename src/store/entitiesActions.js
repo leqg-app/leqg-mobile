@@ -5,6 +5,7 @@ import { getFeatures } from '../api/features';
 import { getProducts } from '../api/products';
 import { getRates } from '../api/rates';
 import { getStores, getStoresVersion, getVersion } from '../api/stores';
+import { getProfile } from '../api/users';
 import { decompressStore } from '../utils/formatStore';
 import {
   featuresState,
@@ -12,6 +13,7 @@ import {
   ratesState,
   storeLoadingState,
   storesState,
+  userState,
 } from './atoms';
 import { storage } from './storage';
 
@@ -21,6 +23,7 @@ function useEntitiesAction() {
   const setFeatures = useSetRecoilState(featuresState);
   const setStores = useSetRecoilState(storesState);
   const setStoreLoading = useSetRecoilState(storeLoadingState);
+  const setUser = useSetRecoilState(userState);
 
   // -- Load stores
 
@@ -100,6 +103,19 @@ function useEntitiesAction() {
     loadEntity('products', getProducts, setProducts);
     loadEntity('rates', getRates, setRates);
     loadEntity('features', getFeatures, setFeatures);
+
+    (async () => {
+      const userState = storage.getObject('userState');
+      if (!userState?.jwt) {
+        return;
+      }
+      const user = await getProfile(userState.jwt);
+      if (user.error) {
+        setUser(null);
+        return;
+      }
+      setUser(user);
+    })();
   };
 
   return { loadEntities };
