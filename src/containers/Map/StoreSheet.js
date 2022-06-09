@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, Suspense } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconButton, Portal, Title } from 'react-native-paper';
 import Animated, {
@@ -9,10 +9,12 @@ import Animated, {
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRecoilState } from 'recoil';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import SchedulesPreview from '../Store/SchedulesPreview';
 import Store from '../Store/Store';
 import { sheetStoreState } from '../../store/atoms';
+import StoreSheetMenu from './StoreSheetMenu';
 
 const StoreSheet = () => {
   const sheet = useRef(null);
@@ -38,10 +40,7 @@ const StoreSheet = () => {
     ],
     opacity: sheetPosition.value,
   }));
-  const topBarStyle = useMemo(
-    () => [styles.topBarWrapper, animatedTopBar, { height: topbarHeight }],
-    [animatedTopBar],
-  );
+  const topBarStyle = useMemo(() => animatedTopBar, [animatedTopBar]);
 
   const getPreviewHeight = event =>
     setPreviewHeight(event.nativeEvent.layout.height - 40);
@@ -76,13 +75,24 @@ const StoreSheet = () => {
 
   return (
     <Portal>
-      <Animated.View style={topBarStyle}>
+      <Animated.View
+        style={[
+          styles.topBarWrapper,
+          topBarStyle,
+          { height: topbarHeight, paddingTop: top },
+        ]}>
         <IconButton
           size={30}
-          style={styles.arrow}
           icon="chevron-down"
           onPress={() => sheet.current.snapToIndex(0)}
         />
+        {sheetStore?.id && (
+          <ErrorBoundary fallback={<></>}>
+            <Suspense fallback={<></>}>
+              {<StoreSheetMenu id={sheetStore.id} />}
+            </Suspense>
+          </ErrorBoundary>
+        )}
       </Animated.View>
       <BottomSheet
         ref={sheet}
@@ -120,11 +130,6 @@ const StoreSheet = () => {
 };
 
 const styles = StyleSheet.create({
-  arrow: {
-    marginLeft: 20,
-    bottom: -10,
-    position: 'absolute',
-  },
   topBarWrapper: {
     backgroundColor: 'white',
     position: 'absolute',
@@ -132,8 +137,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 99,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
   },
-  sheetContent: { backgroundColor: 'white', minHeight: '100%' },
+  sheetContent: {
+    backgroundColor: 'white',
+    minHeight: '100%',
+  },
   previewContainer: {
     minHeight: 93,
     marginBottom: 20,
