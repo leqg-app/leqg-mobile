@@ -33,6 +33,10 @@ function StoreValidate({ id }) {
   const store = useRecoilValue(storeState(id));
   const user = useRecoilValue(userState);
 
+  const alreadyValidated = store.validations.some(
+    validation => validation.user.id === user.id,
+  );
+
   const validate = async () => {
     if (!user) {
       Alert.alert(
@@ -84,18 +88,26 @@ function StoreValidate({ id }) {
 
   return (
     <>
-      <Button
-        mode="outlined"
-        style={styles.button}
-        onPress={validate}
-        loading={state.loading}
-        disabled={state.loading}>
-        J&apos;y suis
-      </Button>
-      <Caption style={styles.helpText}>
-        En validant votre position à ce bar, vous remerciez les contributeurs
-        qui ont participé à la création de cette page.
-      </Caption>
+      {!alreadyValidated ? (
+        <>
+          <Button
+            mode="outlined"
+            style={styles.button}
+            onPress={validate}
+            loading={state.loading}
+            disabled={state.loading}>
+            J&apos;y suis
+          </Button>
+          <Caption style={styles.helpText}>
+            En validant votre position à ce bar, vous remerciez les
+            contributeurs qui ont participé à la création de cette page.
+          </Caption>
+        </>
+      ) : (
+        <Button mode="outlined" style={styles.button} icon="check" disabled>
+          Validé
+        </Button>
+      )}
       <Portal>
         <Snackbar
           visible={state.error}
