@@ -84,7 +84,7 @@ function ProductFilter() {
   }, [search]);
 
   const onLayoutFooter = event =>
-    setFooterHeight(event.nativeEvent.layout.height + bottom);
+    setFooterHeight(event.nativeEvent.layout.height);
 
   return (
     <>
