@@ -12,6 +12,8 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2D6833604EEF30A6255D0340 /* libPods-leqg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F2F940E07052103CE1887FBE /* libPods-leqg.a */; };
+		37A69EA9285397D800A65337 /* Mapbox in Frameworks */ = {isa = PBXBuildFile; productRef = 6DDEB14D29843C5184DD9DB0 /* Mapbox */; };
+		37A69EAA285397D800A65337 /* Mapbox in Frameworks */ = {isa = PBXBuildFile; productRef = 243DA684D1CEBB1839A72E2C /* Mapbox */; };
 		37EE505A275E25E7009EECA9 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37EE5059275E25E7009EECA9 /* BootSplash.storyboard */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A38F237C20C2524836FAED99 /* libPods-leqg-leqgTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 164D26961EA061427F6D0B47 /* libPods-leqg-leqgTests.a */; };
@@ -56,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A38F237C20C2524836FAED99 /* libPods-leqg-leqgTests.a in Frameworks */,
+				37A69EAA285397D800A65337 /* Mapbox in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +67,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D6833604EEF30A6255D0340 /* libPods-leqg.a in Frameworks */,
+				37A69EA9285397D800A65337 /* Mapbox in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
