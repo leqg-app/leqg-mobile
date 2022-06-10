@@ -218,7 +218,7 @@ const Mapbox = () => {
           onPress={e => setSheetStore(e.features[0].properties)}>
           <MapboxGL.SymbolLayer
             id="store"
-            filter={filters && ['all', ...filters]}
+            filter={filters.length ? ['all', ...filters] : []}
             style={{
               ...layerStyles.storePrice,
               textField,
@@ -228,7 +228,7 @@ const Mapbox = () => {
             id="storeName"
             belowLayerID="store"
             minZoomLevel={9}
-            filter={filters && ['all', ...filters]}
+            filter={filters.length ? ['all', ...filters] : []}
             style={layerStyles.storeName}
           />
         </MapboxGL.ShapeSource>
