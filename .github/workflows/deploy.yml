@@ -133,6 +133,13 @@ jobs:
       - name: Unit tests
         run: yarn test
 
+      - name: Create netrc file
+        uses: extractions/netrc@v1
+        with:
+          machine: api.mapbox.com
+          username: mapbox
+          password: ${{ secrets.MAPBOX_SECRET_KEY }}
+
       - name: Create env file
         run: |
           cat << EOF > .env
