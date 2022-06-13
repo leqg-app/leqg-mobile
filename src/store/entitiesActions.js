@@ -25,29 +25,31 @@ function useEntitiesAction() {
   const setStoreLoading = useSetRecoilState(storeLoadingState);
   const setUser = useSetRecoilState(userState);
 
+  const localVersions = storage.getObject('versions', {});
+
   // -- Load stores
 
   async function loadStores() {
     const apiVersions = await getVersion;
-    const localVersions = storage.getObject('versions', {});
     const localStores = storage.getObject('stores', []);
-    const localVersion = storage.getString('appVersion');
+    const appVersion = storage.getString('appVersion');
 
-    if (
-      !apiVersions?.stores ||
-      (localVersion === version &&
-        localStores.length &&
-        localVersions.stores == apiVersions.stores)
-    ) {
-      // We quit, stores default value is local storage
+    // no internet, quit
+    if (!apiVersions?.stores) {
       return;
     }
 
-    if (
-      localVersion !== version ||
-      !localVersions.stores ||
-      !localStores.length
-    ) {
+    const needReset =
+      apiVersions.reset !== localVersions.reset ||
+      apiVersions.count.stores !== localStores.length ||
+      appVersion !== version;
+
+    if (!needReset && localVersions.stores === apiVersions.stores) {
+      // stores default value is local storage and doesn't need update
+      return;
+    }
+
+    if (needReset || !localVersions.stores || !localStores.length) {
       // Load all stores
       const stores = await getStores(apiVersions.stores);
       setStores(stores.map(decompressStore));
@@ -75,11 +77,20 @@ function useEntitiesAction() {
 
   async function loadEntity(name, getEntity, setEntity) {
     const apiVersions = await getVersion;
-    const versions = storage.getObject('versions', {});
+    const appVersion = storage.getString('appVersion');
 
-    if (!apiVersions?.[name] || versions[name] >= apiVersions[name]) {
+    // no internet, quit
+    if (!apiVersions?.[name]) {
       return;
     }
+
+    const needReset =
+      apiVersions.reset !== localVersions.reset || appVersion !== version;
+
+    if (!needReset && localVersions[name] === apiVersions[name]) {
+      return;
+    }
+
     const loaded = await getEntity(apiVersions[name]).catch(() => false);
     if (!loaded) {
       return;
@@ -89,10 +100,23 @@ function useEntitiesAction() {
     }
     storage.setObject(name, loaded);
     storage.setObject('versions', {
-      ...versions,
+      ...localVersions,
       [name]: apiVersions[name],
     });
     return loaded;
+  }
+
+  async function loadUser() {
+    const userState = storage.getObject('userState');
+    if (!userState?.jwt) {
+      return;
+    }
+    const user = await getProfile(userState.jwt);
+    if (user.error) {
+      setUser(null);
+      return;
+    }
+    setUser(user);
   }
 
   const loadEntities = async () => {
@@ -100,22 +124,22 @@ function useEntitiesAction() {
     await loadStores();
     setStoreLoading(false);
 
-    loadEntity('products', getProducts, setProducts);
-    loadEntity('rates', getRates, setRates);
-    loadEntity('features', getFeatures, setFeatures);
+    loadUser();
 
-    (async () => {
-      const userState = storage.getObject('userState');
-      if (!userState?.jwt) {
-        return;
-      }
-      const user = await getProfile(userState.jwt);
-      if (user.error) {
-        setUser(null);
-        return;
-      }
-      setUser(user);
-    })();
+    await Promise.all([
+      loadEntity('products', getProducts, setProducts),
+      loadEntity('rates', getRates, setRates),
+      loadEntity('features', getFeatures, setFeatures),
+    ]);
+
+    const apiVersions = await getVersion;
+
+    if (apiVersions.reset !== localVersions.reset) {
+      storage.setObject('versions', {
+        ...localVersions,
+        reset: apiVersions.reset,
+      });
+    }
   };
 
   return { loadEntities };
