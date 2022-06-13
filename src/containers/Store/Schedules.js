@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { daysFull } from '../../constants';
-import { secondToTime } from '../../utils/time';
+import { minutesToTime } from '../../utils/time';
 
 function Time({ schedule }) {
   const [open, close] = schedule;
-  return !open ? '-' : `${secondToTime(open)}-${secondToTime(close)}`;
+  return !open ? '-' : `${minutesToTime(open)}-${minutesToTime(close)}`;
 }
 
 function DaySchedule({ day, hasSpecial }) {

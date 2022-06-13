@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { daysFull } from '../../constants';
 
-import { inHours, secondToTime } from '../../utils/time';
+import { inHours, minutesToTime } from '../../utils/time';
 
 function findNextOpenDay(schedules, currentDay) {
   const days = Array.from(schedules).sort((a, b) => a.dayOfWeek - b.dayOfWeek);
@@ -17,7 +17,7 @@ function Open({ today }) {
       <Text>
         <Text style={styles.scheduleOpen}>Ouvert</Text>
         {closing !== null && (
-          <Text> jusqu&apos;à {secondToTime(closing, { short: true })}</Text>
+          <Text> jusqu&apos;à {minutesToTime(closing, { short: true })}</Text>
         )}
       </Text>
       {openingSpecial && (
@@ -25,7 +25,7 @@ function Open({ today }) {
           Happy hour de{' '}
           <Text
             style={inHours(openingSpecial, closingSpecial) && styles.boldText}>
-            {secondToTime(openingSpecial)} à {secondToTime(closingSpecial)}
+            {minutesToTime(openingSpecial)} à {minutesToTime(closingSpecial)}
           </Text>
         </Text>
       )}
@@ -37,13 +37,13 @@ function Closed({ today, nextOpenDay }) {
   const { opening } = today;
 
   const date = new Date();
-  const now = date.getHours() * 3600 + date.getMinutes() * 60;
+  const now = date.getHours() * 60 + date.getMinutes();
 
   return (
     <View style={styles.flex}>
       <Text style={styles.scheduleClosed}>Fermé</Text>
       {opening && now < opening ? (
-        <Text> – Ouvre à {secondToTime(opening, { short: true })}</Text>
+        <Text> – Ouvre à {minutesToTime(opening, { short: true })}</Text>
       ) : (
         nextOpenDay && (
           <>
@@ -51,7 +51,7 @@ function Closed({ today, nextOpenDay }) {
             {nextOpenDay.opening && (
               <Text>
                 {' '}
-                à {secondToTime(nextOpenDay.opening, { short: true })}
+                à {minutesToTime(nextOpenDay.opening, { short: true })}
               </Text>
             )}
           </>

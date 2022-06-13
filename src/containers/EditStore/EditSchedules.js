@@ -3,20 +3,18 @@ import { Text, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import {
   Appbar,
   Avatar,
-  Badge,
   Button,
-  Checkbox,
   Dialog,
   IconButton,
   Portal,
+  Switch,
   TouchableRipple,
   useTheme,
-  List,
 } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useRecoilState } from 'recoil';
 
-import { secondToHour, secondToTime } from '../../utils/time';
+import { minutesToTime } from '../../utils/time';
 import { daysFull, daysShort, theme } from '../../constants';
 import { storeEditionState } from '../../store/atoms';
 
@@ -45,7 +43,7 @@ const scheduleTypes = [
 
 function Time({ schedule }) {
   const [open, close] = schedule;
-  return !open ? '-' : `${secondToTime(open)}-${secondToTime(close)}`;
+  return !open ? '-' : `${minutesToTime(open)}-${minutesToTime(close)}`;
 }
 
 const DaySchedule = ({ schedule }) => {
@@ -70,22 +68,13 @@ const DaySchedule = ({ schedule }) => {
   );
 };
 
-function RightHour({ hour }) {
-  return (
-    <Text style={{ textAlignVertical: 'center' }}>
-      {hour !== null ? secondToHour(hour) : '-'}
-    </Text>
-  );
-}
-
 function getPickerValue(schedule, timePicker) {
-  const timezoneOffset = new Date().getTimezoneOffset() * 60000;
-  const date = new Date(timezoneOffset);
+  const date = new Date();
   if (!schedule[timePicker]) {
-    date.setHours(defaultsHour[timePicker]);
+    date.setHours(defaultsHour[timePicker], 0);
     return date;
   }
-  date.setTime(schedule[timePicker] * 1000 + timezoneOffset);
+  date.setHours(schedule[timePicker] / 60, schedule[timePicker] % 60);
   return date;
 }
 
@@ -113,40 +102,60 @@ const EditSchedulesModal = props => {
       <Dialog.Content>
         <ScrollView style={styles.modalScroll}>
           <View style={styles.dayButtons}>
-            {daysShort.map((day, i) => (
-              <Badge
-                key={i}
-                onPress={() => onPressDay(i)}
-                size={35}
-                style={
-                  daysSelected.includes(i)
-                    ? styles.dayButtonFilled
-                    : styles.dayButtonEmpty
-                }>
-                {day}
-              </Badge>
-            ))}
+            {daysShort.map((day, i) => {
+              const selected = daysSelected.includes(i);
+              return (
+                <View
+                  style={[
+                    styles.dayButton,
+                    selected && styles.dayButtonSelected,
+                  ]}
+                  key={i}>
+                  <TouchableRipple
+                    borderless
+                    onPress={() => onPressDay(i)}
+                    style={styles.dayButtonTouchable}>
+                    <Text
+                      style={[
+                        styles.dayButtonText,
+                        selected && styles.dayButtonTextSelected,
+                      ]}>
+                      {day}
+                    </Text>
+                  </TouchableRipple>
+                </View>
+              );
+            })}
           </View>
           <View style={styles.flex}>
-            <View style={styles.flexCell}>
-              <Checkbox
-                status={closed ? 'checked' : 'unchecked'}
+            <View style={styles.closedWrapper}>
+              <Text
+                onPress={() => setSchedule({ ...schedule, closed: !closed })}>
+                Fermé
+              </Text>
+              <Switch
+                style={styles.closedSwitch}
+                value={closed}
                 color={colors.primary}
-                onPress={() => setSchedule({ ...schedule, closed: !closed })}
+                onValueChange={() =>
+                  setSchedule({ ...schedule, closed: !closed })
+                }
               />
-              <Text>Fermé</Text>
             </View>
           </View>
           {!closed && (
             <View>
               {scheduleTypes.map(({ name, type }) => (
-                <List.Item
-                  key={type}
-                  title={name}
-                  right={() => <RightHour hour={schedule[type]} />}
-                  style={styles.scheduleRow}
-                  onPress={() => setTimePicker(type)}
-                />
+                <TouchableRipple key={name} onPress={() => setTimePicker(type)}>
+                  <View style={styles.scheduleRow}>
+                    <Text>{name}</Text>
+                    <Text>
+                      {schedule[type] !== null
+                        ? minutesToTime(schedule[type])
+                        : '-'}
+                    </Text>
+                  </View>
+                </TouchableRipple>
               ))}
               {(schedule.openingSpecial || schedule.closingSpecial) && (
                 <Button
@@ -161,26 +170,23 @@ const EditSchedulesModal = props => {
                   Effacer l&apos;happy hour
                 </Button>
               )}
-              {timePicker && (
-                <DateTimePicker
-                  value={getPickerValue(schedule, timePicker)}
-                  mode="time"
-                  is24Hour={true}
-                  display="default"
-                  onChange={(_, time) => {
-                    setTimePicker(false);
-                    if (time === undefined) {
-                      return;
-                    }
-                    const seconds =
-                      time.getHours() * 3600 + time.getMinutes() * 60;
-                    setSchedule({
-                      ...schedule,
-                      [timePicker]: seconds,
-                    });
-                  }}
-                />
-              )}
+              <DateTimePickerModal
+                date={getPickerValue(schedule, timePicker)}
+                mode="time"
+                confirmTextIOS="Valider"
+                cancelTextIOS="Annuler"
+                isVisible={!!timePicker}
+                is24Hour={true}
+                onConfirm={time => {
+                  setTimePicker(false);
+                  const seconds = time.getHours() * 60 + time.getMinutes();
+                  setSchedule({
+                    ...schedule,
+                    [timePicker]: seconds,
+                  });
+                }}
+                onCancel={() => setTimePicker(false)}
+              />
             </View>
           )}
         </ScrollView>
@@ -227,7 +233,7 @@ const EditSchedules = ({ navigation }) => {
             onPress={() => setEditingDay([i])}
             rippleColor="#000">
             <View style={styles.dayRow}>
-              <Text style={{ flex: 1 }}>{day}</Text>
+              <Text style={styles.container}>{day}</Text>
               <DaySchedule schedule={schedules[i]} />
               <Avatar.Icon
                 icon="pencil"
@@ -311,17 +317,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  flexCell: {
+  closedWrapper: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 10,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  closedSwitch: {
+    marginLeft: 15,
   },
   hourCell: {
     width: 90,
     textAlign: 'center',
   },
   scheduleRow: {
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     borderBottomColor: 'grey',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
@@ -330,16 +344,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  dayButtonEmpty: {
+  dayButton: {
+    borderRadius: 20,
     borderWidth: 2,
     borderColor: theme.colors.primary,
     backgroundColor: 'transparent',
+  },
+  dayButtonTouchable: {
+    width: 30,
+    height: 30,
+    borderRadius: 20,
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayButtonSelected: {
+    backgroundColor: theme.colors.primary,
+  },
+  dayButtonText: {
+    fontSize: 17,
+    fontWeight: 'bold',
     color: theme.colors.primary,
   },
-  dayButtonFilled: {
-    borderWidth: 2,
-    borderColor: theme.colors.primary,
-    backgroundColor: theme.colors.primary,
+  dayButtonTextSelected: {
     color: 'white',
   },
   buttonEditAll: {

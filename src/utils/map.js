@@ -2,7 +2,7 @@ const date = new Date();
 const dayOfWeek = date.getDay() ? date.getDay() - 1 : 6;
 const today = ['object', ['at', dayOfWeek, ['array', ['get', 'schedules']]]];
 
-const time = date.getHours() * 3600 + date.getMinutes() * 60;
+const time = date.getHours() * 60 + date.getMinutes();
 
 export const CHEAPEST_PRICE_EXPRESSION = [
   'case',
