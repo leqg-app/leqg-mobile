@@ -108,15 +108,18 @@ function useEntitiesAction() {
 
   async function loadUser() {
     const userState = storage.getObject('userState');
-    if (!userState?.jwt) {
+    if (!userState) {
       return;
     }
-    const user = await getProfile(userState.jwt);
-    if (user.error) {
+    try {
+      const user = await getProfile(userState.jwt);
+      if (user.error) {
+        throw '';
+      }
+      setUser(user);
+    } catch {
       setUser(null);
-      return;
     }
-    setUser(user);
   }
 
   const loadEntities = async () => {
