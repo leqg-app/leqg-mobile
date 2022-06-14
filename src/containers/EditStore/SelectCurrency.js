@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, Text } from 'react-native';
+import React, { useMemo, useState, useLayoutEffect } from 'react';
+import { FlatList, StyleSheet, Text } from 'react-native';
 import { List } from 'react-native-paper';
 
 import currencies from '../../assets/currencies.json';
@@ -27,7 +27,7 @@ const CurrencyRow = ({ currency, onSelect }) => (
 const SelectCurrency = ({ navigation }) => {
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerSearchBarOptions: {
         autoCapitalize: 'none',
@@ -38,6 +38,7 @@ const SelectCurrency = ({ navigation }) => {
         headerIconColor: '#fff',
         hintTextColor: '#ccc',
         shouldShowHintSearchIcon: false,
+        hideWhenScrolling: false,
         onChangeText: event => setSearch(event.nativeEvent.text),
       },
     });
@@ -69,30 +70,23 @@ const SelectCurrency = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={currencies}
-        renderItem={({ item }) => (
-          <CurrencyRow currency={item} onSelect={onSelect} />
-        )}
-        keyExtractor={currency => currency.code}
-        getItemLayout={(_, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
-          index,
-        })}
-      />
-    </SafeAreaView>
+    <FlatList
+      data={currencies}
+      renderItem={({ item }) => (
+        <CurrencyRow currency={item} onSelect={onSelect} />
+      )}
+      contentInsetAdjustmentBehavior="automatic"
+      keyExtractor={currency => currency.code}
+      getItemLayout={(_, index) => ({
+        length: ITEM_HEIGHT,
+        offset: ITEM_HEIGHT * index,
+        index,
+      })}
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  searchBar: {
-    borderRadius: 0,
-  },
   currencyRow: {
     height: ITEM_HEIGHT,
   },

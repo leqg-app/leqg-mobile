@@ -29,21 +29,18 @@ function DaySchedule({ day, hasSpecial }) {
       </>
     );
   }
-  if (opening || openingSpecial) {
-    return (
-      <>
+  return (
+    <>
+      <Text style={style}>
+        <Time schedule={[opening, closing]} />
+      </Text>
+      {hasSpecial && (
         <Text style={style}>
-          <Time schedule={[opening, closing]} />
+          <Time schedule={[openingSpecial, closingSpecial]} />
         </Text>
-        {hasSpecial && (
-          <Text style={style}>
-            <Time schedule={[openingSpecial, closingSpecial]} />
-          </Text>
-        )}
-      </>
-    );
-  }
-  return <Text style={style}>Ouvert</Text>;
+      )}
+    </>
+  );
 }
 
 function Schedules({ schedules }) {
