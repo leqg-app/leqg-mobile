@@ -16,6 +16,8 @@ import Store from '../Store/Store';
 import { sheetStoreState } from '../../store/atoms';
 import StoreSheetMenu from './StoreSheetMenu';
 
+let lastSheetStore;
+
 const StoreSheet = () => {
   const sheet = useRef(null);
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
@@ -67,10 +69,13 @@ const StoreSheet = () => {
       return;
     }
     if (sheetStore) {
-      sheet.current.snapToIndex(0);
+      if (!lastSheetStore) {
+        sheet.current.snapToIndex(0);
+      }
     } else {
       sheet.current.close();
     }
+    lastSheetStore = sheetStore;
   }, [sheetStore]);
 
   return (

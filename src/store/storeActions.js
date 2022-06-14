@@ -19,6 +19,7 @@ function useStoreActions() {
   const setStores = useSetRecoilState(storesState);
   const user = useRecoilValue(userState);
   const updateStoreState = useRecoilCallback(({ set }) => (id, store) => {
+    set(sheetStoreState, store);
     set(storeState(id), store);
   });
 

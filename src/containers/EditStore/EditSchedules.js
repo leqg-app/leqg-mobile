@@ -70,7 +70,7 @@ const DaySchedule = ({ schedule }) => {
 
 function getPickerValue(schedule, timePicker) {
   const date = new Date();
-  if (!schedule[timePicker]) {
+  if (schedule[timePicker] === null) {
     date.setHours(defaultsHour[timePicker], 0);
     return date;
   }
@@ -201,10 +201,10 @@ const EditSchedulesModal = props => {
 
 const EditSchedules = ({ navigation }) => {
   const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
-  const [schedules, setSchedules] = React.useState(
+  const [schedules, setSchedules] = useState(
     storeEdition.schedules || new Array(7).fill().map(newSchedule),
   );
-  const [editingDays, setEditingDay] = React.useState(false);
+  const [editingDays, setEditingDay] = useState(false);
 
   const save = () => {
     setStoreEdition({ ...storeEdition, schedules });

@@ -298,11 +298,11 @@ const Mapbox = () => {
                 id="nearText5"
                 belowLayerID="store"
                 style={{ ...layerStyles.nearText, textField: '5 MIN' }}
-                minZoomLevel={14.6}
+                minZoomLevel={14.5}
               />
               <MapboxGL.LineLayer
                 id="nearLine5"
-                minZoomLevel={14.6}
+                minZoomLevel={14.5}
                 style={layerStyles.nearLine}
               />
             </MapboxGL.ShapeSource>
