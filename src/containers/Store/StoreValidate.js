@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Alert, StyleSheet } from 'react-native';
 import { Button, Caption, Portal, Snackbar } from 'react-native-paper';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { validateStore } from '../../api/stores';
 import { sheetStoreState, storeState, userState } from '../../store/atoms';
@@ -30,7 +30,7 @@ function StoreValidate({ id }) {
   const navigation = useNavigation();
   const [state, setState] = useState({ loading: false, error: undefined });
   const setSheetStore = useSetRecoilState(sheetStoreState);
-  const store = useRecoilValue(storeState(id));
+  const [store, setStore] = useRecoilState(storeState(id));
   const user = useRecoilValue(userState);
 
   const alreadyValidated = store.validations.some(
@@ -80,6 +80,10 @@ function StoreValidate({ id }) {
         throw error;
       }
       setState({ loading: false, error: undefined });
+      setStore(store => ({
+        ...store,
+        validations: store.validations.concat({ user: { id: user.id } }),
+      }));
       navigation.navigate('WonReputation', { reputation });
     } catch (err) {
       setState({ loading: false, error: getErrorMessage(err) });
