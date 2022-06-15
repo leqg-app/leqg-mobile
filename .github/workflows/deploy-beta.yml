@@ -147,6 +147,12 @@ jobs:
           MAPBOX_API_KEY=${{ secrets.MAPBOX_API_KEY }}
           EOF
 
+      - name: Create Google Services file
+        run: |
+          cat << EOF > android/app/google-services.json
+          ${{ secrets.GOOGLE_SERVICES_JSON }}
+          EOF
+
       - name: Cache iOS dependencies
         id: cache-ios-dependencies
         uses: actions/cache@v2
