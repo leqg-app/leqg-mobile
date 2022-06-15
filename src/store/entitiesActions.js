@@ -41,7 +41,8 @@ function useEntitiesAction() {
 
     const needReset =
       apiVersions.reset !== localVersions.reset ||
-      apiVersions.count.stores !== localStores.length ||
+      (localVersions.stores === apiVersions.stores &&
+        apiVersions.count.stores !== localStores.length) ||
       appVersion !== version;
 
     if (!needReset && localVersions.stores === apiVersions.stores) {
