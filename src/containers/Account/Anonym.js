@@ -4,10 +4,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Paragraph, Title, useTheme } from 'react-native-paper';
 
 import Menu from '../../components/Menu';
+import VersionName from '../../components/VersionName';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import ResetPassword from './ResetPassword';
-import VersionName from '../../components/VersionName';
+import SignUpProvider from './SignUpProvider';
 
 const Anonym = ({ navigation }) => {
   return (
@@ -85,6 +86,11 @@ export default () => {
         options={{ title: 'Inscription' }}
         name="SignUp"
         component={SignUp}
+      />
+      <AnonymStack.Screen
+        options={{ title: 'Inscription' }}
+        name="SignUpProvider"
+        component={SignUpProvider}
       />
       <AnonymStack.Screen
         options={{ title: 'Mot de passe oublié' }}

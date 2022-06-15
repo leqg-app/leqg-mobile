@@ -6,6 +6,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
+import GoogleAuthProvider from './Providers/GoogleAuthProvider';
 
 const errors = {
   'user.credentials': 'Identifiant ou mot de passe incorrect',
@@ -53,6 +54,8 @@ const SignIn = ({ navigation }) => {
       keyboardShouldPersistTaps="always"
       contentContainerStyle={styles.container}>
       <View style={styles.form}>
+        <GoogleAuthProvider />
+        <Text style={styles.or}>ou</Text>
         <TextInput
           style={styles.space}
           label="Pseudo"
@@ -120,7 +123,11 @@ const styles = StyleSheet.create({
   },
   form: {
     flex: 1,
-    // justifyContent: 'center',
+    justifyContent: 'center',
+  },
+  or: {
+    textAlign: 'center',
+    marginTop: 15,
   },
   space: {
     marginTop: 15,

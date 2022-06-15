@@ -4,6 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, Title, useTheme } from 'react-native-paper';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { getLevel } from '../../utils/reputation';
+import { LEVELS } from '../../constants';
 import Settings from './Settings';
 import Menu from '../../components/Menu';
 import { userState } from '../../store/atoms';
@@ -11,11 +13,17 @@ import Anonym from './Anonym';
 import AnimatedCircle from '../../components/AnimatedCircle';
 import VersionName from '../../components/VersionName';
 import Contributions from './Contributions';
+import * as signOutProviders from './Providers/index.js';
 
 const Account = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
 
-  const signout = () => {
+  const signOut = () => {
+    signOutProviders[user.provider]?.signOut?.();
+    setUser(null);
+  };
+
+  const askForSignOut = () => {
     Alert.alert(
       'Confirmation',
       'Voulez-vous vraiment vous déconnecter ?',
@@ -26,7 +34,7 @@ const Account = ({ navigation }) => {
         },
         {
           text: 'OK',
-          onPress: () => setUser(null),
+          onPress: signOut,
         },
       ],
       { cancelable: true },
@@ -40,8 +48,10 @@ const Account = ({ navigation }) => {
   const { username, contributions } = user;
   const reputation = contributions.reduce(
     (reputation, contribution) => reputation + contribution.reputation,
-    1,
+    0,
   );
+
+  const currentLevel = getLevel(reputation);
 
   return (
     <View>
@@ -51,7 +61,9 @@ const Account = ({ navigation }) => {
         </View>
         <View style={styles.name}>
           <Title>{username}</Title>
-          <Text>Plus que 34 points pour atteindre le niveau 4</Text>
+          <Text>
+            Prochain niveau: {reputation}/{LEVELS[currentLevel]}
+          </Text>
         </View>
       </View>
       <View style={styles.menus}>
@@ -68,7 +80,11 @@ const Account = ({ navigation }) => {
             onPress={() => navigation.navigate('SettingsStack')}
             last
           />
-          <Menu.Item name="Se déconnecter" icon="logout" onPress={signout} />
+          <Menu.Item
+            name="Se déconnecter"
+            icon="logout"
+            onPress={askForSignOut}
+          />
         </Menu>
         <VersionName />
       </View>

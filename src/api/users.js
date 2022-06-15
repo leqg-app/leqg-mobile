@@ -4,8 +4,16 @@ function signUp(data) {
   return post('/v2/auth/local/register', data);
 }
 
+function signUpProvider(provider, data) {
+  return post(`/v2/auth/${provider}/register`, data);
+}
+
 function signIn(data) {
   return post('/v2/auth/local', data);
+}
+
+function signInProvider(provider, auth_token) {
+  return get(`/v2/auth/${provider}/callback?auth_token=${auth_token}`);
 }
 
 function resetPassword(data) {
@@ -31,4 +39,6 @@ export {
   updateProfile,
   resetPassword,
   getContributions,
+  signInProvider,
+  signUpProvider,
 };

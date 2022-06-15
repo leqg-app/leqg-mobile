@@ -6,6 +6,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
+import GoogleAuthProvider from './Providers/GoogleAuthProvider';
 
 const errors = {
   'user.email.taken':
@@ -50,10 +51,12 @@ const SignUp = ({ navigation }) => {
     <KeyboardAwareScrollView
       keyboardShouldPersistTaps="always"
       contentContainerStyle={styles.container}>
+      <Paragraph>
+        Inscrivez-vous et profitez de tous les avantages des membres
+      </Paragraph>
       <View style={styles.form}>
-        <Paragraph>
-          Inscrivez-vous et profitez de tous les avantages des membres
-        </Paragraph>
+        <GoogleAuthProvider signUp />
+        <Text style={styles.or}>ou</Text>
         <TextInput
           style={styles.space}
           label="Pseudo"
@@ -129,7 +132,11 @@ const styles = StyleSheet.create({
   },
   form: {
     flex: 1,
-    // justifyContent: 'center',
+    justifyContent: 'center',
+  },
+  or: {
+    textAlign: 'center',
+    marginTop: 15,
   },
   space: {
     marginTop: 15,
