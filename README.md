@@ -13,7 +13,7 @@ A React Native application to find beers near you, on a map.
 
 ### iOS
 
-- `cd pod`, `pod install`
+- `cd ios`, `pod install`
 - `yarn react-native run-ios`
 
 # Concepts
