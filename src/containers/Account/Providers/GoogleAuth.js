@@ -19,7 +19,7 @@ const errors = {
   'Network request failed': 'Vérifiez votre connexion internet',
 };
 
-function GoogleAuthProvider({ signUp }) {
+function GoogleAuth({ signUp }) {
   const navigation = useNavigation();
   const [state, setState] = useState({ error: undefined, loading: false });
   const setUser = useSetRecoilState(userState);
@@ -45,13 +45,11 @@ function GoogleAuthProvider({ signUp }) {
       const user = await signInProvider('google', idToken);
 
       if (user && !user.error) {
-        user.provider = 'google';
-        setUser(user);
-        return;
+        return setUser(user);
       }
 
       if (user.error !== 'user.notfound') {
-        setState({ error: user.error, loading: false });
+        return setState({ error: user.error, loading: false });
       }
 
       if (signUp) {
@@ -85,7 +83,11 @@ function GoogleAuthProvider({ signUp }) {
 
   return (
     <>
-      <SocialButton onPress={connect} />
+      <SocialButton
+        provider="Google"
+        onPress={connect}
+        loading={state.loading}
+      />
       <Portal>
         <Snackbar
           visible={state.error}
@@ -102,13 +104,8 @@ function GoogleAuthProvider({ signUp }) {
   );
 }
 
-export function checkUser(user) {
-  console.log(user);
-  // todo sign in silently
-}
-
 export function signOut() {
-  return GoogleSignin.revokeAccess();
+  return GoogleSignin.signOut();
 }
 
-export default GoogleAuthProvider;
+export default GoogleAuth;

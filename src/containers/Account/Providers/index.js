@@ -1,3 +1,4 @@
-import * as google from './GoogleAuthProvider';
+import * as apple from './AppleAuth';
+import * as google from './GoogleAuth';
 
-export { google };
+export { apple, google };

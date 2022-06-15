@@ -1,27 +1,30 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TouchableRipple } from 'react-native-paper';
+
+import AppleIcon from './AppleIcon';
 import GoogleIcon from './GoogleIcon';
 
-const SocialButton = ({ onPress }) => (
-  <TouchableRipple borderless onPress={onPress} style={styles.button}>
-    <View style={styles.flex}>
-      <GoogleIcon />
-      <Text style={styles.text}>Continuer avec Google</Text>
-    </View>
-  </TouchableRipple>
-);
+const SocialButton = ({ provider, onPress }) => {
+  const { Icon, style } = providers[provider];
+  return (
+    <TouchableRipple borderless onPress={onPress} style={styles.touch}>
+      <View style={[styles.button, style.button]}>
+        <Icon />
+        <Text style={[styles.text, style.text]}>Continuer avec {provider}</Text>
+      </View>
+    </TouchableRipple>
+  );
+};
 
 const styles = StyleSheet.create({
-  button: {
+  touch: {
     borderRadius: 13,
   },
-  flex: {
-    backgroundColor: '#fafafa',
+  button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: '#ddd',
     borderWidth: 2,
     padding: 13,
     borderRadius: 13,
@@ -31,6 +34,37 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
   },
+  appleButton: {
+    backgroundColor: '#000',
+    borderColor: '#ddd',
+  },
+  appleText: {
+    color: '#fff',
+  },
+  googleButton: {
+    backgroundColor: '#fafafa',
+    borderColor: '#ddd',
+  },
+  googleText: {
+    color: '#000',
+  },
 });
+
+const providers = {
+  Apple: {
+    Icon: AppleIcon,
+    style: {
+      button: styles.appleButton,
+      text: styles.appleText,
+    },
+  },
+  Google: {
+    Icon: GoogleIcon,
+    style: {
+      button: styles.googleButton,
+      text: styles.googleText,
+    },
+  },
+};
 
 export default SocialButton;

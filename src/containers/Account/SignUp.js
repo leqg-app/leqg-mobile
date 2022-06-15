@@ -6,7 +6,8 @@ import { useSetRecoilState } from 'recoil';
 
 import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
-import GoogleAuthProvider from './Providers/GoogleAuthProvider';
+import GoogleAuth from './Providers/GoogleAuth';
+// import AppleAuth from './Providers/AppleAuth';
 
 const errors = {
   'user.email.taken':
@@ -55,7 +56,10 @@ const SignUp = ({ navigation }) => {
         Inscrivez-vous et profitez de tous les avantages des membres
       </Paragraph>
       <View style={styles.form}>
-        <GoogleAuthProvider signUp />
+        <GoogleAuth signUp />
+        {/* <View style={styles.socialButton}>
+          <AppleAuth signUp />
+        </View> */}
         <Text style={styles.or}>ou</Text>
         <TextInput
           style={styles.space}
@@ -133,6 +137,9 @@ const styles = StyleSheet.create({
   form: {
     flex: 1,
     justifyContent: 'center',
+  },
+  socialButton: {
+    marginTop: 10,
   },
   or: {
     textAlign: 'center',

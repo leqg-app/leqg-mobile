@@ -1782,6 +1782,11 @@
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
+"@invertase/react-native-apple-authentication@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@invertase/react-native-apple-authentication/-/react-native-apple-authentication-2.2.1.tgz#0e0618f644c9a9af59860f335545bf037b3f8e8a"
+  integrity sha512-sadjKQa9W2i422i7kcZquZ0ZNSBSCljfu7eN0oGqhrzV+RIlWnnU1HiKf/1hOibPQ2ceRvTatjYlHKxrDMirPQ==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
