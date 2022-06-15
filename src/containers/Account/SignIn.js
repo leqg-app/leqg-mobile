@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSetRecoilState } from 'recoil';
@@ -7,7 +7,7 @@ import { useSetRecoilState } from 'recoil';
 import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
 import GoogleAuth from './Providers/GoogleAuth';
-// import AppleAuth from './Providers/AppleAuth';
+import AppleAuth from './Providers/AppleAuth';
 
 const errors = {
   'user.credentials': 'Identifiant ou mot de passe incorrect',
@@ -56,9 +56,11 @@ const SignIn = ({ navigation }) => {
       contentContainerStyle={styles.container}>
       <View style={styles.form}>
         <GoogleAuth />
-        {/* <View style={styles.socialButton}>
-          <AppleAuth />
-        </View> */}
+        {Platform.OS === 'ios' && (
+          <View style={styles.socialButton}>
+            <AppleAuth />
+          </View>
+        )}
         <Text style={styles.or}>ou</Text>
         <TextInput
           style={styles.space}
@@ -120,8 +122,8 @@ const SignIn = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
     padding: 20,
-    flex: 1,
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -140,6 +142,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   footer: {
+    marginTop: 30,
     height: 70,
   },
   footerText: {
