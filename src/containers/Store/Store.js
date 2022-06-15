@@ -15,6 +15,8 @@ import Share from 'react-native-share';
 import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useNavigation } from '@react-navigation/native';
+import formatDistance from 'date-fns/formatDistance';
+import dateLocale from 'date-fns/locale/fr';
 
 import StoreProducts from './StoreProducts';
 import SchedulesPreview from './SchedulesPreview';
@@ -57,6 +59,17 @@ function Loading() {
       <ActivityIndicator color={theme.colors.primary} />
     </View>
   );
+}
+
+function UpdatedAt({ date }) {
+  if (!date) {
+    return <View />;
+  }
+  const updatedAt = formatDistance(new Date(date), Date.now(), {
+    addSuffix: true,
+    locale: dateLocale,
+  });
+  return <Caption style={styles.updateDate}>Mis à jour {updatedAt}</Caption>;
 }
 
 function ActionButton({ name, icon, onPress, color = 'white' }) {
@@ -235,6 +248,7 @@ function StoreContent({ id }) {
           </View>
         </>
       ) : null}
+      {store.updatedAt && <UpdatedAt date={store.updatedAt} />}
     </>
   );
 }
@@ -392,6 +406,10 @@ const styles = StyleSheet.create({
   offlineRetryButton: {
     marginTop: 30,
     color: '#fff',
+  },
+  updateDate: {
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 

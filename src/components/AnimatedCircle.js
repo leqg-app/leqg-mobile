@@ -3,29 +3,23 @@ import { Animated, Easing, StyleSheet, TextInput, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import Svg, { Circle, G } from 'react-native-svg';
 
-import { theme } from '../constants';
-
-const steps = [0, 10, 50, 100, 500, 1000];
+import { theme, LEVELS } from '../constants';
+import { getLevel } from '../utils/reputation';
 
 function AnimatedCircle({ initial, won }) {
-  const initialLevel = steps.findIndex(step => initial < step);
-  const [level, setLevel] = useState(initialLevel);
-  const previousStep = steps[level - 1];
+  const [level, setLevel] = useState(getLevel(initial));
+  const previousLevel = LEVELS[level - 1];
   const initialPercentage =
-    ((initial - previousStep) / (steps[level] - previousStep)) * 100;
+    ((initial - previousLevel) / (LEVELS[level] - previousLevel)) * 100;
   const [initialPercent, setInitialPercent] = useState(initialPercentage);
   const finalScore = initial + won;
   const finalPercentage =
-    ((finalScore - previousStep) / (steps[level] - previousStep)) * 100;
-  const lastLevel = steps.findIndex(step => finalScore < step);
+    ((finalScore - previousLevel) / (LEVELS[level] - previousLevel)) * 100;
 
-  useEffect(
-    () => setLevel(steps.findIndex(step => initial < step)),
-    [initial, won],
-  );
+  useEffect(() => setLevel(getLevel(initial)), [initial, won]);
 
   const onComplete = () => {
-    if (level < lastLevel) {
+    if (level < getLevel(finalScore)) {
       setLevel(level + 1);
       setInitialPercent(0);
     }
@@ -69,6 +63,9 @@ function CircleAnimate({
   );
 
   useEffect(() => {
+    if (initial === target) {
+      return;
+    }
     Animated.timing(animated, {
       toValue: getStrokePercentage(target, circumference),
       duration: 1000,

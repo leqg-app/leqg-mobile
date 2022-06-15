@@ -31,3 +31,16 @@ export const DEFAULT_MAP = {
   CENTER_COORDINATES: [2.3419, 48.8603], // Paris
   ZOOM_LEVEL: 4,
 };
+
+export const LEVELS = [
+  0,
+  10,
+  100,
+  500,
+  1000,
+  5000,
+  10_000,
+  20_000,
+  50_000,
+  Infinity,
+];
