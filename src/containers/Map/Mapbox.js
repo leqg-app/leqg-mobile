@@ -157,14 +157,16 @@ const Mapbox = () => {
   const storesShape = useMemo(
     () => ({
       type: 'FeatureCollection',
-      features: stores.map(store => ({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [store.longitude, store.latitude],
-        },
-        properties: store,
-      })),
+      features: stores
+        .filter(store => store.price || store.specialPrice)
+        .map(store => ({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [store.longitude, store.latitude],
+          },
+          properties: store,
+        })),
     }),
     [stores],
   );
