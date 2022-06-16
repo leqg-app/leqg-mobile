@@ -4,6 +4,7 @@ import { Title, TextInput, Button, HelperText } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { resetPassword } from '../../api/users';
+import { reportError } from '../../utils/errorMessage';
 
 const errors = {
   'Network request failed': 'Vérifiez votre connexion internet',
@@ -34,6 +35,7 @@ const ResetPassword = ({ navigation }) => {
         return;
       }
     } catch (err) {
+      reportError(err);
       setState({ error: err.message, loading: false });
       return;
     }

@@ -8,6 +8,7 @@ import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
 import GoogleAuth from './Providers/GoogleAuth';
 import AppleAuth from './Providers/AppleAuth';
+import { reportError } from '../../utils/errorMessage';
 
 const errors = {
   'user.credentials': 'Identifiant ou mot de passe incorrect',
@@ -46,6 +47,7 @@ const SignIn = ({ navigation }) => {
       }
       setUser(user);
     } catch (error) {
+      reportError(error);
       setState({ error, loading: false });
     }
   };

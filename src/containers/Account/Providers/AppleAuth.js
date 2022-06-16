@@ -8,6 +8,7 @@ import { appleAuth } from '@invertase/react-native-apple-authentication';
 import SocialButton from '../../../components/social/SocialButton';
 import { signInProvider } from '../../../api/users';
 import { userState } from '../../../store/atoms';
+import { reportError } from '../../../utils/errorMessage';
 
 const errors = {
   'user.blocked':
@@ -76,6 +77,7 @@ function AppleAuth({ signUp }) {
       ) {
         return;
       }
+      reportError(error);
       setState({ error, loading: false });
     }
   };

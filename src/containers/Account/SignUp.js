@@ -8,6 +8,7 @@ import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
 import GoogleAuth from './Providers/GoogleAuth';
 import AppleAuth from './Providers/AppleAuth';
+import { reportError } from '../../utils/errorMessage';
 
 const errors = {
   'user.email.taken':
@@ -44,6 +45,7 @@ const SignUp = ({ navigation }) => {
       }
       setUser(user);
     } catch (error) {
+      reportError(error);
       setState({ error, loading: false });
     }
   };

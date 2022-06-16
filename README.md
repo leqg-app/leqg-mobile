@@ -5,16 +5,29 @@ A React Native application to find beers near you, on a map.
 ## Setup
 
 - `yarn`
-- Fill `.env` with `.env.sample` with your own API keys
+- `cp .env.sample .env`
+
+### Mapbox
+
+1. Create an account https://account.mapbox.com/
+2. Create one public and one secret token
+3. Set public token into `.env` file for `MAPBOX_API_KEY`
+4. Create a `.netrc` file into your home directory: `touch ~/.netrc` and add
+
+```
+machine api.mapbox.com
+login mapbox
+password YOUR_MAPBOX_SECRET_TOKEN
+```
 
 ### Android
 
-- `yarn react-native run-android`
+- `yarn android`
 
 ### iOS
 
 - `cd ios`, `pod install`
-- `yarn react-native run-ios`
+- `yarn ios`
 
 # Concepts
 

@@ -6,6 +6,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
+import { reportError } from '../../utils/errorMessage';
 
 const errors = {
   'user.username.taken':
@@ -36,6 +37,7 @@ function SignUpProvider({ route }) {
       }
       setUser(user);
     } catch (error) {
+      reportError(error);
       setState({ error, loading: false });
     }
   };

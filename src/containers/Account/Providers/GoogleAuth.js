@@ -12,6 +12,7 @@ import { useSetRecoilState } from 'recoil';
 import SocialButton from '../../../components/social/SocialButton';
 import { signInProvider } from '../../../api/users';
 import { userState } from '../../../store/atoms';
+import { reportError } from '../../../utils/errorMessage';
 
 const errors = {
   'user.blocked':
@@ -77,6 +78,7 @@ function GoogleAuth({ signUp }) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         return;
       }
+      reportError(error);
       setState({ error, loading: false });
     }
   };

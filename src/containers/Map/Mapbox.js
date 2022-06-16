@@ -18,6 +18,7 @@ import {
   mapboxFiltersState,
   mapboxTextFieldState,
 } from '../../store/filterAtoms';
+import { reportError } from '../../utils/errorMessage';
 
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
@@ -186,7 +187,8 @@ const Mapbox = () => {
         return;
       }
       setCreateStore({ address, countryCode, longitude, latitude });
-    } catch (e) {
+    } catch (err) {
+      reportError(err);
       setCreateStore({ error: 'Erreur réseau, réessayez plus tard' });
     }
   };

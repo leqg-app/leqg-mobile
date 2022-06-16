@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/react-native';
+
 function getErrorMessage(error, options = {}) {
   if (error === 'Network request failed') {
     return 'Aucune connexion internet';
@@ -8,4 +10,12 @@ function getErrorMessage(error, options = {}) {
   return error;
 }
 
-export { getErrorMessage };
+function reportError(error) {
+  // Don't report network errors
+  if ((error.message || error) === 'Network request failed') {
+    return;
+  }
+  Sentry.captureException(error);
+}
+
+export { getErrorMessage, reportError };
