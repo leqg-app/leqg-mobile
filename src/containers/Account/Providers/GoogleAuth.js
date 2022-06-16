@@ -36,7 +36,7 @@ function GoogleAuth({ signUp }) {
     setState({ error: undefined, loading: true });
     try {
       GoogleSignin.configure({
-        webClientId: Config.WEB_CLIENT_ID_DEBUG,
+        webClientId: Config.GOOGLE_WEB_CLIENT_ID,
         offlineAccess: true,
       });
 
