@@ -155,6 +155,12 @@ jobs:
           GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
           EOF
 
+      - name: Create Google Services file
+        run: |
+          cat << EOF > ios/GoogleService-Info.plist
+          ${{ secrets.GOOGLESERVICE_INFO_PLIST }}
+          EOF
+
       - name: Cache iOS dependencies
         id: cache-ios-dependencies
         uses: actions/cache@v2
