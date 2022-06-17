@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo } from 'react';
+import React, { useEffect, useRef, memo, useState } from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -94,8 +94,7 @@ const Product = memo(({ product, onPress, hasHH }) => {
 const EditStore = ({ route, navigation }) => {
   const products = useRecoilValue(productsState);
   const nameInput = useRef();
-  const [error, setError] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [state, setState] = useState({ error: false, loading: false });
   const user = useRecoilValue(userState);
   const setSheetStore = useSetRecoilState(sheetStoreState);
   const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
@@ -115,16 +114,13 @@ const EditStore = ({ route, navigation }) => {
     name && validAddress && storeEdition.products?.length && user;
 
   const save = async () => {
-    setLoading(true);
+    setState({ loading: true });
     if (!validForm) {
-      setError('Missing field');
-      return;
+      return setState({ error: 'Certains champs sont manquants' });
     }
     const { error, store, reputation } = await saveStore(storeEdition);
-    setLoading(false);
     if (error) {
-      setError(getErrorMessage(error));
-      return;
+      return setState(getErrorMessage(error, { unknown: true }));
     }
     if (!storeEdition.id) {
       setSheetStore({ ...store, focus: true });
@@ -137,7 +133,7 @@ const EditStore = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    setLoading(false);
+    setState({ loading: false });
     if (route.params?.store && !route.params.store.name && nameInput.current) {
       nameInput.current.focus();
     }
@@ -152,14 +148,14 @@ const EditStore = ({ route, navigation }) => {
         <Appbar.Action
           color="white"
           icon="check"
-          disabled={!validForm || loading}
+          disabled={!validForm || state.loading}
           onPress={save}
         />
       ),
     });
-  }, [validForm, loading, save]);
+  }, [validForm, state.loading, save]);
 
-  if (loading) {
+  if (state.loading) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
@@ -378,13 +374,13 @@ const EditStore = ({ route, navigation }) => {
         </View>
         <Portal>
           <Snackbar
-            visible={error}
+            visible={state.error}
             duration={3000}
             action={{
               label: 'OK',
             }}
-            onDismiss={() => setError()}>
-            {error}
+            onDismiss={() => setState({ error: false })}>
+            {state.error}
           </Snackbar>
         </Portal>
       </ScrollView>

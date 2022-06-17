@@ -1,6 +1,8 @@
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import * as Sentry from '@sentry/react-native';
+
 import {
   sheetStoreState,
   storeEditionState,
@@ -85,16 +87,22 @@ function useStoreActions() {
         });
       } else {
         // Another changes were made before, get them all
-        const { updated } = await getStoresVersion(
+        const versioned = await getStoresVersion(
           versions.stores,
           response.version,
         );
 
-        setStores(stores => {
-          return stores
-            .filter(store => updated.every(([id]) => store.id !== id))
-            .concat(updated.map(decompressStore));
-        });
+        if (versioned?.updated?.length) {
+          setStores(stores => {
+            return stores
+              .filter(store =>
+                versioned.updated.every(([id]) => store.id !== id),
+              )
+              .concat(versioned.updated.map(decompressStore));
+          });
+        } else {
+          Sentry.captureException(versioned);
+        }
       }
 
       updateStoreState(response.store.id, response.store);

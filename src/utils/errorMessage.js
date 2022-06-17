@@ -5,6 +5,7 @@ function getErrorMessage(error, options = {}) {
     return 'Aucune connexion internet';
   }
   if (options.unknown) {
+    reportError(error);
     return 'Une erreur est survenue, merci de réessayer plus tard';
   }
   return error;
