@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Alert, StyleSheet } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { Button, Caption, Portal, Snackbar } from 'react-native-paper';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -32,6 +32,10 @@ function StoreValidate({ id }) {
   const setSheetStore = useSetRecoilState(sheetStoreState);
   const [store, setStore] = useRecoilState(storeState(id));
   const user = useRecoilValue(userState);
+
+  if (!store.validations) {
+    return <View />;
+  }
 
   const alreadyValidated = store.validations.some(
     validation => validation.user.id === user.id,
