@@ -92,13 +92,16 @@ function useStoreActions() {
           response.version,
         );
 
-        if (versioned?.updated?.length) {
+        if (versioned?.updated || versioned?.deleted) {
+          const { updated = [], deleted = [] } = versioned;
           setStores(stores => {
             return stores
-              .filter(store =>
-                versioned.updated.every(([id]) => store.id !== id),
+              .filter(
+                store =>
+                  updated.every(([id]) => store.id !== id) &&
+                  deleted.every(id => store.id !== id),
               )
-              .concat(versioned.updated.map(decompressStore));
+              .concat(updated.map(decompressStore));
           });
         } else {
           Sentry.captureException(versioned);

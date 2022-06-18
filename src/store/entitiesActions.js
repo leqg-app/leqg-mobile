@@ -1,4 +1,5 @@
 import { useSetRecoilState } from 'recoil';
+import * as Sentry from '@sentry/react-native';
 
 import { version } from '../../package.json';
 import { getFeatures } from '../api/features';
@@ -55,16 +56,26 @@ function useEntitiesAction() {
       const stores = await getStores(apiVersions.stores);
       setStores(stores.map(decompressStore));
     } else {
-      // Load only updated stores
-      const { updated } = await getStoresVersion(
+      // Load only updated storesl
+      const versioned = await getStoresVersion(
         localVersions.stores,
         apiVersions.stores,
       );
-      setStores(
-        localStores
-          .filter(store => updated.every(([id]) => store.id !== id))
-          .concat(updated.map(decompressStore)),
-      );
+
+      if (versioned?.updated || versioned?.deleted) {
+        const { updated = [], deleted = [] } = versioned;
+        setStores(
+          localStores
+            .filter(
+              store =>
+                updated.every(([id]) => store.id !== id) &&
+                deleted.every(id => store.id !== id),
+            )
+            .concat(updated.map(decompressStore)),
+        );
+      } else {
+        Sentry.captureException(versioned);
+      }
     }
 
     storage.set('appVersion', version);
