@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { Text, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { Text, ScrollView, StyleSheet, View } from 'react-native';
 import {
   Appbar,
   Avatar,
@@ -199,25 +199,28 @@ const EditSchedulesModal = props => {
   );
 };
 
-const EditSchedules = ({ navigation }) => {
+function getInitialSchedules({ schedules }) {
+  if (!schedules) {
+    return new Array(7).fill(0).map(newSchedule);
+  }
+  return Array.from(schedules).sort((a, b) => a.dayOfWeek - b.dayOfWeek);
+}
+
+function EditSchedules({ navigation }) {
   const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
-  const [schedules, setSchedules] = useState(
-    storeEdition.schedules || new Array(7).fill().map(newSchedule),
-  );
+  const [schedules, setSchedules] = useState(getInitialSchedules(storeEdition));
   const [editingDays, setEditingDay] = useState(false);
 
   const save = () => {
     setStoreEdition({ ...storeEdition, schedules });
     navigation.goBack();
   };
-  const goBack = () => {
-    // TODO: ask to save or cancel
-    navigation.goBack();
-  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => <Appbar.BackAction color="white" onPress={goBack} />,
+      headerLeft: () => (
+        <Appbar.BackAction color="white" onPress={navigation.goBack} />
+      ),
       headerRight: () => (
         <IconButton color="white" icon="check" onPress={save} />
       ),
@@ -225,7 +228,7 @@ const EditSchedules = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView>
       {daysFull.map((day, i) => {
         return (
           <TouchableRipple
@@ -292,9 +295,9 @@ const EditSchedules = ({ navigation }) => {
           />
         </Portal>
       )}
-    </SafeAreaView>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
