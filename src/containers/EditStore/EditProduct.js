@@ -71,7 +71,7 @@ const EditProducts = ({ navigation, route }) => {
       setProduct({
         ...storeProduct,
         productId: null,
-        productName,
+        productName: productName.trim(),
       });
       return;
     }
