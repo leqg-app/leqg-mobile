@@ -107,7 +107,7 @@ function GoogleAuth({ signUp }) {
 }
 
 export function signOut() {
-  return GoogleSignin.signOut();
+  return GoogleSignin.revokeAccess();
 }
 
 export default GoogleAuth;
