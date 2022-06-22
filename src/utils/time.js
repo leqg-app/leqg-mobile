@@ -13,7 +13,7 @@ export function minutesToTime(minutes, options = {}) {
     return short ? '00h' : '00:00';
   }
   const hour = Math.floor(minutes / 60);
-  const minute = Math.floor((minutes % 60) / 60);
+  const minute = Math.floor(minutes % 60);
   if (short && minute === 0) {
     return `${hour}h`;
   }

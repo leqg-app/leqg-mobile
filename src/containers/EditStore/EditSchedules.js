@@ -18,7 +18,7 @@ import { minutesToTime } from '../../utils/time';
 import { daysFull, daysShort, theme } from '../../constants';
 import { storeEditionState } from '../../store/atoms';
 
-const newSchedule = (_, i) => ({
+export const newSchedule = (_, i) => ({
   ...(i !== undefined && { dayOfWeek: i + 1 }),
   closed: false,
   opening: null,
@@ -94,7 +94,13 @@ const EditSchedulesModal = props => {
     }
   };
 
-  const { closed } = schedule;
+  const { opening, closing, openingSpecial, closingSpecial, closed } = schedule;
+  const disabled =
+    !closed &&
+    (!opening ||
+      !closing ||
+      (openingSpecial && !closingSpecial) ||
+      (!openingSpecial && closingSpecial));
 
   return (
     <Dialog visible={true} onDismiss={onDismiss}>
@@ -193,14 +199,18 @@ const EditSchedulesModal = props => {
       </Dialog.Content>
       <Dialog.Actions>
         <Button onPress={onDismiss}>Annuler</Button>
-        <Button onPress={() => onEdited(daysSelected, schedule)}>OK</Button>
+        <Button
+          onPress={() => onEdited(daysSelected, schedule)}
+          disabled={disabled}>
+          OK
+        </Button>
       </Dialog.Actions>
     </Dialog>
   );
 };
 
 function getInitialSchedules({ schedules }) {
-  if (!schedules) {
+  if (!schedules?.length || schedules.length < 7) {
     return new Array(7).fill(0).map(newSchedule);
   }
   return Array.from(schedules).sort((a, b) => a.dayOfWeek - b.dayOfWeek);

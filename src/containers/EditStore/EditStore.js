@@ -27,7 +27,7 @@ import { sortByPrices } from '../../utils/price';
 import { theme } from '../../constants';
 import Menu from '../../components/Menu';
 import Price from '../../components/Price';
-import EditSchedules from './EditSchedules';
+import EditSchedules, { newSchedule } from './EditSchedules';
 import EditAddress from './EditAddress';
 import SelectProduct from './SelectProduct';
 import EditProduct from './EditProduct';
@@ -105,7 +105,7 @@ const EditStore = ({ route, navigation }) => {
     address,
     longitude,
     latitude,
-    schedules = [],
+    schedules = new Array(7).fill(0).map(newSchedule),
     features = [],
   } = storeEdition;
 
