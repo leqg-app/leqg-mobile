@@ -35,9 +35,9 @@ password YOUR_MAPBOX_SECRET_TOKEN
   - [x] Display store on map
   - [x] Price of the cheapest beer
   - [x] Store name when zoom
-  - [ ] Only display store type (pub/cave/...)
-  - [ ] Search store by name
+  - [x] Search store by name
   - [ ] Search address
+  - [ ] Only display store type (pub/cave/...)
   - Filters:
     - Price:
       - [x] Min - max price with rheostats
@@ -46,9 +46,11 @@ password YOUR_MAPBOX_SECRET_TOKEN
       - [ ] Choose displaying local or user currency
     - Beer:
       - [x] Display only stores with a beer
-      - [ ] Search beer
-      - [ ] Choose different beers
-      - [ ] Display price of cheapest choosed beers
+      - [x] Search beer
+      - [x] Choose different beers
+      - [x] Display price of cheapest choosed beers
+      - [x] Choose operator AND/OR if selected multiple beers
+      - [ ] Filter by type
     - Schedule:
       - [x] Display only open stores, now
       - [ ] Choose a different date and hour
@@ -62,18 +64,18 @@ password YOUR_MAPBOX_SECRET_TOKEN
   - [x] Signup, signin, reset password
   - [x] Choose favorite currency
   - [x] Have contribution/reputation
+  - [x] Read contribution/reputation history
   - [ ] Edit their profile
   - [ ] Edit their photo 
-  - [ ] Read contribution/reputation history
 
 - Stores
   - [x] Name
   - [x] Address
   - [x] Products
   - [x] Schedules
-  - [ ] Website
-  - [ ] Phone
-  - [ ] Features
+  - [x] Website
+  - [x] Phone
+  - [x] Features
   - [ ] Photos
   - [ ] Rate
   - [ ] Type (pub/cave/...)
