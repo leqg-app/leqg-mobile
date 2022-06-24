@@ -20,7 +20,14 @@ function Intro({ navigation }) {
     {
       title: 'Trouvez votre bar !',
       description: 'Selon le prix, le lieu, la bière, les horaires...',
-      img: <IconButton icon="map-search" color="white" size={70} />,
+      img: (
+        <IconButton
+          testID="map-search-icon"
+          icon="map-search"
+          color="white"
+          size={70}
+        />
+      ),
       imgStyle: {
         height: 100,
         width: 100,

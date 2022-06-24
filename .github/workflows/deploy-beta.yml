@@ -185,5 +185,4 @@ jobs:
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APPSTORE_CONNECT_API_KEY }}
           MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.GIT_REPO_TOKEN_64 }}
-          BUILD_NUMBER: ${{ github.run_id }}
           VERSION_NUMBER: ${{ env.RELEASE_VERSION }}
