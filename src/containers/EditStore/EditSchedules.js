@@ -94,13 +94,20 @@ const EditSchedulesModal = props => {
     }
   };
 
-  const { opening, closing, openingSpecial, closingSpecial, closed } = schedule;
+  const {
+    opening = null,
+    closing = null,
+    openingSpecial = null,
+    closingSpecial = null,
+    closed = false,
+  } = schedule;
+
   const disabled =
     !closed &&
-    (!opening ||
-      !closing ||
-      (openingSpecial && !closingSpecial) ||
-      (!openingSpecial && closingSpecial));
+    (opening === null ||
+      closing === null ||
+      (openingSpecial && closingSpecial === null) ||
+      (openingSpecial === null && closingSpecial));
 
   return (
     <Dialog visible={true} onDismiss={onDismiss}>
