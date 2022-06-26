@@ -133,7 +133,11 @@ const EditProducts = ({ navigation, route }) => {
     // Format price
     storeProduct.price = parsePrice(storeProduct.price);
     storeProduct.specialPrice = parsePrice(storeProduct.specialPrice);
-    storeProduct.tmpId = Math.random().toString(36);
+
+    if (!storeProduct.id) {
+      // new product, add temp id
+      storeProduct.tmpId = Math.random().toString(36);
+    }
 
     products.push(storeProduct);
 
@@ -153,10 +157,10 @@ const EditProducts = ({ navigation, route }) => {
         text: 'OK',
         onPress: () => {
           const storeProducts = storeEdition?.products || [];
-          const products = storeProducts.filter(storeProduct =>
-            storeProduct.product?.id
-              ? storeProduct.product !== productId
-              : storeProduct.productName !== productName,
+          const products = storeProducts.filter(({ id, tmpId }) =>
+            storeProduct.id
+              ? storeProduct.id !== id
+              : storeProduct.tmpId !== tmpId,
           );
           setStoreEdition({ ...storeEdition, products });
           navigation.goBack();
