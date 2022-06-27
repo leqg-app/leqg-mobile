@@ -10,7 +10,8 @@ export const CHEAPEST_PRICE_EXPRESSION = [
     'any',
     [
       'all',
-      ['>', 0, ['get', 'specialPrice']], // if special price > 0 AND
+      ['!', ['get', 'closed', today]],
+      ['<', 0, ['get', 'specialPrice']], // if special price > 0 AND
       [
         'case',
         [

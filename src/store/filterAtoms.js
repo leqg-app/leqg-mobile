@@ -66,21 +66,21 @@ const mapboxTextFieldState = selector({
   key: 'mapboxTextFieldState',
   get: ({ get }) => {
     const productFilter = get(productFilterState);
-    if (productFilter.products?.length) {
-      const { products } = productFilter;
-      return [
-        'to-string',
-        [
-          'min',
-          ...products.map(({ id }) => [
-            'coalesce',
-            ['get', ['to-string', id], ['object', ['get', 'productsPrice']]],
-            999999, // help!
-          ]),
-        ],
-      ];
+    if (!productFilter.products?.length) {
+      return ['to-string', CHEAPEST_PRICE_EXPRESSION];
     }
-    return ['to-string', CHEAPEST_PRICE_EXPRESSION];
+    const { products } = productFilter;
+    return [
+      'to-string',
+      [
+        'min',
+        ...products.map(({ id }) => [
+          'coalesce',
+          ['get', ['to-string', id], ['object', ['get', 'productsPrice']]],
+          999999, // help!
+        ]),
+      ],
+    ];
   },
 });
 
