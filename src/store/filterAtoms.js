@@ -1,6 +1,6 @@
 import { atom, selector } from 'recoil';
 
-import { CHEAPEST_PRICE_EXPRESSION, OPEN_STORE_EXPRESSION } from '../utils/map';
+import { OPEN_STORE_EXPRESSION } from '../utils/map';
 
 const productFilterState = atom({
   key: 'productFilterState',
@@ -25,8 +25,8 @@ const scheduleFilterState = atom({
   default: null,
 });
 
-const mapboxFiltersState = selector({
-  key: 'mapboxFiltersState',
+const mapboxState = selector({
+  key: 'mapboxState',
   get: ({ get }) => {
     const filters = [];
     const productFilter = get(productFilterState);
@@ -34,23 +34,48 @@ const mapboxFiltersState = selector({
     const featureFilter = get(featureFilterState);
     const scheduleFilter = get(scheduleFilterState);
 
+    let cheapestPrice = ['get', 'price'];
+
     if (productFilter.products?.length) {
       const { filterAll, products } = productFilter;
       const filterType = filterAll ? 'all' : 'any';
       filters.push([
         filterType,
-        ...products.map(({ id }) => ['in', id, ['get', 'productsId']]),
+        ...products.map(({ id }) => [
+          'to-boolean',
+          [
+            'get',
+            'price',
+            ['get', `${id}`, ['object', ['get', 'productsById']]],
+          ],
+        ]),
       ]);
+
+      // Update prices text on map
+      cheapestPrice = [
+        'min',
+        ...products.map(({ id }) => [
+          'coalesce',
+          [
+            'get',
+            'price',
+            ['get', `${id}`, ['object', ['get', 'productsById']]],
+          ],
+          999999, // help!
+        ]),
+      ];
     }
+
     if (priceFilter) {
       const [min, max] = priceFilter;
       if (min > 0) {
-        filters.push(['>=', CHEAPEST_PRICE_EXPRESSION, min]);
+        filters.push(['>=', cheapestPrice, min]);
       }
       if (max < 10) {
-        filters.push(['<=', CHEAPEST_PRICE_EXPRESSION, max]);
+        filters.push(['<=', cheapestPrice, max]);
       }
     }
+
     if (featureFilter) {
       filters.push(...featureFilter.map(id => ['in', id, ['get', 'features']]));
     }
@@ -58,29 +83,17 @@ const mapboxFiltersState = selector({
       filters.push(OPEN_STORE_EXPRESSION);
     }
 
-    return filters;
-  },
-});
-
-const mapboxTextFieldState = selector({
-  key: 'mapboxTextFieldState',
-  get: ({ get }) => {
-    const productFilter = get(productFilterState);
-    if (!productFilter.products?.length) {
-      return ['to-string', CHEAPEST_PRICE_EXPRESSION];
-    }
-    const { products } = productFilter;
-    return [
-      'to-string',
-      [
-        'min',
-        ...products.map(({ id }) => [
-          'coalesce',
-          ['get', ['to-string', id], ['object', ['get', 'productsPrice']]],
-          999999, // help!
-        ]),
+    return {
+      filters,
+      textField: ['to-string', cheapestPrice],
+      symbolSortKey: cheapestPrice,
+      textSize: [
+        'case',
+        ['<', 3, ['length', ['to-string', cheapestPrice]]],
+        11,
+        13,
       ],
-    ];
+    };
   },
 });
 
@@ -89,6 +102,5 @@ export {
   priceFilterState,
   featureFilterState,
   scheduleFilterState,
-  mapboxFiltersState,
-  mapboxTextFieldState,
+  mapboxState,
 };

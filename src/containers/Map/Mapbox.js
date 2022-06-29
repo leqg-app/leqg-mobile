@@ -12,12 +12,8 @@ import searchPlace from '../../utils/searchPlace';
 import CreateStoreSheet from './CreateStoreSheet';
 import { storage } from '../../store/storage';
 import getLocation from '../../utils/location';
-import { CHEAPEST_PRICE_EXPRESSION } from '../../utils/map';
-import { sheetStoreState, storesState } from '../../store/atoms';
-import {
-  mapboxFiltersState,
-  mapboxTextFieldState,
-} from '../../store/filterAtoms';
+import { sheetStoreState, storesMapState } from '../../store/atoms';
+import { mapboxState } from '../../store/filterAtoms';
 import { reportError } from '../../utils/errorMessage';
 
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
@@ -41,10 +37,10 @@ const storedMapPosition = storage.getObject('mapPosition', {});
 
 const Mapbox = () => {
   const camera = useRef();
-  const stores = useRecoilValue(storesState);
+  const stores = useRecoilValue(storesMapState);
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
-  const filters = useRecoilValue(mapboxFiltersState);
-  const textField = useRecoilValue(mapboxTextFieldState);
+  const { filters, textField, symbolSortKey, textSize } =
+    useRecoilValue(mapboxState);
   const { colors } = useTheme();
 
   const [createStore, setCreateStore] = useState();
@@ -154,23 +150,6 @@ const Mapbox = () => {
     setMap({ position });
   };
 
-  const storesShape = useMemo(
-    () => ({
-      type: 'FeatureCollection',
-      features: stores
-        .filter(store => store.price || store.specialPrice)
-        .map(store => ({
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [store.longitude, store.latitude],
-          },
-          properties: store,
-        })),
-    }),
-    [stores],
-  );
-
   if (!initialPosition) {
     return <View />;
   }
@@ -195,6 +174,11 @@ const Mapbox = () => {
     }
   };
 
+  const storeStyle = useMemo(
+    () => ({ ...layerStyles.storePrice, textField, symbolSortKey, textSize }),
+    [textField, symbolSortKey, textSize],
+  );
+
   return (
     <>
       <MapboxGL.MapView
@@ -218,15 +202,12 @@ const Mapbox = () => {
         />
         <MapboxGL.ShapeSource
           id="stores"
-          shape={storesShape}
+          shape={stores}
           onPress={e => setSheetStore(e.features[0].properties)}>
           <MapboxGL.SymbolLayer
             id="store"
             filter={filters.length ? ['all', ...filters] : []}
-            style={{
-              ...layerStyles.storePrice,
-              textField,
-            }}
+            style={storeStyle}
           />
           <MapboxGL.SymbolLayer
             id="storeName"
@@ -340,17 +321,9 @@ const layerStyles = {
     iconSize: 0.5,
     iconAllowOverlap: true,
     iconIgnorePlacement: true,
-    symbolSortKey: CHEAPEST_PRICE_EXPRESSION,
 
-    // textField: ['to-string', CHEAPEST_PRICE_EXPRESSION],
     textColor: '#fff',
     textTranslate: [0, -13],
-    textSize: [
-      'case',
-      ['<', 3, ['length', ['to-string', CHEAPEST_PRICE_EXPRESSION]]],
-      11,
-      13,
-    ],
   },
   storeName: {
     textField: ['get', 'name'],

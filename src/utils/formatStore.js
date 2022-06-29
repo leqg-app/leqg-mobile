@@ -55,13 +55,17 @@ export function decompressStore(compressedStore) {
     price,
     specialPrice,
     currencyCode,
-    productsId: products.map(product => product[0]),
-    productsPrice: products.reduce(
-      (price, product) => ({ ...price, [product[0]]: product[1] }),
+    productsById: products.reduce(
+      (products, [id, price, specialPrice, volume]) => ({
+        ...products,
+        [id]: {
+          price,
+          specialPrice,
+          volume,
+        },
+      }),
       {},
     ),
-    productsSpecialPrice: products.map(product => product[2]),
-    productsVolume: products.map(product => product[3]),
     schedules: decompressSchedules(schedules),
     features,
   };

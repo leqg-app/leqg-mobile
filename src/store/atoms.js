@@ -63,6 +63,71 @@ const storesState = atom({
   effects_UNSTABLE: [getAllStores],
 });
 
+const storesMapState = selector({
+  key: 'storesMapState',
+  get: ({ get }) => {
+    const stores = get(storesState);
+    const all = [];
+    const date = new Date();
+    const currentDay = date.getDay() || 7;
+    const now = date.getHours() * 60 + date.getMinutes();
+
+    for (const store of stores) {
+      if (!store.price && !store.specialPrice) {
+        continue;
+      }
+      if (!store.price) {
+        all.push({ ...store, price: store.specialPrice });
+        continue;
+      }
+      const today = store.schedules.find(s => s.dayOfWeek === currentDay);
+      if (
+        !store.specialPrice ||
+        !today ||
+        today.closed ||
+        !today.openingSpecial ||
+        !today.closingSpecial
+      ) {
+        all.push(store);
+        continue;
+      }
+
+      const specialHours =
+        today.openingSpecial < today.closingSpecial
+          ? today.openingSpecial < now && now < today.closingSpecial
+          : today.openingSpecial < now || now < today.closingSpecial;
+
+      if (!specialHours) {
+        all.push(store);
+      }
+
+      const productsById = Object.keys(store.productsById).reduce(
+        (products, id) => ({
+          ...products,
+          [id]: {
+            ...store.productsById[id],
+            price: store.productsById[id].specialPrice,
+          },
+        }),
+        {},
+      );
+      all.push({ ...store, price: store.specialPrice, productsById });
+    }
+
+    return {
+      type: 'FeatureCollection',
+      features: all.map(store => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [store.longitude, store.latitude],
+        },
+        properties: store,
+      })),
+    };
+  },
+});
+
 const productsState = atom({
   key: 'productsState',
   default: storage.getObject('products', []),
@@ -100,6 +165,7 @@ export {
   userState,
   sheetStoreState,
   storeState,
+  storesMapState,
   storeQueryRequestIDState,
   storesState,
   productsState,
