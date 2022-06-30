@@ -1,5 +1,5 @@
 import React, { useMemo, Suspense } from 'react';
-import { Alert, Platform, StyleSheet, Text, View, Linking } from 'react-native';
+import { Alert, Platform, StyleSheet, View, Linking } from 'react-native';
 import {
   ActivityIndicator,
   Avatar,
@@ -8,6 +8,7 @@ import {
   Divider,
   IconButton,
   List,
+  Text,
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';

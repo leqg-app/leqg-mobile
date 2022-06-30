@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { daysFull } from '../../constants';
+import { StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
 
+import { daysFull } from '../../constants';
 import { inHours, minutesToTime } from '../../utils/time';
 
 function findNextOpenDay(schedules, currentDay) {

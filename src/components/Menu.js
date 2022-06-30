@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { List } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { List, Text } from 'react-native-paper';
 
 const Item = ({ name, onPress = () => {}, last, icon, value, arrow }) => (
   <List.Item

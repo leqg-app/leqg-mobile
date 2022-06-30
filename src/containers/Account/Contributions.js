@@ -1,5 +1,6 @@
 import React from 'react';
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
 import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import formatDistance from 'date-fns/formatDistance';
 import dateLocale from 'date-fns/locale/fr';

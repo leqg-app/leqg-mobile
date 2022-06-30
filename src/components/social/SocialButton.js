@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Text, TouchableRipple } from 'react-native-paper';
 
 import AppleIcon from './AppleIcon';
 import GoogleIcon from './GoogleIcon';

@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { IconButton, Text } from 'react-native-paper';
 import { useRecoilState } from 'recoil';
 
 import FeaturesList from '../../components/FeaturesList';

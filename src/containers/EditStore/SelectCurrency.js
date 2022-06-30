@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useLayoutEffect } from 'react';
-import { FlatList, StyleSheet, Text } from 'react-native';
-import { List } from 'react-native-paper';
+import { FlatList, StyleSheet } from 'react-native';
+import { List, Text } from 'react-native-paper';
 
 import currencies from '../../assets/currencies.json';
 

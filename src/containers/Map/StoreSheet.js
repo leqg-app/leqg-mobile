@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef, Suspense } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { IconButton, Portal, Title } from 'react-native-paper';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { IconButton, Portal, Text, Title } from 'react-native-paper';
 import Animated, {
   interpolate,
   useAnimatedStyle,

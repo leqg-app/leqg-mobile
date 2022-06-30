@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
-import { Title } from 'react-native-paper';
+import { Alert, StyleSheet, View } from 'react-native';
+import { Text, Title } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 

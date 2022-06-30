@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { IconButton, Title } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { IconButton, Text, Title } from 'react-native-paper';
 import { useRecoilValue } from 'recoil';
 
 import { theme } from '../../constants';

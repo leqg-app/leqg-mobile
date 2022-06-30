@@ -1,6 +1,13 @@
 import React, { useEffect } from 'react';
-import { StatusBar, StyleSheet, Text, View } from 'react-native';
-import { Title, IconButton, Card, Divider, Button } from 'react-native-paper';
+import { StatusBar, StyleSheet, View } from 'react-native';
+import {
+  Title,
+  IconButton,
+  Card,
+  Divider,
+  Button,
+  Text,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRecoilState } from 'recoil';
 

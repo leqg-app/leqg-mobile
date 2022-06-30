@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
-import { TextInput, Button, HelperText } from 'react-native-paper';
+import { Platform, StyleSheet, View } from 'react-native';
+import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSetRecoilState } from 'recoil';
 

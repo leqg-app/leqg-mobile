@@ -1,6 +1,6 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { Image, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, IconButton, Text } from 'react-native-paper';
 
 import leqgLogo from '../assets/icon-transparent.png';
 

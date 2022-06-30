@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Searchbar, TouchableRipple } from 'react-native-paper';
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import { Searchbar, Text, TouchableRipple } from 'react-native-paper';
 import { useRecoilValue } from 'recoil';
 
 import { productsState } from '../../store/atoms';

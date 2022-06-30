@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-
-import { IconButton, TouchableRipple } from 'react-native-paper';
+import { IconButton, Text, TouchableRipple } from 'react-native-paper';
 
 const ITEM_HEIGHT = 50;
 

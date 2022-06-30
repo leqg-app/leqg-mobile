@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Caption } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Caption, Text } from 'react-native-paper';
 import { useRecoilValue } from 'recoil';
 
 import Price from '../../components/Price';

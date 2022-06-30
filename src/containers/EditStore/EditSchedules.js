@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { Text, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import {
   Appbar,
   Avatar,
@@ -8,6 +8,7 @@ import {
   IconButton,
   Portal,
   Switch,
+  Text,
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
