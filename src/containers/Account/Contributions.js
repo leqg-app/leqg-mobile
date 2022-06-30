@@ -8,7 +8,6 @@ import {
   contributionsState,
   storeQueryRequestIDState,
 } from '../../store/atoms';
-import { utcDate } from '../../utils/date';
 
 const reasons = {
   'store.creation': "Création d'un bar",
@@ -20,7 +19,7 @@ const reasons = {
 };
 
 const Row = ({ contribution }) => {
-  const date = formatDistance(utcDate(contribution.createdAt), Date.now(), {
+  const date = formatDistance(new Date(contribution.createdAt), Date.now(), {
     addSuffix: true,
     locale: dateLocale,
   });

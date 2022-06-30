@@ -3,7 +3,6 @@ import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import formatDistance from 'date-fns/formatDistance';
 import dateLocale from 'date-fns/locale/fr';
 
-import { utcDate } from '../../utils/date';
 import { sortBy } from '../../utils/sorter';
 
 const actions = {
@@ -42,7 +41,7 @@ const RevisionEdition = memo(({ revision }) => {
 
 const RevisionRow = memo(({ revision }) => {
   const author = revision.user?.username || 'anonyme';
-  const date = formatDistance(utcDate(revision.createdAt), Date.now(), {
+  const date = formatDistance(new Date(revision.createdAt), Date.now(), {
     addSuffix: true,
     locale: dateLocale,
   });
