@@ -4,7 +4,7 @@ import { Button, IconButton, List, Paragraph } from 'react-native-paper';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { theme } from '../../constants';
-import { sheetStoreState, userState } from '../../store/atoms';
+import { sheetStoreState, storesState, userState } from '../../store/atoms';
 import { useFavoriteState } from '../../store/hooks';
 
 const AuthRequired = ({ navigation }) => (
@@ -32,11 +32,17 @@ const Row = ({ store, onPress, onRemove }) => (
 
 const Favorites = ({ navigation }) => {
   const user = useRecoilValue(userState);
+  const stores = useRecoilValue(storesState);
   const setSheetStore = useSetRecoilState(sheetStoreState);
   const { removeFavorite } = useFavoriteState();
 
   const navigate = store => {
-    setSheetStore({ ...store, focus: true });
+    const selectedStore = stores.find(({ id }) => id === store.id);
+    if (!selectedStore) {
+      return;
+    }
+    selectedStore.focus = true;
+    setSheetStore(selectedStore);
     navigation.navigate('MapTab', {
       screen: 'MapScreen',
     });
