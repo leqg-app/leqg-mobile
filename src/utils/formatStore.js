@@ -29,6 +29,18 @@ function decompressSchedules(compressedSchedule) {
   }, []);
 }
 
+function getProductsById(products) {
+  const groupById = (products, [id, price, specialPrice, volume]) => ({
+    ...products,
+    [id]: {
+      price,
+      specialPrice,
+      volume,
+    },
+  });
+  return products.reduce(groupById, {});
+}
+
 export function decompressStore(compressedStore) {
   if (!Array.isArray(compressedStore)) {
     return {};
@@ -55,17 +67,7 @@ export function decompressStore(compressedStore) {
     price,
     specialPrice,
     currencyCode,
-    productsById: products.reduce(
-      (products, [id, price, specialPrice, volume]) => ({
-        ...products,
-        [id]: {
-          price,
-          specialPrice,
-          volume,
-        },
-      }),
-      {},
-    ),
+    productsById: getProductsById(products),
     schedules: decompressSchedules(schedules),
     features,
   };
@@ -80,12 +82,9 @@ export function formatStoreToMap(store) {
     price: getLowest(products.map(p => p.price).filter(Boolean)),
     specialPrice: getLowest(products.map(p => p.specialPrice).filter(Boolean)),
     currencyCode: products?.[0]?.currencyCode || 'EUR',
-    productsId: products.map(product => product.id),
-    productsPrice: products.reduce(
-      (price, product) => ({ ...price, [product.id]: product.price }),
+    productsById: products.reduce(
+      (products, product) => ({ ...products, [product.id]: product }),
       {},
     ),
-    productsSpecialPrice: products.map(product => product.specialPrice),
-    productsVolume: products.map(product => product.volume),
   };
 }

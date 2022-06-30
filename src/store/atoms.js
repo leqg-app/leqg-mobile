@@ -2,6 +2,7 @@ import { atom, atomFamily, selector } from 'recoil';
 
 import { getStore } from '../api/stores';
 import { getContributions, getProfile } from '../api/users';
+import { inHours } from '../utils/time';
 import { storage } from './storage';
 
 function persistUser({ setSelf, onSet }) {
@@ -72,15 +73,25 @@ const storesMapState = selector({
     const currentDay = date.getDay() || 7;
     const now = date.getHours() * 60 + date.getMinutes();
 
+    // If we are in special hours, replace price by special price
+    // Same for all products
     for (const store of stores) {
       if (!store.price && !store.specialPrice) {
         continue;
       }
+
+      const today = store.schedules.find(s => s.dayOfWeek === currentDay);
+      const open = today?.closed
+        ? false
+        : !today ||
+          !today.opening ||
+          !today.closing ||
+          inHours(today.opening, today.closing);
+
       if (!store.price) {
-        all.push({ ...store, price: store.specialPrice });
+        all.push({ ...store, open, price: store.specialPrice });
         continue;
       }
-      const today = store.schedules.find(s => s.dayOfWeek === currentDay);
       if (
         !store.specialPrice ||
         !today ||
@@ -88,7 +99,7 @@ const storesMapState = selector({
         !today.openingSpecial ||
         !today.closingSpecial
       ) {
-        all.push(store);
+        all.push({ ...store, open });
         continue;
       }
 
@@ -98,10 +109,11 @@ const storesMapState = selector({
           : today.openingSpecial < now || now < today.closingSpecial;
 
       if (!specialHours) {
-        all.push(store);
+        all.push({ ...store, open });
+        continue;
       }
 
-      const productsById = Object.keys(store.productsById).reduce(
+      const productsById = Object.keys(store.productsById || {}).reduce(
         (products, id) => ({
           ...products,
           [id]: {
@@ -111,7 +123,7 @@ const storesMapState = selector({
         }),
         {},
       );
-      all.push({ ...store, price: store.specialPrice, productsById });
+      all.push({ ...store, open, price: store.specialPrice, productsById });
     }
 
     return {

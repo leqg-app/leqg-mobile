@@ -1,7 +1,5 @@
 import { atom, selector } from 'recoil';
 
-import { OPEN_STORE_EXPRESSION } from '../utils/map';
-
 const productFilterState = atom({
   key: 'productFilterState',
   default: {
@@ -80,7 +78,7 @@ const mapboxState = selector({
       filters.push(...featureFilter.map(id => ['in', id, ['get', 'features']]));
     }
     if (scheduleFilter) {
-      filters.push(OPEN_STORE_EXPRESSION);
+      filters.push(['get', 'open']);
     }
 
     return {
