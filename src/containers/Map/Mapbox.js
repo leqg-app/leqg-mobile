@@ -49,10 +49,9 @@ const Mapbox = () => {
     initialPosition: storedMapPosition.coordinates,
     initialZoomLevel: storedMapPosition.zoom,
     isLocated: false,
-    isFollowing: storedMapPosition.followUser || false,
   });
 
-  const { position, isFollowing, initialPosition, initialZoomLevel } = mapState;
+  const { position, initialPosition, initialZoomLevel } = mapState;
 
   const setMap = state => setState({ ...mapState, ...state });
 
@@ -67,7 +66,6 @@ const Mapbox = () => {
           ...(!initialPosition && {
             initialPosition: position,
             initialZoomLevel: 13,
-            isFollowing: true,
           }),
         });
       } catch (e) {
@@ -76,7 +74,6 @@ const Mapbox = () => {
           ...(!initialPosition && {
             initialPosition: DEFAULT_MAP.CENTER_COORDINATES,
             initialZoomLevel: DEFAULT_MAP.ZOOM_LEVEL,
-            isFollowing: false,
           }),
         });
       }
@@ -88,7 +85,6 @@ const Mapbox = () => {
       return;
     }
     setCreateStore();
-    setMap({ isFollowing: false });
     camera.current.setCamera({
       centerCoordinate: [sheetStore.longitude, sheetStore.latitude],
       zoomLevel: 17,
@@ -111,10 +107,7 @@ const Mapbox = () => {
     try {
       const position = await getLocation({ timeout: 5000, askedByUser: true });
       moveTo(position);
-      setMap({
-        position,
-        isFollowing: true,
-      });
+      setMap({ position });
     } catch (e) {
       setMap({ position: undefined });
     }
@@ -130,24 +123,14 @@ const Mapbox = () => {
   };
 
   const didMove = ({ geometry, properties }) => {
-    const { coordinates } = geometry;
-    const { isUserInteraction, zoomLevel } = properties;
-    if (properties.isUserInteraction && isFollowing) {
-      setMap({ isFollowing: false });
-    }
     storage.setObject('mapPosition', {
-      followUser: isFollowing && isUserInteraction ? false : isFollowing,
-      coordinates,
-      zoom: zoomLevel,
+      coordinates: geometry.coordinates,
+      zoom: properties.zoomLevel,
     });
   };
 
   const onUpdateLocation = ({ coords }) => {
-    const position = [coords.longitude, coords.latitude];
-    if (isFollowing) {
-      moveTo(position);
-    }
-    setMap({ position });
+    setMap({ position: [coords.longitude, coords.latitude] });
   };
 
   if (!initialPosition) {
@@ -294,21 +277,20 @@ const Mapbox = () => {
           </>
         )}
       </MapboxGL.MapView>
-      <FAB
-        style={[
-          styles.fab,
-          { backgroundColor: isFollowing ? colors.primary : 'white' },
-        ]}
-        icon="target"
-        color={isFollowing ? 'white' : colors.primary}
-        onPress={moveToCurrentLocation}
-      />
-      <FAB
-        style={[styles.fab, styles.fabAddStore]}
-        icon="plus"
-        color={colors.primary}
-        onPress={() => setCreateStore({ add: true })}
-      />
+      <View style={styles.fabContainer}>
+        <FAB
+          style={[styles.fab, styles.fabAddStore]}
+          icon="plus"
+          color={colors.primary}
+          onPress={() => setCreateStore({ add: true })}
+        />
+        <FAB
+          style={styles.fab}
+          icon="target"
+          color={colors.primary}
+          onPress={moveToCurrentLocation}
+        />
+      </View>
       <CreateStoreSheet createStore={createStore} onClose={setCreateStore} />
     </>
   );
@@ -375,16 +357,19 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',
   },
-  fab: {
+  fabContainer: {
     position: 'absolute',
-    margin: 16,
     right: 0,
     bottom: 0,
+    margin: 16,
+  },
+  fab: {
+    backgroundColor: 'white',
     borderColor: 'grey',
     borderWidth: StyleSheet.hairlineWidth,
   },
   fabAddStore: {
-    bottom: 75,
+    marginBottom: 10,
     backgroundColor: 'white',
   },
 });

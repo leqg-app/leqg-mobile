@@ -28,13 +28,11 @@ function LocationPermission() {
     try {
       const coordinates = await getLocation({ askedByUser: true });
       storage.setObject('mapPosition', {
-        followUser: true,
         coordinates,
         zoom: 13,
       });
     } catch (e) {
       storage.setObject('mapPosition', {
-        followUser: false,
         coordinates: DEFAULT_MAP.CENTER_COORDINATES,
         zoom: DEFAULT_MAP.ZOOM_LEVEL,
       });
@@ -52,7 +50,7 @@ function LocationPermission() {
           <View style={styles.explanation}>
             <Bullet text="Elle permet de facilement vous repérer sur la carte" />
             <Bullet text="Nous n'envoyons jamais votre position à nos serveurs" />
-            <Bullet text="Le code de l'application est ouvert, vous pouvez vérifier par vous-même" />
+            <Bullet text="Le code de l'application est ouvert à tous" />
           </View>
           <View style={styles.actions}>
             {loading ? (
