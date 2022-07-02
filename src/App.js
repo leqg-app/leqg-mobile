@@ -19,6 +19,7 @@ if (!__DEV__) {
   // @gorhom/bottom-sheet@4.1.5
   LogBox.ignoreLogs([
     /ViewPropType/, // react-native-mapbox-gl
+    /eglSwapBuffer/,
     "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
   ]);
 }
@@ -26,13 +27,13 @@ if (!__DEV__) {
 const App = () => {
   return (
     <GestureHandlerRootView style={styles.container}>
-      <PaperProvider theme={theme}>
-        <SafeAreaProvider>
-          <RecoilRoot>
+      <SafeAreaProvider>
+        <RecoilRoot>
+          <PaperProvider theme={theme}>
             <Routes />
-          </RecoilRoot>
-        </SafeAreaProvider>
-      </PaperProvider>
+          </PaperProvider>
+        </RecoilRoot>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 };

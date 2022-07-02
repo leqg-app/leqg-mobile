@@ -79,9 +79,9 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
-  - GoogleSignIn (6.1.0):
-    - AppAuth (~> 1.4)
-    - GTMAppAuth (~> 1.0)
+  - GoogleSignIn (6.2.2):
+    - AppAuth (~> 1.5)
+    - GTMAppAuth (~> 1.3)
     - GTMSessionFetcher/Core (~> 1.1)
   - GTMAppAuth (1.3.0):
     - AppAuth/Core (~> 1.4)
@@ -336,7 +336,7 @@ PODS:
     - React-Core
   - react-native-geolocation-service (5.3.0):
     - React
-  - react-native-mmkv (2.4.1):
+  - react-native-mmkv (2.4.2):
     - MMKV (>= 1.2.13)
     - React-Core
   - react-native-safe-area-context (4.3.1):
@@ -416,14 +416,14 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
-  - RNDateTimePicker (6.1.4):
+  - RNDateTimePicker (6.2.0):
     - React-Core
   - RNDeviceInfo (9.0.2):
     - React-Core
   - RNGestureHandler (2.5.0):
     - React-Core
-  - RNGoogleSignin (7.2.2):
-    - GoogleSignIn (~> 6.1.0)
+  - RNGoogleSignin (8.0.0):
+    - GoogleSignIn (~> 6.2.2)
     - React-Core
   - rnmapbox-maps (10.0.0-beta.11):
     - MapboxMaps (~> 10.5.0)
@@ -468,18 +468,18 @@ PODS:
   - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
-  - RNSentry (4.0.2):
+  - RNSentry (4.1.0):
     - React-Core
-    - Sentry (= 7.18.0)
+    - Sentry (= 7.18.1)
   - RNShare (7.6.4):
     - React-Core
   - RNSVG (12.3.0):
     - React-Core
-  - RNVectorIcons (9.1.0):
+  - RNVectorIcons (9.2.0):
     - React-Core
-  - Sentry (7.18.0):
-    - Sentry/Core (= 7.18.0)
-  - Sentry/Core (7.18.0)
+  - Sentry (7.18.1):
+    - Sentry/Core (= 7.18.1)
+  - Sentry/Core (7.18.1)
   - SocketRocket (0.6.0)
   - Turf (2.4.0)
   - Yoga (1.14.0)
@@ -724,7 +724,7 @@ SPEC CHECKSUMS:
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 476ee3e89abb49e07f822b48323c51c57124b572
-  GoogleSignIn: c90b5bec45e780f54c6a8e1e3c182a86e3dda69d
+  GoogleSignIn: 3c68388ac221f379676e8f1cb115df3aaf73b93f
   GTMAppAuth: 4d8f864896f3646f0c33baf38a28362f4c601e15
   GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   hermes-engine: 84e3af1ea01dd7351ac5d8689cbbea1f9903ffc3
@@ -754,7 +754,7 @@ SPEC CHECKSUMS:
   React-logger: a0833912d93b36b791b7a521672d8ee89107aff1
   react-native-config: 7cd105e71d903104e8919261480858940a6b9c0e
   react-native-geolocation-service: f32ef48fa665bd710207a3ac39bc127cac9cb993
-  react-native-mmkv: b5c7f9bc369eef2b8a2aa36e8a15949989fa823f
+  react-native-mmkv: e0fbf896d09b76514b63e6febeb144c6472f00e8
   react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
   React-perflogger: a18b4f0bd933b8b24ecf9f3c54f9bf65180f3fe6
   React-RCTActionSheet: 547fe42fdb4b6089598d79f8e1d855d7c23e2162
@@ -771,19 +771,19 @@ SPEC CHECKSUMS:
   RNAppleAuthentication: dab41edef916715148ce94a7dd04041a01590ddc
   RNBootSplash: b59b9140af7ac429a8b417559c70dce8a26d41c1
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
-  RNDateTimePicker: f56338ebc86246f6b46f9e0953daa3a28acf909c
+  RNDateTimePicker: 30e6733efc179d1e49d6008ea5fce42cdc9aeeca
   RNDeviceInfo: 1e3f62b9ec32f7754fac60bd06b8f8a27124e7f0
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
-  RNGoogleSignin: d7f8368b82d94f1dec964785d496387ca7f19092
+  RNGoogleSignin: b2179ba653c759b936404a7746fc5302f9de6a5a
   rnmapbox-maps: 589c626fa25b3f68de7063a7fe30a6c229f13720
   RNPermissions: 34d678157c800b25b22a488e4d8babb57456e796
   RNReanimated: 64573e25e078ae6bec03b891586d50b9ec284393
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
-  RNSentry: a0db9b7879436933e78c7a3669e098eeb9c98001
+  RNSentry: d27112c8fcb77c52a42c3fffb796193c333ee562
   RNShare: 4406f61af043027b695c3a0b8f39e2c2bdacde12
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
-  RNVectorIcons: 7923e585eaeb139b9f4531d25a125a1500162a0b
-  Sentry: aff6fb3785973436f0bf25748f6b3bcb3e825e09
+  RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
+  Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Turf: 60b93cfdc62758526bc7bf1ef191a829aeb9694d
   Yoga: 99652481fcd320aefa4a7ef90095b95acd181952
