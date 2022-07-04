@@ -133,6 +133,11 @@ const Mapbox = () => {
     setMap({ position: [coords.longitude, coords.latitude] });
   };
 
+  const storeStyle = useMemo(
+    () => ({ ...layerStyles.storePrice, textField, symbolSortKey, textSize }),
+    [textField, symbolSortKey, textSize],
+  );
+
   if (!initialPosition) {
     return <View />;
   }
@@ -156,11 +161,6 @@ const Mapbox = () => {
       setCreateStore({ error: 'Erreur réseau, réessayez plus tard' });
     }
   };
-
-  const storeStyle = useMemo(
-    () => ({ ...layerStyles.storePrice, textField, symbolSortKey, textSize }),
-    [textField, symbolSortKey, textSize],
-  );
 
   return (
     <>
