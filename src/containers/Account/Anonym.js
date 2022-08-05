@@ -1,10 +1,12 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Paragraph, Title, useTheme } from 'react-native-paper';
+import { Text, Paragraph, useTheme } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Menu from '../../components/Menu';
 import VersionName from '../../components/VersionName';
+import Title from '../../components/Title';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import ResetPassword from './ResetPassword';
@@ -12,7 +14,8 @@ import SignUpProvider from './SignUpProvider';
 
 const Anonym = ({ navigation }) => {
   return (
-    <View>
+    <SafeAreaView>
+      <Title style={{ marginBottom: 20 }}>Mon Compte</Title>
       <Menu>
         <Menu.Item
           name="Connexion"
@@ -27,7 +30,7 @@ const Anonym = ({ navigation }) => {
         />
       </Menu>
       <View style={styles.whySignUp}>
-        <Title>Inscrivez-vous gratuitement</Title>
+        <Text variant="titleMedium">Inscrivez-vous gratuitement</Text>
         <Paragraph>
           - Remerciez les contributeurs pour leur travail{'\n'}- Enregistrez vos
           bars favoris{'\n'}- Contribuez pour aider les autres utilisateurs
@@ -43,7 +46,7 @@ const Anonym = ({ navigation }) => {
         />
       </Menu>
       <VersionName />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -73,7 +76,7 @@ export default () => {
         headerTintColor: '#fff',
       }}>
       <AnonymStack.Screen
-        options={{ title: 'Mon compte' }}
+        options={{ title: 'Mon compte', headerShown: false }}
         name="Anonym"
         component={Anonym}
       />

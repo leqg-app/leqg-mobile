@@ -144,6 +144,9 @@ const EditStore = ({ route, navigation }) => {
 
   useEffect(() => {
     navigation.setOptions({
+      headerLeft: () => (
+        <Appbar.BackAction color="white" onPress={navigation.goBack} />
+      ),
       headerRight: () => (
         <Appbar.Action
           color="white"

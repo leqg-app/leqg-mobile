@@ -27,7 +27,7 @@ const Routes = () => {
   }, []);
 
   return (
-    <NavigationContainer theme={theme}>
+    <NavigationContainer>
       <Main.Navigator
         screenOptions={{ headerShown: false }}
         defaultScreenOptions={{

@@ -49,6 +49,7 @@ const TabNavigator = () => (
         name="FavoritesTab"
         component={Favorites}
         options={{
+          headerShown: false,
           title: 'Enregistrés',
           lazy: false,
         }}

@@ -1,9 +1,6 @@
 import { api as apiEndpoint } from '../../app.json';
-import { getUniqueId } from 'react-native-device-info';
 
-const defaultHeaders = {
-  'x-uniq-id': getUniqueId(),
-};
+const defaultHeaders = {};
 
 function get(path, headers = {}) {
   return fetch(`${apiEndpoint}${path}`, {

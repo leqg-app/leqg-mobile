@@ -1,17 +1,19 @@
 import React from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text, Title, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { getLevel } from '../../utils/reputation';
 import { LEVELS } from '../../constants';
-import Settings from './Settings';
 import Menu from '../../components/Menu';
-import { userState } from '../../store/atoms';
-import Anonym from './Anonym';
+import Title from '../../components/Title';
 import AnimatedCircle from '../../components/AnimatedCircle';
 import VersionName from '../../components/VersionName';
+import { getLevel } from '../../utils/reputation';
+import { userState } from '../../store/atoms';
+import Settings from './Settings';
+import Anonym from './Anonym';
 import Contributions from './Contributions';
 import * as signOutProviders from './Providers/index.js';
 
@@ -54,45 +56,55 @@ const Account = ({ navigation }) => {
   const currentLevel = getLevel(reputation);
 
   return (
-    <View>
-      <View style={styles.head}>
-        <View>
-          <AnimatedCircle initial={reputation} won={0} />
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Title>Mon Compte</Title>
+        <View style={styles.head}>
+          <View>
+            <AnimatedCircle initial={reputation} won={0} />
+          </View>
+          <View style={styles.name}>
+            <Text variant="titleMedium">{username}</Text>
+            <Text>
+              Prochain niveau: {reputation}/{LEVELS[currentLevel]}
+            </Text>
+          </View>
         </View>
-        <View style={styles.name}>
-          <Title>{username}</Title>
-          <Text>
-            Prochain niveau: {reputation}/{LEVELS[currentLevel]}
-          </Text>
+        <View style={styles.menus}>
+          <Menu>
+            <Menu.Item
+              name="Mes contributions"
+              icon="thumb-up"
+              onPress={() => navigation.navigate('Contributions')}
+              value={contributions.length}
+            />
+            <Menu.Item
+              name="Préférences"
+              icon="cog-outline"
+              onPress={() => navigation.navigate('SettingsStack')}
+              last
+            />
+            <Menu.Item
+              name="Se déconnecter"
+              icon="logout"
+              onPress={askForSignOut}
+            />
+          </Menu>
+          <VersionName />
         </View>
-      </View>
-      <View style={styles.menus}>
-        <Menu>
-          <Menu.Item
-            name="Mes contributions"
-            icon="thumb-up"
-            onPress={() => navigation.navigate('Contributions')}
-            value={contributions.length}
-          />
-          <Menu.Item
-            name="Préférences"
-            icon="cog-outline"
-            onPress={() => navigation.navigate('SettingsStack')}
-            last
-          />
-          <Menu.Item
-            name="Se déconnecter"
-            icon="logout"
-            onPress={askForSignOut}
-          />
-        </Menu>
-        <VersionName />
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    marginTop: StatusBar.currentHeight,
+  },
+  title: {
+    marginTop: 20,
+    marginHorizontal: 20,
+  },
   head: {
     margin: 20,
     display: 'flex',
@@ -127,7 +139,7 @@ export default () => {
       }}>
       {user?.jwt ? (
         <AccountStack.Screen
-          options={{ title: 'Mon compte' }}
+          options={{ title: 'Mon compte', headerShown: false }}
           name="Account"
           component={Account}
         />
