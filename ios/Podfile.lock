@@ -89,15 +89,15 @@ PODS:
   - GTMSessionFetcher/Core (1.7.2)
   - hermes-engine (0.11.0)
   - libevent (2.1.12)
-  - MapboxCommon (21.3.0)
-  - MapboxCoreMaps (10.5.3):
-    - MapboxCommon (~> 21.3)
-  - MapboxMaps (10.5.1):
-    - MapboxCommon (= 21.3.0)
-    - MapboxCoreMaps (= 10.5.3)
-    - MapboxMobileEvents (= 1.0.7)
+  - MapboxCommon (22.1.0)
+  - MapboxCoreMaps (10.7.0):
+    - MapboxCommon (~> 22.1)
+  - MapboxMaps (10.7.0):
+    - MapboxCommon (= 22.1.0)
+    - MapboxCoreMaps (= 10.7.0)
+    - MapboxMobileEvents (= 1.0.8)
     - Turf (~> 2.0)
-  - MapboxMobileEvents (1.0.7)
+  - MapboxMobileEvents (1.0.8)
   - MMKV (1.2.13):
     - MMKVCore (~> 1.2.13)
   - MMKVCore (1.2.13)
@@ -426,13 +426,13 @@ PODS:
     - GoogleSignIn (~> 6.2.2)
     - React-Core
   - rnmapbox-maps (10.0.0-beta.23):
-    - MapboxMaps (~> 10.5.0)
+    - MapboxMaps (~> 10.7.0)
     - React
     - React-Core
     - rnmapbox-maps/DynamicLibrary (= 10.0.0-beta.23)
     - Turf
   - rnmapbox-maps/DynamicLibrary (10.0.0-beta.23):
-    - MapboxMaps (~> 10.5.0)
+    - MapboxMaps (~> 10.7.0)
     - React
     - React-Core
     - Turf
@@ -729,10 +729,10 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   hermes-engine: 84e3af1ea01dd7351ac5d8689cbbea1f9903ffc3
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  MapboxCommon: a336e40b53e3fda5c419fe093c9c40aff4f4dd2b
-  MapboxCoreMaps: 259135c413370d63e998b6eb4acf888b5f292cc1
-  MapboxMaps: 7668203e0b731c6d5e31d982f3bd4bb245950061
-  MapboxMobileEvents: f7f3e8daeb4b83688ae62a4172dce79169a97233
+  MapboxCommon: 1e26303f61682e6307a10162792ea0f018d037b9
+  MapboxCoreMaps: 929f2cf9de62782347db31d6c04dc1b6b4ba80ad
+  MapboxMaps: c7df1efe838d7acb54929ada9ee735949137fde9
+  MapboxMobileEvents: febdd92835daa258ca1c1faad0821c0b3394ef40
   MMKV: aac95d817a100479445633f2b3ed8961b4ac5043
   MMKVCore: 3388952ded307e41b3ed8a05892736a236ed1b8e
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
@@ -775,7 +775,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 0a7c1d2532aa7691f9b9925a27e43af006db4dae
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
   RNGoogleSignin: b2179ba653c759b936404a7746fc5302f9de6a5a
-  rnmapbox-maps: 5d882f3567153c11a30377faeab9b71048f73eb8
+  rnmapbox-maps: e7489694dc38ba0f135e91f1b779eabf0ad4bb5f
   RNPermissions: de7b7c3fe1680d974ac7a85e3e97aa539c0e68ea
   RNReanimated: 5c8c17e26787fd8984cd5accdc70fef2ca70aafd
   RNScreens: 4a1af06327774490d97342c00aee0c2bafb497b7
@@ -789,6 +789,6 @@ SPEC CHECKSUMS:
   Yoga: 99652481fcd320aefa4a7ef90095b95acd181952
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 2e8488c0f2e2b5ade00eb1e95f29fb35d17881ab
+PODFILE CHECKSUM: d60bed21ba66c920c7c0f272741e640905b30201
 
 COCOAPODS: 1.11.3
