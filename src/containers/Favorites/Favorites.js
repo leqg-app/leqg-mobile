@@ -56,7 +56,7 @@ const Favorites = ({ navigation }) => {
             <Text variant="bodyMedium" style={styles.textCenter}>
               Veuillez vous connecter pour voir vos bars favoris
             </Text>
-            <Button onPress={() => navigation.navigate('account')}>
+            <Button onPress={() => navigation.navigate('AccountTab')}>
               Connexion
             </Button>
           </View>

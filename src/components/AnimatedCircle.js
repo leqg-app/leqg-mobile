@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     position: 'absolute',
-    margin: 4.5,
+    margin: 7,
   },
 });
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import MapboxGL, { Logger } from '@rnmapbox/maps';
+import MapboxGL, { Logger } from '@react-native-mapbox-gl/maps';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
 import Config from 'react-native-config';
