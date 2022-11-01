@@ -142,6 +142,7 @@ android {
         resValue "string", "build_config_package", "com.leqg"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -208,7 +209,7 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-telemetry:6.1.0'
+    // implementation 'com.mapbox.mapboxsdk:mapbox-android-telemetry:6.1.0'
     implementation 'androidx.core:core-splashscreen:1.0.0'
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
