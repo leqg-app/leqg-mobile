@@ -161,6 +161,9 @@ jobs:
           ${{ secrets.GOOGLESERVICE_INFO_PLIST }}
           EOF
 
+      - name: Add Mapbox token
+        run: echo "MAPBOX_SECRET_KEY=$MAPBOX_SECRET_KEY" >> ./android/gradle.properties
+
       - name: Cache iOS dependencies
         id: cache-ios-dependencies
         uses: actions/cache@v2
