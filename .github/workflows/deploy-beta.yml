@@ -56,6 +56,9 @@ jobs:
           ${{ secrets.GOOGLE_SERVICES_JSON }}
           EOF
 
+      - name: Add Mapbox token
+        run: echo "MAPBOX_SECRET_KEY=${{ secrets.MAPBOX_SECRET_KEY }}" >> ./android/gradle.properties
+
       - name: Linter
         run: yarn lint
 
@@ -160,9 +163,6 @@ jobs:
           cat << EOF > ios/GoogleService-Info.plist
           ${{ secrets.GOOGLESERVICE_INFO_PLIST }}
           EOF
-
-      - name: Add Mapbox token
-        run: echo "MAPBOX_SECRET_KEY=$MAPBOX_SECRET_KEY" >> ./android/gradle.properties
 
       - name: Cache iOS dependencies
         id: cache-ios-dependencies
