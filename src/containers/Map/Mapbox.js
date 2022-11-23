@@ -16,6 +16,7 @@ import { sheetStoreState, storesMapState } from '../../store/atoms';
 import { mapboxState } from '../../store/filterAtoms';
 import { reportError } from '../../utils/errorMessage';
 
+MapboxGL.setWellKnownTileServer('mapbox');
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
 // https://github.com/react-native-mapbox-gl/maps/issues/943

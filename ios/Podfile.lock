@@ -89,12 +89,12 @@ PODS:
   - GTMSessionFetcher/Core (2.3.0)
   - hermes-engine (0.70.6)
   - libevent (2.1.12)
-  - MapboxCommon (22.1.0)
-  - MapboxCoreMaps (10.7.0):
-    - MapboxCommon (~> 22.1)
-  - MapboxMaps (10.7.0):
-    - MapboxCommon (= 22.1.0)
-    - MapboxCoreMaps (= 10.7.0)
+  - MapboxCommon (23.1.0)
+  - MapboxCoreMaps (10.9.1):
+    - MapboxCommon (~> 23.1)
+  - MapboxMaps (10.9.1):
+    - MapboxCommon (= 23.1.0)
+    - MapboxCoreMaps (= 10.9.1)
     - MapboxMobileEvents (= 1.0.8)
     - Turf (~> 2.0)
   - MapboxMobileEvents (1.0.8)
@@ -426,14 +426,14 @@ PODS:
   - RNGoogleSignin (8.2.1):
     - GoogleSignIn (~> 6.2)
     - React-Core
-  - rnmapbox-maps (10.0.0-beta.58):
-    - MapboxMaps (~> 10.7.0)
+  - rnmapbox-maps (10.0.0-beta.59):
+    - MapboxMaps (~> 10.9.1)
     - React
     - React-Core
-    - rnmapbox-maps/DynamicLibrary (= 10.0.0-beta.58)
+    - rnmapbox-maps/DynamicLibrary (= 10.0.0-beta.59)
     - Turf
-  - rnmapbox-maps/DynamicLibrary (10.0.0-beta.58):
-    - MapboxMaps (~> 10.7.0)
+  - rnmapbox-maps/DynamicLibrary (10.0.0-beta.59):
+    - MapboxMaps (~> 10.9.1)
     - React
     - React-Core
     - Turf
@@ -469,18 +469,16 @@ PODS:
   - RNScreens (3.18.2):
     - React-Core
     - React-RCTImage
-  - RNSentry (4.8.0):
+  - RNSentry (4.9.0):
     - React-Core
-    - Sentry (= 7.29.0)
+    - Sentry/HybridSDK (= 7.31.2)
   - RNShare (8.0.0):
     - React-Core
   - RNSVG (13.6.0):
     - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
-  - Sentry (7.29.0):
-    - Sentry/Core (= 7.29.0)
-  - Sentry/Core (7.29.0)
+  - Sentry/HybridSDK (7.31.2)
   - SocketRocket (0.6.0)
   - Turf (2.6.1)
   - Yoga (1.14.0)
@@ -730,9 +728,9 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
   hermes-engine: 2af7b7a59128f250adfd86f15aa1d5a2ecd39995
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  MapboxCommon: 1e26303f61682e6307a10162792ea0f018d037b9
-  MapboxCoreMaps: 929f2cf9de62782347db31d6c04dc1b6b4ba80ad
-  MapboxMaps: c7df1efe838d7acb54929ada9ee735949137fde9
+  MapboxCommon: bfffb68226f650df065cf24e307576267ebc75e8
+  MapboxCoreMaps: c74e3dd1d7d2b8c0ca5503d8c3e8ef79a8feccd5
+  MapboxMaps: f5e3858e71a923f0e2fc168a93397cfd98341dc5
   MapboxMobileEvents: febdd92835daa258ca1c1faad0821c0b3394ef40
   MMKV: 9c4663aa7ca255d478ff10f2f5cb7d17c1651ccd
   MMKVCore: 89f5c8a66bba2dcd551779dea4d412eeec8ff5bb
@@ -776,20 +774,20 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
   RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
   RNGoogleSignin: 3db2d849581299f425f5b61b90cb482a9e68c7af
-  rnmapbox-maps: d9b6aea28619d2ea2122a8cd89e0be18d3d533e4
+  rnmapbox-maps: ea93f81a0d63cb9695b63c1fd40e1bbd939ab759
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReanimated: ce445c233a6ff5600223484a88ad5704945d972a
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
-  RNSentry: db7fd7b66efda28885e4e904a8b5e7349aec61c1
+  RNSentry: 6503a8ec616947dbe98be828307c8f49e7686674
   RNShare: 36aa3e6958373a0ad1c95a1c960adef589da3794
   RNSVG: 3a79c0c4992213e4f06c08e62730c5e7b9e4dc17
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  Sentry: 4272663eb0eda312024d795ca3f5a562a8ce5e18
+  Sentry: b15765d11769852fe78c9add942f7df60ed5dbf5
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Turf: 469ce2c3d22e5e8e4818d5a3b254699a5c89efa4
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: a85b5075d0f967a6c3135c27c8ecd50797b7218d
+PODFILE CHECKSUM: 4dcd28cec04a66a1ad141451e5259047388a7156
 
 COCOAPODS: 1.11.3
