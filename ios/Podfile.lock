@@ -417,7 +417,7 @@ PODS:
     - React-Core
   - RNBootSplash (4.3.3):
     - React-Core
-  - RNDateTimePicker (6.7.0):
+  - RNDateTimePicker (6.7.1):
     - React-Core
   - RNDeviceInfo (10.3.0):
     - React-Core
@@ -469,7 +469,7 @@ PODS:
   - RNScreens (3.18.2):
     - React-Core
     - React-RCTImage
-  - RNSentry (4.9.0):
+  - RNSentry (4.10.0):
     - React-Core
     - Sentry/HybridSDK (= 7.31.2)
   - RNShare (8.0.0):
@@ -525,6 +525,7 @@ DEPENDENCIES:
   - React-callinvoker (from `../node_modules/react-native/ReactCommon/callinvoker`)
   - React-Codegen (from `build/generated/ios`)
   - React-Core (from `../node_modules/react-native/`)
+  - React-Core/DevSupport (from `../node_modules/react-native/`)
   - React-Core/RCTWebSocket (from `../node_modules/react-native/`)
   - React-CoreModules (from `../node_modules/react-native/React/CoreModules`)
   - React-cxxreact (from `../node_modules/react-native/ReactCommon/cxxreact`)
@@ -770,7 +771,7 @@ SPEC CHECKSUMS:
   ReactCommon: 349be31adeecffc7986a0de875d7fb0dcf4e251c
   RNAppleAuthentication: 0571c08da8c327ae2afc0261b48b4a515b0286a6
   RNBootSplash: 7e91ea56c7010aae487489789dbe212e8c905a0c
-  RNDateTimePicker: c6b404647f45472443b0fdcdd31296fc3516b0eb
+  RNDateTimePicker: 0530a73a6f3a1a85814cbde0802736993b9e675e
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
   RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
   RNGoogleSignin: 3db2d849581299f425f5b61b90cb482a9e68c7af
@@ -778,7 +779,7 @@ SPEC CHECKSUMS:
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReanimated: ce445c233a6ff5600223484a88ad5704945d972a
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
-  RNSentry: 6503a8ec616947dbe98be828307c8f49e7686674
+  RNSentry: 211e1a62145d5bcb4bee926823061b5af47816c4
   RNShare: 36aa3e6958373a0ad1c95a1c960adef589da3794
   RNSVG: 3a79c0c4992213e4f06c08e62730c5e7b9e4dc17
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
@@ -788,6 +789,6 @@ SPEC CHECKSUMS:
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 4dcd28cec04a66a1ad141451e5259047388a7156
+PODFILE CHECKSUM: 8c3bed3682deb90f17d2d07c33439751edc6ef23
 
 COCOAPODS: 1.11.3
