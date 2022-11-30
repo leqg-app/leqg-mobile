@@ -1,6 +1,6 @@
 {
   "name": "leqg",
-  "version": "2.0.10-beta.6",
+  "version": "2.0.10-beta.7",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
