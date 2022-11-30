@@ -43,7 +43,7 @@ target 'leqg' do
   use_flipper!()
 
   pre_install do |installer|
-    $RNMBGL.pre_install(installer)
+    $RNMapboxMaps.pre_install(installer)
   end
 
   permissions_path = '../node_modules/react-native-permissions/ios'
@@ -51,7 +51,14 @@ target 'leqg' do
   pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
 
   post_install do |installer|
-    $RNMBGL.post_install(installer)
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if config.build_settings['WRAPPER_EXTENSION'] == 'bundle'
+          config.build_settings['DEVELOPMENT_TEAM'] = '5N58NLV863'
+        end
+      end
+    end
+    $RNMapboxMaps.post_install(installer)
     react_native_post_install(
       installer,
       # Set `mac_catalyst_enabled` to `true` in order to apply patches
