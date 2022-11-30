@@ -80,7 +80,7 @@ const storesMapState = selector({
         continue;
       }
 
-      const today = store.schedules.find(s => s.dayOfWeek === currentDay);
+      const today = store.schedules?.find(s => s.dayOfWeek === currentDay);
       const open = today?.closed
         ? false
         : !today ||
