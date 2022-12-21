@@ -6,6 +6,7 @@ function Filter({ icon, onPress, onRemove, children }) {
   return (
     <Chip
       style={styles.filter}
+      textStyle={styles.text}
       icon={icon}
       onPress={onPress}
       onClose={onRemove}
@@ -20,6 +21,11 @@ const styles = StyleSheet.create({
     zIndex: 1,
     marginRight: 10,
     elevation: 2,
+    backgroundColor: 'white',
+    borderColor: '#666',
+  },
+  text: {
+    color: '#666',
   },
 });
 

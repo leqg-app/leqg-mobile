@@ -82,7 +82,7 @@ const mapboxState = selector({
     }
 
     return {
-      filters,
+      filters: filters.length ? filters : [['has', 'id']],
       textField: ['to-string', cheapestPrice],
       symbolSortKey: cheapestPrice,
       textSize: [
