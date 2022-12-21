@@ -415,7 +415,7 @@ PODS:
     - React-perflogger (= 0.70.6)
   - RNAppleAuthentication (2.2.2):
     - React-Core
-  - RNBootSplash (4.3.3):
+  - RNBootSplash (4.4.0):
     - React-Core
   - RNDateTimePicker (6.7.1):
     - React-Core
@@ -423,16 +423,16 @@ PODS:
     - React-Core
   - RNGestureHandler (2.8.0):
     - React-Core
-  - RNGoogleSignin (8.2.1):
+  - RNGoogleSignin (9.0.2):
     - GoogleSignIn (~> 6.2)
     - React-Core
-  - rnmapbox-maps (10.0.0-beta.59):
+  - rnmapbox-maps (10.0.0-beta.61):
     - MapboxMaps (~> 10.9.1)
     - React
     - React-Core
-    - rnmapbox-maps/DynamicLibrary (= 10.0.0-beta.59)
+    - rnmapbox-maps/DynamicLibrary (= 10.0.0-beta.61)
     - Turf
-  - rnmapbox-maps/DynamicLibrary (10.0.0-beta.59):
+  - rnmapbox-maps/DynamicLibrary (10.0.0-beta.61):
     - MapboxMaps (~> 10.9.1)
     - React
     - React-Core
@@ -469,16 +469,16 @@ PODS:
   - RNScreens (3.18.2):
     - React-Core
     - React-RCTImage
-  - RNSentry (4.9.0):
+  - RNSentry (4.12.0):
     - React-Core
-    - Sentry/HybridSDK (= 7.31.2)
-  - RNShare (8.0.0):
+    - Sentry/HybridSDK (= 7.31.3)
+  - RNShare (8.0.1):
     - React-Core
   - RNSVG (13.6.0):
     - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
-  - Sentry/HybridSDK (7.31.2)
+  - Sentry/HybridSDK (7.31.3)
   - SocketRocket (0.6.0)
   - Turf (2.6.1)
   - Yoga (1.14.0)
@@ -770,25 +770,25 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 15437b576139df27635400de0599d9844f1ab817
   ReactCommon: 349be31adeecffc7986a0de875d7fb0dcf4e251c
   RNAppleAuthentication: 0571c08da8c327ae2afc0261b48b4a515b0286a6
-  RNBootSplash: 7e91ea56c7010aae487489789dbe212e8c905a0c
+  RNBootSplash: 8ecffd190fae05291b671ea2280c5238f15499a9
   RNDateTimePicker: 0530a73a6f3a1a85814cbde0802736993b9e675e
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
   RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
-  RNGoogleSignin: 3db2d849581299f425f5b61b90cb482a9e68c7af
-  rnmapbox-maps: ea93f81a0d63cb9695b63c1fd40e1bbd939ab759
+  RNGoogleSignin: 22e468a9474dbcb8618d8847205ad4f0b2575d13
+  rnmapbox-maps: 67c2ac3619b9e1a75e5dad52efbdcb7a7f5f70bf
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReanimated: ce445c233a6ff5600223484a88ad5704945d972a
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
-  RNSentry: 6503a8ec616947dbe98be828307c8f49e7686674
-  RNShare: 36aa3e6958373a0ad1c95a1c960adef589da3794
+  RNSentry: 4c09f4dd9740cb9b33e94303de5b6d0dbeb0737d
+  RNShare: d93e00e906e6174657f6370b480437e4702bc86e
   RNSVG: 3a79c0c4992213e4f06c08e62730c5e7b9e4dc17
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  Sentry: b15765d11769852fe78c9add942f7df60ed5dbf5
+  Sentry: 08884c523575ec0f6690d94ed3ccb0246a1600bf
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Turf: 469ce2c3d22e5e8e4818d5a3b254699a5c89efa4
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: e8e6031e7329ec97d2c95b0b810fbd5ae90d1802
+PODFILE CHECKSUM: 0ba498788a7ab72556c3531a82f46a98c878d878
 
 COCOAPODS: 1.11.3

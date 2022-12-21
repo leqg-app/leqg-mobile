@@ -66,6 +66,6 @@ buck-out/
 
 # Project
 .env
-/leqg.app.*.zip
+/Le QG.app.*.zip
 android/app/google-services.json
 ios/GoogleService-Info.plist
