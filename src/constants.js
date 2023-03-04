@@ -1,8 +1,8 @@
 // import { Appearance } from 'react-native';
-import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+import { DefaultTheme, DarkTheme } from 'react-native-paper';
 
 export const isDark = false; // Appearance.getColorScheme() === 'dark';
-const PaperTheme = isDark ? MD3DarkTheme : MD3LightTheme;
+const PaperTheme = isDark ? DarkTheme : DefaultTheme;
 
 export const daysShort = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 export const daysFull = [

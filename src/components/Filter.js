@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     backgroundColor: 'white',
     borderColor: '#666',
+    borderRadius: 20,
   },
   text: {
     color: '#666',

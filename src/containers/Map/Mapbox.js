@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import MapboxGL, { Logger } from '@rnmapbox/maps';
+import MapboxGL, { Images, Logger } from '@rnmapbox/maps';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
 import Config from 'react-native-config';
@@ -123,10 +123,10 @@ const Mapbox = () => {
     }
   };
 
-  const didMove = ({ geometry, properties }) => {
+  const didMove = ({ properties }) => {
     storage.setObject('mapPosition', {
-      coordinates: geometry.coordinates,
-      zoom: properties.zoomLevel,
+      coordinates: properties.center,
+      zoom: properties.zoom,
     });
   };
 
@@ -173,7 +173,7 @@ const Mapbox = () => {
         styleURL={isDark ? MapboxGL.StyleURL.Dark : undefined}
         onPress={onMapPress}
         onLongPress={searchPoint}
-        onRegionDidChange={didMove}>
+        onCameraChanged={didMove}>
         <MapboxGL.Camera
           ref={camera}
           animationDuration={0}
@@ -188,6 +188,7 @@ const Mapbox = () => {
           id="stores"
           shape={stores}
           onPress={e => setSheetStore(e.features[0].properties)}>
+          <Images images={{ tooltipIcon }} />
           <MapboxGL.SymbolLayer
             id="store"
             filter={['all', ...filters]}
@@ -299,7 +300,7 @@ const Mapbox = () => {
 
 const layerStyles = {
   storePrice: {
-    iconImage: tooltipIcon,
+    iconImage: 'tooltipIcon',
     iconTranslate: [0, -10],
     iconSize: 0.5,
     iconAllowOverlap: true,

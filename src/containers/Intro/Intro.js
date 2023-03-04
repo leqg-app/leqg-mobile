@@ -24,7 +24,7 @@ function Intro({ navigation }) {
         <IconButton
           testID="map-search-icon"
           icon="map-search"
-          color="white"
+          iconColor="white"
           size={70}
         />
       ),
@@ -39,7 +39,7 @@ function Intro({ navigation }) {
     {
       title: 'Participez !',
       description: 'Ajoutez et modifiez les bars, aidez la communauté',
-      img: <IconButton icon="account-group" color="white" size={70} />,
+      img: <IconButton icon="account-group" iconColor="white" size={70} />,
       imgStyle: {
         height: 100,
         width: 100,

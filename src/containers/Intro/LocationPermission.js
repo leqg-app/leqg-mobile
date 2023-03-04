@@ -58,18 +58,16 @@ function LocationPermission() {
             ) : (
               <>
                 <Button
-                  style={styles.button}
                   contentStyle={styles.contentButton}
-                  mode="contained"
-                  color="#305458"
+                  mode="elevated"
+                  textColor="#305458"
                   icon="navigation"
                   onPress={grant}>
                   Activer
                 </Button>
                 <Button
-                  style={styles.button}
                   contentStyle={styles.contentButton}
-                  color="#fff"
+                  textColor="#fff"
                   onPress={next}>
                   Ignorer
                 </Button>
@@ -91,6 +89,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   padded: {
+    marginHorizontal: 20,
     flex: 1,
     justifyContent: 'center',
   },

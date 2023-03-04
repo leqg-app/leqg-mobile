@@ -48,7 +48,7 @@ const Map = ({ navigation, route }) => {
       }
       StatusBar.setBarStyle('dark-content');
     } else {
-      StatusBar.setBarStyle('light-content');
+      StatusBar.setBarStyle('dark-content');
     }
   }, [isFocused]);
 
