@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useTheme } from 'react-native-paper';
 import { useMMKVString } from 'react-native-mmkv';
 
 import Menu from '../../components/Menu';
@@ -38,16 +37,8 @@ const Settings = ({ navigation, route }) => {
 const SettingsStack = createNativeStackNavigator();
 
 export default () => {
-  const { colors } = useTheme();
   return (
-    <SettingsStack.Navigator
-      initialRouteName="Settings"
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.primary,
-        },
-        headerTintColor: '#fff',
-      }}>
+    <SettingsStack.Navigator initialRouteName="Settings">
       <SettingsStack.Screen
         options={{ title: 'Préférences' }}
         name="Settings"

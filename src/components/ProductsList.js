@@ -41,7 +41,6 @@ const ProductsList = ({ initialSelected = [], products, onChange }) => {
         offset: ITEM_HEIGHT * index,
         index,
       })}
-      contentContainerStyle={styles.contentContainer}
       keyboardShouldPersistTaps="always"
     />
   );
@@ -50,9 +49,6 @@ const ProductsList = ({ initialSelected = [], products, onChange }) => {
 const styles = StyleSheet.create({
   title: {
     marginVertical: 10,
-  },
-  contentContainer: {
-    backgroundColor: 'white',
   },
   productRow: {
     height: ITEM_HEIGHT,

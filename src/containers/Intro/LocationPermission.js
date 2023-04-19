@@ -60,7 +60,7 @@ function LocationPermission() {
                 <Button
                   contentStyle={styles.contentButton}
                   mode="elevated"
-                  textColor="#305458"
+                  textColor="#fff"
                   icon="navigation"
                   onPress={grant}>
                   Activer

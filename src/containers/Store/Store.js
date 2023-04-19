@@ -10,7 +10,6 @@ import {
   List,
   Text,
   TouchableRipple,
-  useTheme,
 } from 'react-native-paper';
 import Share from 'react-native-share';
 import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
@@ -22,7 +21,6 @@ import dateLocale from 'date-fns/locale/fr';
 import StoreProducts from './StoreProducts';
 import SchedulesPreview from './SchedulesPreview';
 import Schedules from './Schedules';
-import { theme } from '../../constants';
 import { getUrlHost } from '../../utils/url';
 import StoreFeatures from './StoreFeatures';
 import {
@@ -38,10 +36,8 @@ import { useStoreActions } from '../../store/storeActions';
 function OfflineMessage({ resetErrorBoundary }) {
   return (
     <View style={styles.contentCenter}>
-      <Text style={styles.offlineMessage}>
-        Veuillez vérifier votre connexion internet
-      </Text>
-      <IconButton icon="wifi-off" color="#888" />
+      <Text>Veuillez vérifier votre connexion internet</Text>
+      <IconButton icon="wifi-off" />
       <Button
         style={styles.offlineRetryButton}
         mode="outlined"
@@ -57,7 +53,7 @@ function OfflineMessage({ resetErrorBoundary }) {
 function Loading() {
   return (
     <View style={styles.contentCenter}>
-      <ActivityIndicator color={theme.colors.primary} />
+      <ActivityIndicator />
     </View>
   );
 }
@@ -73,7 +69,7 @@ function UpdatedAt({ date }) {
   return <Caption style={styles.updateDate}>Mis à jour {updatedAt}</Caption>;
 }
 
-function ActionButton({ name, icon, onPress, color = 'white' }) {
+function ActionButton({ name, icon, onPress, color }) {
   return (
     <View>
       <TouchableRipple
@@ -99,17 +95,10 @@ function ListInfo({ onPress, content, icon, chevron = true }) {
     <TouchableRipple onPress={onPress} rippleColor="rgba(0, 0, 0, .25)">
       <View style={styles.row}>
         <View style={styles.infoRow}>
-          <List.Icon
-            style={styles.infoIcon}
-            size={40}
-            icon={icon}
-            color={theme.colors.primary}
-          />
+          <List.Icon style={styles.infoIcon} size={40} icon={icon} />
           <Text style={styles.infoText}>{content}</Text>
         </View>
-        {chevron && (
-          <List.Icon icon="chevron-right" color="grey" style={styles.chevron} />
-        )}
+        {chevron && <List.Icon icon="chevron-right" style={styles.chevron} />}
       </View>
     </TouchableRipple>
   );
@@ -255,7 +244,6 @@ function StoreContent({ id }) {
 }
 
 const Store = () => {
-  const { colors } = useTheme();
   const sheetStore = useRecoilValue(sheetStoreState);
   const [requestId, setRequestID] = useRecoilState(storeQueryRequestIDState);
 
@@ -303,12 +291,7 @@ const Store = () => {
         <View style={styles.row}>
           {!expandSchedules ? (
             <View style={styles.infoRow}>
-              <List.Icon
-                style={styles.infoIcon}
-                size={40}
-                icon="clock"
-                color={colors.primary}
-              />
+              <List.Icon style={styles.infoIcon} size={40} icon="clock" />
               <SchedulesPreview schedules={sheetStore.schedules} />
             </View>
           ) : (
@@ -317,11 +300,7 @@ const Store = () => {
             </View>
           )}
           {!expandSchedules && (
-            <List.Icon
-              icon="chevron-down"
-              color="grey"
-              style={styles.chevron}
-            />
+            <List.Icon icon="chevron-down" style={styles.chevron} />
           )}
         </View>
       </TouchableRipple>
@@ -365,6 +344,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 15,
   },
   infoIcon: {
     marginHorizontal: 10,
@@ -401,12 +381,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     height: 300,
   },
-  offlineMessage: {
-    color: '#888',
-  },
   offlineRetryButton: {
     marginTop: 30,
-    color: '#fff',
   },
   updateDate: {
     marginTop: 10,

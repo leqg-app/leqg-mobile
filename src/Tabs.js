@@ -1,70 +1,94 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Portal } from 'react-native-paper';
+import { BottomNavigation, Portal } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { theme } from './constants';
 import Map from './containers/Map/Map';
 import Favorites from './containers/Favorites/Favorites';
 import Account from './containers/Account/Account';
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = () => (
-  <Portal.Host>
-    <Tab.Navigator
-      initialRouteName="MapTab"
-      screenOptions={({ route }) => ({
-        headerStyle: {
-          backgroundColor: theme.colors.primary,
-        },
-        headerTintColor: '#fff',
+const tabBar = ({ navigation, state, descriptors, insets }) => (
+  <BottomNavigation.Bar
+    navigationState={state}
+    safeAreaInsets={insets}
+    onTabPress={({ route, preventDefault }) => {
+      const event = navigation.emit({
+        type: 'tabPress',
+        target: route.key,
+        canPreventDefault: true,
+      });
 
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarIcon: ({ color, size }) => {
-          const icons = {
-            MapTab: 'map',
-            FavoritesTab: 'bookmark-outline',
-            AccountTab: 'account',
-          };
+      if (event.defaultPrevented) {
+        preventDefault();
+      } else {
+        navigation.navigate(route);
+      }
+    }}
+    renderIcon={({ route, focused, color }) => {
+      const { options } = descriptors[route.key];
+      if (options.tabBarIcon) {
+        return options.tabBarIcon({ focused, color, size: 24 });
+      }
 
-          return (
-            <MaterialCommunityIcons
-              name={icons[route.name]}
-              color={color}
-              size={size}
-            />
-          );
-        },
-      })}>
-      <Tab.Screen
-        name="MapTab"
-        component={Map}
-        options={{
-          headerShown: false,
-          title: 'Carte',
-        }}
-      />
-      <Tab.Screen
-        name="FavoritesTab"
-        component={Favorites}
-        options={{
-          headerShown: false,
-          title: 'Enregistrés',
-          lazy: false,
-        }}
-      />
-      <Tab.Screen
-        name="AccountTab"
-        component={Account}
-        options={{
-          headerShown: false,
-          title: 'Compte',
-          lazy: false,
-        }}
-      />
-    </Tab.Navigator>
-  </Portal.Host>
+      return null;
+    }}
+    getLabelText={({ route }) => {
+      const { options } = descriptors[route.key];
+      const label =
+        options.tabBarLabel !== undefined
+          ? options.tabBarLabel
+          : options.title !== undefined
+          ? options.title
+          : route.title;
+
+      return label;
+    }}
+  />
 );
+
+const TabNavigator = () => {
+  return (
+    <Portal.Host>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        tabBar={tabBar}>
+        <Tab.Screen
+          name="MapTab"
+          component={Map}
+          options={{
+            tabBarLabel: 'Carte',
+            tabBarIcon: ({ color, size }) => {
+              return <Icon name="map" size={size} color={color} />;
+            },
+          }}
+        />
+        <Tab.Screen
+          name="FavoritesTab"
+          component={Favorites}
+          options={{
+            tabBarLabel: 'Enregistrés',
+            tabBarIcon: ({ color, size }) => {
+              return <Icon name="bookmark-outline" size={size} color={color} />;
+            },
+          }}
+        />
+        <Tab.Screen
+          name="AccountTab"
+          component={Account}
+          options={{
+            tabBarLabel: 'Compte',
+            tabBarIcon: ({ color, size }) => {
+              return <Icon name="account" size={size} color={color} />;
+            },
+          }}
+        />
+      </Tab.Navigator>
+    </Portal.Host>
+  );
+};
 
 export default TabNavigator;

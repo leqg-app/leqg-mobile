@@ -79,7 +79,6 @@ function SearchStore({ navigation }) {
         placeholder="Rechercher un bar"
         onChangeText={text => setText(text)}
         value={text}
-        clearButtonMode="always"
         icon="arrow-left"
         onIconPress={() => navigation.goBack()}
         inputStyle={styles.searchbarInput}
@@ -105,14 +104,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 20,
     borderRadius: 30,
-    height: 45,
+    height: 50,
+    // paddingTop: 0,
     paddingLeft: 10,
     borderColor: 'grey',
     borderWidth: StyleSheet.hairlineWidth,
     marginBottom: 10,
   },
   searchbarInput: {
-    paddingLeft: 9,
+    minHeight: 50,
+    paddingLeft: 5,
   },
   rowStore: {
     display: 'flex',

@@ -1,12 +1,20 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, IconButton, Text } from 'react-native-paper';
+import {
+  ActivityIndicator,
+  IconButton,
+  Surface,
+  Text,
+  useTheme,
+} from 'react-native-paper';
 
 import leqgLogo from '../assets/icon-transparent.png';
 
 function SearchBar({ onSearch, onBack, loading }) {
+  const theme = useTheme();
   return (
-    <View style={styles.container}>
+    <Surface
+      style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.left}>
         {onBack ? (
           <IconButton
@@ -19,32 +27,31 @@ function SearchBar({ onSearch, onBack, loading }) {
         )}
       </View>
       <View onTouchStart={onSearch} style={styles.input}>
-        <Text style={styles.placeholder} numberOfLines={1}>
+        <Text
+          style={[styles.placeholder, { color: theme.colors.onSurfaceVariant }]}
+          numberOfLines={1}>
           Rechercher un bar
         </Text>
       </View>
       {loading && <ActivityIndicator style={styles.loader} size={19} />}
-    </View>
+    </Surface>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     elevation: 4,
-    backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
-    marginHorizontal: 20,
+    marginHorizontal: 18,
     borderRadius: 30,
-    height: 45,
-    borderColor: 'grey',
-    borderWidth: StyleSheet.hairlineWidth,
+    height: 50,
   },
   left: {
     marginLeft: 10,
-    marginRight: 9,
+    marginRight: 11,
   },
   logo: {
     resizeMode: 'stretch',
@@ -54,13 +61,13 @@ const styles = StyleSheet.create({
     marginRight: 1,
   },
   input: {
+    fontSize: 16,
     paddingVertical: 10,
     flex: 1,
   },
   placeholder: {
-    color: '#666',
-    fontSize: 18,
-    marginTop: -1,
+    fontSize: 16,
+    // marginTop: -1,
   },
   loader: {
     marginRight: 15,

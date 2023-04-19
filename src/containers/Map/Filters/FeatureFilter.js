@@ -1,7 +1,8 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { BottomSheetFooter, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { ScrollView } from 'react-native-gesture-handler';
 import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ActionButtons from '../../../components/ActionButtons';
 import ActionSheet from '../../../components/ActionSheet';
@@ -15,6 +16,8 @@ function FeatureFilter() {
   const setSheetStore = useSetRecoilState(sheetStoreState);
   const [featureFilter, setFeatureFilter] = useRecoilState(featureFilterState);
   const [filters, setFilters] = useState([]);
+  const { bottom } = useSafeAreaInsets();
+  const [footerHeight, setFooterHeight] = useState(117);
 
   const openModal = () => {
     setSheetStore();
@@ -30,20 +33,8 @@ function FeatureFilter() {
     closeModal();
   }, [filters]);
 
-  const renderFooter = useCallback(
-    props => (
-      <BottomSheetFooter {...props}>
-        <View style={styles.actions}>
-          <ActionButtons
-            onCancel={closeModal}
-            onSubmit={submit}
-            submitLabel="OK"
-          />
-        </View>
-      </BottomSheetFooter>
-    ),
-    [submit],
-  );
+  const onLayoutFooter = event =>
+    setFooterHeight(event.nativeEvent.layout.height);
 
   return (
     <>
@@ -52,17 +43,20 @@ function FeatureFilter() {
         onRemove={featureFilter && (() => setFeatureFilter(null))}>
         Caractéristique
       </Filter>
-      <ActionSheet
-        ref={sheet}
-        onDismiss={closeModal}
-        backdrop
-        snaps={['80%']}
-        footer={renderFooter}>
-        <BottomSheetScrollView>
-          <View style={styles.sheet}>
-            <FeaturesList initialSelected={filters} onChange={setFilters} />
-          </View>
-        </BottomSheetScrollView>
+      <ActionSheet ref={sheet} onDismiss={closeModal} backdrop snaps={['80%']}>
+        <ScrollView
+          style={{ paddingHorizontal: 15, marginBottom: footerHeight }}>
+          <FeaturesList initialSelected={filters} onChange={setFilters} />
+        </ScrollView>
+        <View
+          style={[styles.footerSheet, { paddingBottom: bottom }]}
+          onLayout={onLayoutFooter}>
+          <ActionButtons
+            onCancel={closeModal}
+            onSubmit={submit}
+            submitLabel="OK"
+          />
+        </View>
       </ActionSheet>
     </>
   );
@@ -73,15 +67,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 80,
   },
-  actions: {
-    backgroundColor: '#fff',
+  footerSheet: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: 'grey',
-  },
-  actionButtons: {
-    backgroundColor: 'white',
-    marginTop: 15,
-    marginBottom: 5,
   },
 });
 

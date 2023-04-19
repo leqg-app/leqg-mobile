@@ -4,6 +4,7 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Chip, Divider, Switch, Text } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ActionButtons from '../../../components/ActionButtons';
 import ActionSheet from '../../../components/ActionSheet';
@@ -11,7 +12,6 @@ import ProductsList from '../../../components/ProductsList';
 import Filter from '../../../components/Filter';
 import { productFilterState } from '../../../store/filterAtoms';
 import { productsState, sheetStoreState } from '../../../store/atoms';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function sortByName(a, b) {
   return a.name > b.name ? 1 : -1;
@@ -113,40 +113,38 @@ function ProductFilter() {
         <View
           style={[styles.footerSheet, { paddingBottom: bottom }]}
           onLayout={onLayoutFooter}>
-          <View style={styles.actions}>
-            {selectedProducts.length ? (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.selectedProductsList}>
-                {selectedProducts.map(product => (
-                  <Chip
-                    mode="outlined"
-                    key={product.id}
-                    style={styles.selectedProduct}
-                    onPress={() => unselectProduct(product)}
-                    onClose={() => unselectProduct(product)}>
-                    {product.name}
-                  </Chip>
-                ))}
-              </ScrollView>
-            ) : null}
-            <View style={styles.filterType}>
-              <Text onPress={toggleType}>
-                Tous les critères doivent être présents:
-              </Text>
-              <Switch
-                style={styles.switchFilterType}
-                value={filterAll}
-                onValueChange={toggleType}
-              />
-            </View>
-            <ActionButtons
-              onCancel={closeModal}
-              onSubmit={submit}
-              submitLabel="OK"
+          {selectedProducts.length ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.selectedProductsList}>
+              {selectedProducts.map(product => (
+                <Chip
+                  mode="outlined"
+                  key={product.id}
+                  style={styles.selectedProduct}
+                  onPress={() => unselectProduct(product)}
+                  onClose={() => unselectProduct(product)}>
+                  {product.name}
+                </Chip>
+              ))}
+            </ScrollView>
+          ) : null}
+          <View style={styles.filterType}>
+            <Text onPress={toggleType}>
+              Tous les critères doivent être présents:
+            </Text>
+            <Switch
+              style={styles.switchFilterType}
+              value={filterAll}
+              onValueChange={toggleType}
             />
           </View>
+          <ActionButtons
+            onCancel={closeModal}
+            onSubmit={submit}
+            submitLabel="OK"
+          />
         </View>
       </ActionSheet>
     </>
@@ -154,11 +152,6 @@ function ProductFilter() {
 }
 
 const styles = StyleSheet.create({
-  actions: {
-    backgroundColor: '#fff',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'grey',
-  },
   filterType: {
     display: 'flex',
     flexDirection: 'row',
@@ -177,7 +170,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     marginBottom: 12,
     borderRadius: 12,
-    backgroundColor: '#EEE',
     textAlign: 'left',
   },
   selectedProductsList: {
@@ -192,6 +184,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'grey',
   },
 });
 

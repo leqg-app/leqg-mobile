@@ -1,13 +1,14 @@
 import React from 'react';
-import { LogBox, StyleSheet } from 'react-native';
+import { LogBox, StyleSheet, useColorScheme } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Sentry from '@sentry/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
 import { RecoilRoot } from 'recoil';
 
 import Routes from './Routes';
-import { theme } from './constants';
+import { CombinedDarkTheme, CombinedDefaultTheme } from './theme';
 
 // eslint-disable-next-line
 if (!__DEV__) {
@@ -25,12 +26,17 @@ if (!__DEV__) {
 }
 
 const App = () => {
+  const isDarkMode = useColorScheme() === 'dark';
+  const theme = isDarkMode ? CombinedDarkTheme : CombinedDefaultTheme;
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <SafeAreaProvider>
         <RecoilRoot>
           <PaperProvider theme={theme}>
-            <Routes />
+            <NavigationContainer theme={theme}>
+              <Routes />
+            </NavigationContainer>
           </PaperProvider>
         </RecoilRoot>
       </SafeAreaProvider>

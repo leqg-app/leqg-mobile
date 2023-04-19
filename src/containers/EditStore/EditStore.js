@@ -24,7 +24,6 @@ import {
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 
 import { sortByPrices } from '../../utils/price';
-import { theme } from '../../constants';
 import Menu from '../../components/Menu';
 import Price from '../../components/Price';
 import EditSchedules, { newSchedule } from './EditSchedules';
@@ -463,13 +462,7 @@ const styles = StyleSheet.create({
 const AddStack = createNativeStackNavigator();
 
 export default () => (
-  <AddStack.Navigator
-    screenOptions={{
-      headerStyle: {
-        backgroundColor: theme.colors.primary,
-      },
-      headerTintColor: '#fff',
-    }}>
+  <AddStack.Navigator>
     <AddStack.Screen
       options={({ route }) => ({
         title: route.params?.store?.id ? 'Modifier un bar' : 'Ajouter un bar',

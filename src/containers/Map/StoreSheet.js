@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef, Suspense } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { IconButton, Portal, Text, Title } from 'react-native-paper';
+import { IconButton, Portal, Text, Title, useTheme } from 'react-native-paper';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -16,10 +16,10 @@ import Store from '../Store/Store';
 import { sheetStoreState } from '../../store/atoms';
 import StoreSheetMenu from './StoreSheetMenu';
 
-let lastSheetStore;
-
 const StoreSheet = () => {
+  const { colors } = useTheme();
   const sheet = useRef(null);
+  const lastSheetStore = useRef(null);
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const [previewHeight, setPreviewHeight] = useState(0);
   const sheetPosition = useSharedValue(0);
@@ -59,8 +59,9 @@ const StoreSheet = () => {
     ],
     opacity: sheetPosition.value,
   }));
+  const sheetStyle = { backgroundColor: colors.background, minHeight: '100%' };
   const contentStyle = useMemo(
-    () => [styles.sheetContent, animatedContent],
+    () => [sheetStyle, animatedContent],
     [animatedContent],
   );
 
@@ -69,13 +70,13 @@ const StoreSheet = () => {
       return;
     }
     if (sheetStore) {
-      if (!lastSheetStore) {
+      if (!lastSheetStore.current) {
         sheet.current.snapToIndex(0);
       }
     } else {
       sheet.current.close();
     }
-    lastSheetStore = sheetStore;
+    lastSheetStore.current = sheetStore;
   }, [sheetStore]);
 
   return (
@@ -84,7 +85,11 @@ const StoreSheet = () => {
         style={[
           styles.topBarWrapper,
           topBarStyle,
-          { height: topbarHeight, paddingTop: top },
+          {
+            height: topbarHeight,
+            paddingTop: top,
+            backgroundColor: colors.background,
+          },
         ]}>
         <IconButton
           size={30}
@@ -105,9 +110,11 @@ const StoreSheet = () => {
         snapPoints={initialSnapPoints}
         animatedIndex={sheetPosition}
         topInset={topbarHeight - 20}
+        handleStyle={{ backgroundColor: colors.background }}
+        backgroundStyle={{ backgroundColor: colors.background }}
         enablePanDownToClose
         onClose={() => sheetStore && setSheetStore()}>
-        <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
+        <BottomSheetScrollView contentContainerStyle={sheetStyle}>
           <Pressable
             onPress={() => sheet.current.snapToIndex(1)}
             onLayout={getPreviewHeight}>
@@ -146,10 +153,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
-  },
-  sheetContent: {
-    backgroundColor: 'white',
-    minHeight: '100%',
   },
   previewContainer: {
     minHeight: 93,

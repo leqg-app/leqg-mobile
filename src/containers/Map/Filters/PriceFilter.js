@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Paragraph, Title } from 'react-native-paper';
+import { Paragraph, Title, useTheme } from 'react-native-paper';
 import { BarRheostat } from 'react-native-rheostat';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -62,6 +62,7 @@ function getStats(stores, rates) {
 }
 
 function PriceFilter() {
+  const { colors } = useTheme();
   const sheet = useRef();
   const setSheetStore = useSetRecoilState(sheetStoreState);
   const [price, setPrice] = useRecoilState(priceFilterState);
@@ -113,7 +114,7 @@ function PriceFilter() {
             {currencySymbol}
           </Paragraph>
           <BarRheostat
-            theme={{ rheostat: { themeColor: '#163033' } }}
+            theme={{ rheostat: { themeColor: colors.primary } }}
             values={values}
             min={0}
             max={20}

@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   rightValue: {
     marginTop: 5,
-    backgroundColor: '#DDD',
+    // backgroundColor: '#DDD',
     paddingTop: 6,
     height: 30,
     marginRight: 20,

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useColorScheme } from 'react-native';
 import MapboxGL, { Images, Logger } from '@rnmapbox/maps';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
@@ -7,7 +7,7 @@ import Config from 'react-native-config';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import tooltipIcon from '../../assets/tooltip-50.png';
-import { DEFAULT_MAP, isDark, theme } from '../../constants';
+import { DEFAULT_MAP, theme } from '../../constants';
 import searchPlace from '../../utils/searchPlace';
 import CreateStoreSheet from './CreateStoreSheet';
 import { storage } from '../../store/storage';
@@ -42,6 +42,7 @@ const Mapbox = () => {
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const { filters, textField, symbolSortKey, textSize } =
     useRecoilValue(mapboxState);
+  const isDarkMode = useColorScheme() === 'dark';
   const { colors } = useTheme();
 
   const [createStore, setCreateStore] = useState();
@@ -92,6 +93,14 @@ const Mapbox = () => {
       animationDuration: 1000,
     });
   }, [sheetStore]);
+
+  useEffect(() => {
+    layerStyles.storeName.textColor = colors.onBackground;
+    layerStyles.storeName.textHaloColor = colors.onSecondary;
+    layerStyles.nearLine.lineColor = colors.primary;
+    layerStyles.nearText.textColor = colors.primary;
+    layerStyles.nearText.textHaloColor = colors.primary;
+  }, [colors]);
 
   const moveTo = centerCoordinate => {
     if (!camera.current) {
@@ -170,7 +179,8 @@ const Mapbox = () => {
         localizeLabels={true}
         pitchEnabled={false}
         rotateEnabled={false}
-        styleURL={isDark ? MapboxGL.StyleURL.Dark : undefined}
+        scaleBarPosition={{ left: 10, bottom: 40 }}
+        styleURL={isDarkMode ? MapboxGL.StyleURL.Dark : undefined}
         onPress={onMapPress}
         onLongPress={searchPoint}
         onCameraChanged={didMove}>
@@ -243,7 +253,7 @@ const Mapbox = () => {
               style={{
                 textField: '✕',
                 textSize: 20,
-                textColor: theme.colors.primary,
+                textColor: colors.primary,
               }}
             />
           </MapboxGL.ShapeSource>
@@ -281,12 +291,14 @@ const Mapbox = () => {
       </MapboxGL.MapView>
       <View style={styles.fabContainer}>
         <FAB
+          variant="surface"
           style={[styles.fab, styles.fabAddStore]}
           icon="plus"
           color={colors.primary}
           onPress={() => setCreateStore({ add: true })}
         />
         <FAB
+          variant="surface"
           style={styles.fab}
           icon="target"
           color={colors.primary}
@@ -313,7 +325,6 @@ const layerStyles = {
     textField: ['get', 'name'],
     textSize: 12,
     textTranslate: [0, -11],
-    textHaloColor: '#fff',
     textHaloWidth: 2,
     textJustify: 'auto',
     textOptional: true,
@@ -330,7 +341,6 @@ const layerStyles = {
     textRadialOffset: 1.1,
   },
   nearLine: {
-    lineColor: theme.colors.primary,
     lineWidth: 1.4,
     lineOpacity: 0.84,
     lineDasharray: [5, 5],
@@ -338,8 +348,6 @@ const layerStyles = {
   nearText: {
     symbolPlacement: 'line-center',
     textSize: 13,
-    textColor: theme.colors.primary,
-    textHaloColor: theme.colors.primary,
     textHaloWidth: 0.4,
     textOffset: [0, 1],
     textLetterSpacing: 0.1,
@@ -366,13 +374,10 @@ const styles = StyleSheet.create({
     margin: 16,
   },
   fab: {
-    backgroundColor: 'white',
-    borderColor: 'grey',
     borderWidth: StyleSheet.hairlineWidth,
   },
   fabAddStore: {
     marginBottom: 10,
-    backgroundColor: 'white',
   },
 });
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { LEVELS } from '../../constants';
@@ -70,7 +70,7 @@ const Account = ({ navigation }) => {
             </Text>
           </View>
         </View>
-        <View style={styles.menus}>
+        <View>
           <Menu>
             <Menu.Item
               name="Mes contributions"
@@ -115,9 +115,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     flex: 1,
   },
-  menus: {
-    // marginTop: 10,
-  },
   menu: {
     borderTopColor: '#777',
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -128,15 +125,8 @@ const AccountStack = createNativeStackNavigator();
 
 export default () => {
   const user = useRecoilValue(userState);
-  const { colors } = useTheme();
   return (
-    <AccountStack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.primary,
-        },
-        headerTintColor: '#fff',
-      }}>
+    <AccountStack.Navigator>
       {user?.jwt ? (
         <AccountStack.Screen
           options={{ title: 'Mon compte', headerShown: false }}

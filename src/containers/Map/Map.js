@@ -1,14 +1,18 @@
 import React, { useEffect } from 'react';
-import { BackHandler, Platform, StatusBar, StyleSheet } from 'react-native';
+import {
+  BackHandler,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  useColorScheme,
+} from 'react-native';
 import { Portal, Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useIsFocused } from '@react-navigation/core';
 import { useFocusEffect } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { theme } from '../../constants';
 import Filters from './Filters/Filters';
 import Mapbox from './Mapbox';
 import StoreSheet from './StoreSheet';
@@ -17,7 +21,7 @@ import SearchStore from './SearchStore';
 import { sheetStoreState, storeLoadingState } from '../../store/atoms';
 
 const Map = ({ navigation, route }) => {
-  const isFocused = useIsFocused();
+  const isDarkMode = useColorScheme() === 'dark';
   const storeLoading = useRecoilValue(storeLoadingState);
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const { params } = route;
@@ -41,16 +45,12 @@ const Map = ({ navigation, route }) => {
   });
 
   useEffect(() => {
-    if (isFocused) {
-      if (Platform.OS === 'android') {
-        StatusBar.setBackgroundColor('transparent');
-        StatusBar.setTranslucent(true);
-      }
-      StatusBar.setBarStyle('dark-content');
-    } else {
-      StatusBar.setBarStyle('dark-content');
+    if (Platform.OS === 'android') {
+      StatusBar.setBackgroundColor('transparent');
+      StatusBar.setTranslucent(true);
     }
-  }, [isFocused]);
+    StatusBar.setBarStyle(`${isDarkMode ? 'light' : 'dark'}-content`);
+  }, [isDarkMode]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -85,24 +85,12 @@ const MapStack = createNativeStackNavigator();
 export default () => (
   <MapStack.Navigator
     screenOptions={{
-      presentation: 'modal',
-      headerStyle: {
-        backgroundColor: theme.colors.primary,
-      },
-      headerTintColor: '#fff',
+      headerShown: false,
     }}>
-    <MapStack.Screen
-      name="MapScreen"
-      component={Map}
-      options={{ headerShown: false }}
-    />
+    <MapStack.Screen name="MapScreen" component={Map} />
     <MapStack.Group
       screenOptions={{ presentation: 'fullScreenModal', animation: 'fade' }}>
-      <MapStack.Screen
-        options={{ headerShown: false }}
-        name="SearchStore"
-        component={SearchStore}
-      />
+      <MapStack.Screen name="SearchStore" component={SearchStore} />
     </MapStack.Group>
   </MapStack.Navigator>
 );

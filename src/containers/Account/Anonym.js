@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text, Paragraph, useTheme } from 'react-native-paper';
+import { Text, Paragraph } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Menu from '../../components/Menu';
@@ -66,15 +66,8 @@ const styles = StyleSheet.create({
 const AnonymStack = createNativeStackNavigator();
 
 export default () => {
-  const { colors } = useTheme();
   return (
-    <AnonymStack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.primary,
-        },
-        headerTintColor: '#fff',
-      }}>
+    <AnonymStack.Navigator>
       <AnonymStack.Screen
         options={{ title: 'Mon compte', headerShown: false }}
         name="Anonym"

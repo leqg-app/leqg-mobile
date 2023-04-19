@@ -1,33 +1,26 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Chip, useTheme } from 'react-native-paper';
 
-import { theme } from '../constants';
-
-const Badge = ({ children, onSelect, selected }) => {
+function Badge({ onSelect, children, selected }) {
+  const { colors } = useTheme();
   return (
-    <Text
-      style={[styles.badge, selected && styles.selected]}
-      onPress={onSelect}>
+    <Chip
+      style={[styles.badge, selected && { backgroundColor: colors.primary }]}
+      onPress={onSelect}
+      textStyle={[selected && { color: colors.onPrimary }]}
+      mode="outlined">
       {children}
-    </Text>
+    </Chip>
   );
-};
+}
 
 const styles = StyleSheet.create({
   badge: {
-    paddingVertical: 8,
-    paddingHorizontal: 13,
     marginRight: 10,
     marginBottom: 10,
     borderRadius: 20,
-    borderColor: theme.colors.primary,
-    borderWidth: 1,
-  },
-  selected: {
-    backgroundColor: theme.colors.primary,
-    color: '#fff',
   },
 });
 
-export default memo(Badge);
+export default Badge;

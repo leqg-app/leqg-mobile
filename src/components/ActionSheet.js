@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
 import { BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Portal } from 'react-native-paper';
+import { Portal, useTheme } from 'react-native-paper';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
@@ -12,6 +12,7 @@ let currentIndex = -1;
 
 const ActionSheet = React.forwardRef(
   ({ children, onDismiss = () => {}, backdrop, snaps, footer }, ref) => {
+    const { colors } = useTheme();
     const { top } = useSafeAreaInsets();
 
     const topbarHeight = useMemo(() => top + 30, []);
@@ -62,7 +63,8 @@ const ActionSheet = React.forwardRef(
             onChange={onChange}
             backdropComponent={backdrop && renderBackdrop}
             topInset={topbarHeight}
-            footerComponent={footer}>
+            footerComponent={footer}
+            backgroundStyle={{ backgroundColor: colors.background }}>
             {children}
           </BottomSheet>
         </Portal>
@@ -81,7 +83,8 @@ const ActionSheet = React.forwardRef(
           onClose={onDismiss}
           onChange={onChange}
           backdropComponent={backdrop && renderBackdrop}
-          topInset={topbarHeight}>
+          topInset={topbarHeight}
+          backgroundStyle={{ backgroundColor: colors.background }}>
           <BottomSheetView onLayout={handleContentLayout}>
             {children}
           </BottomSheetView>
