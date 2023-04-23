@@ -33,10 +33,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   rightValue: {
-    marginTop: 5,
-    // backgroundColor: '#DDD',
-    paddingTop: 6,
-    height: 30,
+    marginTop: 2,
     marginRight: 20,
     paddingHorizontal: 15,
     borderRadius: 20,

@@ -16,7 +16,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useRecoilState } from 'recoil';
 
 import { minutesToTime } from '../../utils/time';
-import { daysFull, daysShort, theme } from '../../constants';
+import { daysFull, daysShort } from '../../constants';
 import { storeEditionState } from '../../store/atoms';
 
 export const newSchedule = (_, i) => ({
@@ -122,7 +122,8 @@ const EditSchedulesModal = props => {
                 <View
                   style={[
                     styles.dayButton,
-                    selected && styles.dayButtonSelected,
+                    { borderColor: colors.primary },
+                    selected && { backgroundColor: colors.primary },
                   ]}
                   key={i}>
                   <TouchableRipple
@@ -132,7 +133,8 @@ const EditSchedulesModal = props => {
                     <Text
                       style={[
                         styles.dayButtonText,
-                        selected && styles.dayButtonTextSelected,
+                        { color: colors.primary },
+                        selected && { color: colors.onPrimary },
                       ]}>
                       {day}
                     </Text>
@@ -236,12 +238,8 @@ function EditSchedules({ navigation }) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => (
-        <Appbar.BackAction color="white" onPress={navigation.goBack} />
-      ),
-      headerRight: () => (
-        <IconButton color="white" icon="check" onPress={save} />
-      ),
+      headerLeft: () => <Appbar.BackAction onPress={navigation.goBack} />,
+      headerRight: () => <IconButton icon="check" onPress={save} />,
     });
   }, [navigation]);
 
@@ -256,12 +254,7 @@ function EditSchedules({ navigation }) {
             <View style={styles.dayRow}>
               <Text style={styles.container}>{day}</Text>
               <DaySchedule schedule={schedules[i]} />
-              <Avatar.Icon
-                icon="pencil"
-                size={20}
-                color="#000"
-                style={styles.editIcon}
-              />
+              <Avatar.Icon icon="pencil" size={20} style={styles.editIcon} />
             </View>
           </TouchableRipple>
         );
@@ -368,7 +361,6 @@ const styles = StyleSheet.create({
   dayButton: {
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: theme.colors.primary,
     backgroundColor: 'transparent',
   },
   dayButtonTouchable: {
@@ -379,16 +371,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  dayButtonSelected: {
-    backgroundColor: theme.colors.primary,
-  },
   dayButtonText: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: theme.colors.primary,
-  },
-  dayButtonTextSelected: {
-    color: 'white',
   },
   buttonEditAll: {
     margin: 30,

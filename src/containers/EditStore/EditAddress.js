@@ -13,7 +13,7 @@ const EditAddress = ({ navigation }) => {
   const addressInput = useRef();
 
   useEffect(() => {
-    addressInput.current.focus();
+    // addressInput.current.focus();
   }, []);
 
   return (
@@ -37,15 +37,16 @@ const EditAddress = ({ navigation }) => {
           key: Config.GOOGLE_MAPS_API_KEY,
           language: 'fr',
         }}
-        enablePoweredByContainer={false}
         textInputProps={{
           InputComp: Searchbar,
           placeholder: 'Rechercher une adresse',
           returnKeyType: 'done',
           style: {
-            height: 50,
+            height: 61,
             width: '100%',
+            borderRadius: 0,
           },
+          clearButtonMode: 'never',
         }}
         styles={{
           listView: {

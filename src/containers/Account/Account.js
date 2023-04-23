@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Alert, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text } from 'react-native-paper';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -57,7 +57,7 @@ const Account = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView>
         <Title>Mon Compte</Title>
         <View style={styles.head}>
           <View>
@@ -98,9 +98,6 @@ const Account = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: StatusBar.currentHeight,
-  },
   title: {
     marginTop: 20,
     marginHorizontal: 20,

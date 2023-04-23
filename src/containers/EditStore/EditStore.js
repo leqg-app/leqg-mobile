@@ -3,7 +3,6 @@ import {
   Pressable,
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   View,
 } from 'react-native';
@@ -143,12 +142,9 @@ const EditStore = ({ route, navigation }) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerLeft: () => (
-        <Appbar.BackAction color="white" onPress={navigation.goBack} />
-      ),
+      headerLeft: () => <Appbar.BackAction onPress={navigation.goBack} />,
       headerRight: () => (
         <Appbar.Action
-          color="white"
           icon="check"
           disabled={!validForm || state.loading}
           onPress={save}
@@ -172,11 +168,6 @@ const EditStore = ({ route, navigation }) => {
   if (!user) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-          translucent={true}
-          backgroundColor="transparent"
-        />
         <View style={styles.center}>
           <View>
             <Paragraph>Veuillez vous connecter pour contribuer</Paragraph>
@@ -211,11 +202,6 @@ const EditStore = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        translucent={true}
-        backgroundColor="transparent"
-      />
       <ScrollView keyboardShouldPersistTaps="always">
         {storeEdition?.revisions?.length ? (
           <Menu>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, View, useColorScheme } from 'react-native';
+import { Appearance, StyleSheet, View } from 'react-native';
 import MapboxGL, { Images, Logger } from '@rnmapbox/maps';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
@@ -34,16 +34,16 @@ if (__DEV__) {
   });
 }
 
+const isDarkMode = Appearance.getColorScheme() === 'dark';
 const storedMapPosition = storage.getObject('mapPosition', {});
 
 const Mapbox = () => {
   const camera = useRef();
+  const { colors } = useTheme();
   const stores = useRecoilValue(storesMapState);
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const { filters, textField, symbolSortKey, textSize } =
     useRecoilValue(mapboxState);
-  const isDarkMode = useColorScheme() === 'dark';
-  const { colors } = useTheme();
 
   const [createStore, setCreateStore] = useState();
   const [mapState, setState] = useState({
@@ -65,10 +65,8 @@ const Mapbox = () => {
         const position = await getLocation();
         setMap({
           position,
-          ...(!initialPosition && {
-            initialPosition: position,
-            initialZoomLevel: 13,
-          }),
+          initialPosition: position,
+          initialZoomLevel: 13,
         });
       } catch (e) {
         setMap({

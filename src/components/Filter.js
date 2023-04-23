@@ -9,7 +9,8 @@ function Filter({ icon, onPress, onRemove, children }) {
       icon={icon}
       onPress={onPress}
       onClose={onRemove}
-      mode="outlined">
+      mode="outlined"
+      elevated>
       {children}
     </Chip>
   );
@@ -19,8 +20,9 @@ const styles = StyleSheet.create({
   filter: {
     zIndex: 1,
     marginRight: 10,
-    elevation: 2,
+    elevation: 3,
     borderRadius: 20,
+    borderWidth: 0,
   },
 });
 

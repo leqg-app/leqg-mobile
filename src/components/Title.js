@@ -12,6 +12,7 @@ const Title = ({ children, style = {} }) => {
 
 const styles = StyleSheet.create({
   title: {
+    fontSize: 22,
     marginTop: 20,
     marginHorizontal: 20,
   },

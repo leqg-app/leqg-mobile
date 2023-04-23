@@ -25,7 +25,7 @@ const EditFeatures = ({ navigation }) => {
         </Text>
       </View>
       <ScrollView>
-        <View style={{ marginHorizontal: 15, marginBottom: 15 }}>
+        <View style={styles.features}>
           <FeaturesList
             initialSelected={storeEdition.features}
             onChange={features =>
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'grey',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
+  features: { marginHorizontal: 15, marginBottom: 15 },
 });
 
 export default EditFeatures;

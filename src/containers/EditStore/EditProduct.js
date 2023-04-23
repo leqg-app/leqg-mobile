@@ -109,12 +109,7 @@ const EditProducts = ({ navigation, route }) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <IconButton
-          color="white"
-          disabled={!validForm}
-          icon="check"
-          onPress={save}
-        />
+        <IconButton disabled={!validForm} icon="check" onPress={save} />
       ),
     });
   }, [navigation, storeProduct]);

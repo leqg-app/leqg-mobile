@@ -61,8 +61,14 @@ const TabNavigator = () => {
           component={Map}
           options={{
             tabBarLabel: 'Carte',
-            tabBarIcon: ({ color, size }) => {
-              return <Icon name="map" size={size} color={color} />;
+            tabBarIcon: ({ color, size, focused }) => {
+              return (
+                <Icon
+                  name={focused ? 'map' : 'map-outline'}
+                  size={size}
+                  color={color}
+                />
+              );
             },
           }}
         />
@@ -71,8 +77,14 @@ const TabNavigator = () => {
           component={Favorites}
           options={{
             tabBarLabel: 'Enregistrés',
-            tabBarIcon: ({ color, size }) => {
-              return <Icon name="bookmark-outline" size={size} color={color} />;
+            tabBarIcon: ({ color, size, focused }) => {
+              return (
+                <Icon
+                  name={focused ? 'bookmark' : 'bookmark-outline'}
+                  size={size}
+                  color={color}
+                />
+              );
             },
           }}
         />
@@ -81,8 +93,14 @@ const TabNavigator = () => {
           component={Account}
           options={{
             tabBarLabel: 'Compte',
-            tabBarIcon: ({ color, size }) => {
-              return <Icon name="account" size={size} color={color} />;
+            tabBarIcon: ({ color, size, focused }) => {
+              return (
+                <Icon
+                  name={focused ? 'account' : 'account-outline'}
+                  size={size}
+                  color={color}
+                />
+              );
             },
           }}
         />

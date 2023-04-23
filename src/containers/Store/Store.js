@@ -10,6 +10,7 @@ import {
   List,
   Text,
   TouchableRipple,
+  useTheme,
 } from 'react-native-paper';
 import Share from 'react-native-share';
 import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
@@ -129,6 +130,7 @@ function call(store) {
 }
 
 function StoreActionButtons({ id }) {
+  const { colors } = useTheme();
   const store = useRecoilValue(storeState(id));
   const user = useRecoilValue(userState);
   const setSheetStore = useSetRecoilState(sheetStoreState);
@@ -177,12 +179,17 @@ function StoreActionButtons({ id }) {
       <ActionButton
         onPress={toggleFavorite}
         name="Enregistrer"
-        color={isFavorite ? 'gold' : 'white'}
+        color={isFavorite ? 'gold' : colors.onPrimary}
         icon={isFavorite ? 'star' : 'star-outline'}
         disabled
       />
       {store.phone && (
-        <ActionButton onPress={() => call(store)} name="Appeler" icon="phone" />
+        <ActionButton
+          onPress={() => call(store)}
+          name="Appeler"
+          icon="phone"
+          color={colors.onPrimary}
+        />
       )}
     </>
   );
@@ -244,6 +251,7 @@ function StoreContent({ id }) {
 }
 
 const Store = () => {
+  const { colors } = useTheme();
   const sheetStore = useRecoilValue(sheetStoreState);
   const [requestId, setRequestID] = useRecoilState(storeQueryRequestIDState);
 
@@ -261,11 +269,13 @@ const Store = () => {
           onPress={() => openAddress(sheetStore)}
           name="Itinéraire"
           icon="directions"
+          color={colors.onPrimary}
         />
         <ActionButton
           onPress={() => shareStore(sheetStore)}
           name="Partager"
           icon="share-variant"
+          color={colors.onPrimary}
         />
         <ErrorBoundary fallback={<></>} resetKeys={[requestId]}>
           <Suspense fallback={<></>}>
