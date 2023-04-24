@@ -28,7 +28,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '14'
+          node-version: '16'
 
       - name: Cache dependencies
         id: cache-dependencies
@@ -50,17 +50,20 @@ jobs:
           GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
           EOF
 
-      - name: Linter
-        run: yarn lint
-
-      - name: Unit tests
-        run: yarn test
-
       - name: Create Google Services file
         run: |
           cat << EOF > android/app/google-services.json
           ${{ secrets.GOOGLE_SERVICES_JSON }}
           EOF
+
+      - name: Add Mapbox token
+        run: echo "MAPBOX_SECRET_KEY=${{ secrets.MAPBOX_SECRET_KEY }}" >> ./android/gradle.properties
+
+      - name: Linter
+        run: yarn lint
+
+      - name: Unit tests
+        run: yarn test
 
       - name: Grant rights
         working-directory: android
@@ -120,7 +123,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '14'
+          node-version: '16'
 
       - name: Cache Node.js dependencies
         id: cache-nodejs-dependencies
