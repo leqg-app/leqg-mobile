@@ -7,19 +7,22 @@ import {
   Text,
   useTheme,
 } from 'react-native-paper';
+import { useRecoilState } from 'recoil';
 
 import leqgLogo from '../assets/icon-transparent.png';
+import { sheetStoreState } from '../store/atoms';
 
-function SearchBar({ onSearch, onBack, loading }) {
+function SearchBar({ onSearch, loading }) {
   const theme = useTheme();
+  const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   return (
     <Surface
       style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.left}>
-        {onBack ? (
+        {sheetStore ? (
           <IconButton
             icon="arrow-left"
-            onPress={onBack}
+            onPress={() => setSheetStore()}
             color="rgba(0,0,0,0.54)"
           />
         ) : (

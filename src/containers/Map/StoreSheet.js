@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef, Suspense } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { BackHandler, Pressable, StyleSheet, View } from 'react-native';
 import { IconButton, Portal, Text, Title, useTheme } from 'react-native-paper';
 import Animated, {
   interpolate,
@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRecoilState } from 'recoil';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -22,11 +23,43 @@ const StoreSheet = () => {
   const lastSheetStore = useRef(null);
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const [previewHeight, setPreviewHeight] = useState(0);
+  const [show, setShow] = useState(false);
   const sheetPosition = useSharedValue(0);
   const { top, bottom } = useSafeAreaInsets();
 
   const topbarHeight = top + 50;
   const sheetHeight = bottom + 170;
+
+  useFocusEffect(() => {
+    const event = BackHandler.addEventListener(
+      'hardwareBackPress',
+      function () {
+        if (sheetStore) {
+          setSheetStore();
+          return true;
+        }
+        return false;
+      },
+    );
+    return () => event.remove();
+  });
+
+  useEffect(() => {
+    if (!sheet.current) {
+      setShow(false);
+      return;
+    }
+    if (sheetStore) {
+      if (!lastSheetStore.current) {
+        sheet.current.snapToIndex(0);
+      }
+      setTimeout(() => setShow(true), 300);
+    } else {
+      sheet.current.close();
+      setShow(false);
+    }
+    lastSheetStore.current = sheetStore;
+  }, [sheetStore]);
 
   const initialSnapPoints = useMemo(() => [sheetHeight, '100%'], []);
 
@@ -65,45 +98,33 @@ const StoreSheet = () => {
     [animatedContent],
   );
 
-  useEffect(() => {
-    if (!sheet.current) {
-      return;
-    }
-    if (sheetStore) {
-      if (!lastSheetStore.current) {
-        sheet.current.snapToIndex(0);
-      }
-    } else {
-      sheet.current.close();
-    }
-    lastSheetStore.current = sheetStore;
-  }, [sheetStore]);
-
   return (
     <Portal>
-      <Animated.View
-        style={[
-          styles.topBarWrapper,
-          topBarStyle,
-          {
-            height: topbarHeight,
-            paddingTop: top,
-            backgroundColor: colors.background,
-          },
-        ]}>
-        <IconButton
-          size={30}
-          icon="chevron-down"
-          onPress={() => sheet.current.snapToIndex(0)}
-        />
-        {sheetStore?.id && (
-          <ErrorBoundary fallback={<></>}>
-            <Suspense fallback={<></>}>
-              {<StoreSheetMenu id={sheetStore.id} />}
-            </Suspense>
-          </ErrorBoundary>
-        )}
-      </Animated.View>
+      {show && (
+        <Animated.View
+          style={[
+            styles.topBarWrapper,
+            topBarStyle,
+            {
+              height: topbarHeight,
+              paddingTop: top,
+              backgroundColor: colors.background,
+            },
+          ]}>
+          <IconButton
+            size={30}
+            icon="chevron-down"
+            onPress={() => sheet.current.snapToIndex(0)}
+          />
+          {sheetStore?.id && (
+            <ErrorBoundary fallback={<></>}>
+              <Suspense fallback={<></>}>
+                {<StoreSheetMenu id={sheetStore.id} />}
+              </Suspense>
+            </ErrorBoundary>
+          )}
+        </Animated.View>
+      )}
       <BottomSheet
         ref={sheet}
         index={-1}
@@ -132,9 +153,11 @@ const StoreSheet = () => {
               </View>
             </View>
           </Pressable>
-          <Animated.View style={contentStyle}>
-            <Store />
-          </Animated.View>
+          {show && (
+            <Animated.View style={contentStyle}>
+              <Store sheetStore={sheetStore} />
+            </Animated.View>
+          )}
         </BottomSheetScrollView>
       </BottomSheet>
     </Portal>

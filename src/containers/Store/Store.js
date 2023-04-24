@@ -250,9 +250,8 @@ function StoreContent({ id }) {
   );
 }
 
-const Store = () => {
+const Store = ({ sheetStore }) => {
   const { colors } = useTheme();
-  const sheetStore = useRecoilValue(sheetStoreState);
   const [requestId, setRequestID] = useRecoilState(storeQueryRequestIDState);
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
