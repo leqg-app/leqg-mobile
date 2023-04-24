@@ -1,12 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Animated, Easing, StyleSheet, TextInput, View } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import { IconButton, useTheme } from 'react-native-paper';
 import Svg, { Circle, G } from 'react-native-svg';
 
 import { theme, LEVELS } from '../constants';
 import { getLevel } from '../utils/reputation';
 
 function AnimatedCircle({ initial, won }) {
+  const { colors } = useTheme();
   const [level, setLevel] = useState(getLevel(initial));
   const previousLevel = LEVELS[level - 1];
   const initialPercentage =
@@ -28,7 +29,7 @@ function AnimatedCircle({ initial, won }) {
   return (
     <View>
       <View style={styles.icon}>
-        <IconButton icon="shield" color={theme.colors.primary} size={40} />
+        <IconButton icon="shield" iconColor={colors.primary} size={40} />
       </View>
       <CircleAnimate
         initial={initialPercent}
@@ -54,6 +55,7 @@ function CircleAnimate({
   radius = 40,
   strokeWidth = 10,
 }) {
+  const { colors } = useTheme();
   const circleRef = useRef();
   const halfCircle = radius + strokeWidth;
   const circumference = 2 * Math.PI * radius;
@@ -84,7 +86,7 @@ function CircleAnimate({
           <Circle
             cx="50%"
             cy="50%"
-            stroke={theme.colors.primary}
+            stroke={colors.primary}
             strokeWidth={strokeWidth}
             r={radius}
             fill="transparent"
@@ -94,7 +96,7 @@ function CircleAnimate({
             ref={circleRef}
             cx="50%"
             cy="50%"
-            stroke={theme.colors.primary}
+            stroke={colors.primary}
             strokeWidth={strokeWidth}
             r={radius}
             fill="transparent"

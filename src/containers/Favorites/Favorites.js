@@ -77,7 +77,6 @@ const Favorites = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <Title>Enregistrés</Title>
-
       <FlatList
         data={user.favorites}
         renderItem={({ item }) => (

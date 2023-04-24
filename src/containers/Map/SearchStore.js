@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 30,
     height: 50,
-    // paddingTop: 0,
     paddingLeft: 10,
     borderColor: 'grey',
     borderWidth: StyleSheet.hairlineWidth,
@@ -118,10 +117,11 @@ const styles = StyleSheet.create({
   rowStore: {
     display: 'flex',
     flexDirection: 'row',
+    paddingLeft: 10,
   },
   rowInformation: {
     paddingVertical: 10,
-    paddingRight: 10,
+    paddingHorizontal: 10,
     borderBottomColor: '#bbb',
     borderBottomWidth: StyleSheet.hairlineWidth,
     flex: 1,
