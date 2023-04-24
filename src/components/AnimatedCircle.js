@@ -3,7 +3,7 @@ import { Animated, Easing, StyleSheet, TextInput, View } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
 import Svg, { Circle, G } from 'react-native-svg';
 
-import { theme, LEVELS } from '../constants';
+import { LEVELS } from '../constants';
 import { getLevel } from '../utils/reputation';
 
 function AnimatedCircle({ initial, won }) {
