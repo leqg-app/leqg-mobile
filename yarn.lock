@@ -2264,10 +2264,10 @@
     color "^4.2.3"
     warn-once "^0.1.0"
 
-"@rnmapbox/maps@10.0.2":
-  version "10.0.2"
-  resolved "https://registry.yarnpkg.com/@rnmapbox/maps/-/maps-10.0.2.tgz#a5d079613ec220d6b805008f47f98d596ef630e2"
-  integrity sha512-6wp3mMmfYRbraUwvjNYOgUBOfxRYZK+J0tbj91qNcDDi4RB3uB0Dl+l3zmEmar81vKGLtWsqdeTRMegXNmg5SQ==
+"@rnmapbox/maps@10.0.3":
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/@rnmapbox/maps/-/maps-10.0.3.tgz#ea9bafb0c379fce5906fbc88e386b23cfe6c8e41"
+  integrity sha512-5m/fSJmXcNdrU7kzIBSgflhiBUiS4f2iWzNmIRwFcT4Hame86XNWlep9SNQZee7bYaFo4Gesf96LSQNY0me1Qw==
   dependencies:
     "@turf/along" "6.5.0"
     "@turf/distance" "6.5.0"
@@ -7106,10 +7106,10 @@ metro-react-native-babel-preset@0.73.9:
     "@babel/template" "^7.0.0"
     react-refresh "^0.4.0"
 
-metro-react-native-babel-preset@0.76.2:
-  version "0.76.2"
-  resolved "https://registry.yarnpkg.com/metro-react-native-babel-preset/-/metro-react-native-babel-preset-0.76.2.tgz#dab4ca4b594bb47780adf5987c6b3b9cb41e767b"
-  integrity sha512-Kzi4JhEzwrPOuv3OHjDZvvlPTjInNoIV8QKBRyLTzx7TJuA5a2xReo0lz4sG4x9Bcv1XjKkKRmYUgS9V1I820w==
+metro-react-native-babel-preset@0.76.3:
+  version "0.76.3"
+  resolved "https://registry.yarnpkg.com/metro-react-native-babel-preset/-/metro-react-native-babel-preset-0.76.3.tgz#efedce64251c4733446a127a7e19e1f36cd4a600"
+  integrity sha512-3DyE0aP/k8OdIcA0Dy0MQwx6EiXaTLq5YPy4Z38lwOFxD9ZRm2rwnaNXNczsYisJqeq1vcEJpfMnjS26Kqq97g==
   dependencies:
     "@babel/core" "^7.20.0"
     "@babel/plugin-proposal-async-generator-functions" "^7.0.0"
