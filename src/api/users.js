@@ -1,4 +1,4 @@
-import { post, put, get } from './index';
+import { post, put, get, del } from './index';
 
 function signUp(data) {
   return post('/v2/auth/local/register', data);
@@ -32,6 +32,10 @@ function updateProfile(jwt, data) {
   return put('/v2/users/me', data, { Authorization: `Bearer ${jwt}` });
 }
 
+function deleteProfile(jwt) {
+  return del('/v2/users/me', {}, { Authorization: `Bearer ${jwt}` });
+}
+
 export {
   signUp,
   signIn,
@@ -41,4 +45,5 @@ export {
   getContributions,
   signInProvider,
   signUpProvider,
+  deleteProfile,
 };

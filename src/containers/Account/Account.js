@@ -15,6 +15,7 @@ import Settings from './Settings';
 import Anonym from './Anonym';
 import Contributions from './Contributions';
 import * as signOutProviders from './Providers/index.js';
+import Profile from './Profile';
 
 const Account = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
@@ -70,6 +71,11 @@ const Account = ({ navigation }) => {
       </View>
       <View>
         <Menu>
+          <Menu.Item
+            name="Mon profil"
+            icon="account"
+            onPress={() => navigation.navigate('Profile')}
+          />
           <Menu.Item
             name="Mes contributions"
             icon="thumb-up"
@@ -139,6 +145,11 @@ export default () => {
         />
       )}
       <AccountStack.Screen name="Contributions" component={Contributions} />
+      <AccountStack.Screen
+        name="Profile"
+        options={{ title: 'Mon profil' }}
+        component={Profile}
+      />
       <AccountStack.Screen
         options={{ headerShown: false }}
         name="SettingsStack"
