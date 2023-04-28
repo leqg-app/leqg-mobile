@@ -8,12 +8,11 @@ import { appleAuth } from '@invertase/react-native-apple-authentication';
 import SocialButton from '../../../components/social/SocialButton';
 import { signInProvider } from '../../../api/users';
 import { userState } from '../../../store/atoms';
-import { reportError } from '../../../utils/errorMessage';
+import { getErrorMessage } from '../../../utils/errorMessage';
 
-const errors = {
+const ERROR_MESSAGES = {
   'user.blocked':
     "Ce compte a été désactivé, contactez-nous pour plus d'information",
-  'Network request failed': 'Vérifiez votre connexion internet',
 };
 
 function AppleAuth({ signUp }) {
@@ -45,7 +44,7 @@ function AppleAuth({ signUp }) {
       }
 
       if (user.error !== 'user.notfound') {
-        return setState({ error: user.error, loading: false });
+        throw user.error;
       }
 
       if (signUp) {
@@ -70,15 +69,12 @@ function AppleAuth({ signUp }) {
       );
 
       setState({ error: undefined, loading: false });
-    } catch (error) {
-      if (
-        error.code === appleAuth.Error.CANCELED ||
-        error.code === appleAuth.Error.UNKNOWN
-      ) {
+    } catch (err) {
+      const { CANCELED, UNKNOWN } = appleAuth.Error;
+      if (err.code === CANCELED || err.code === UNKNOWN) {
         return;
       }
-      reportError(error);
-      setState({ error, loading: false });
+      setState({ error: getErrorMessage(err, ERROR_MESSAGES), loading: false });
     }
   };
 
@@ -97,8 +93,7 @@ function AppleAuth({ signUp }) {
             label: 'OK',
           }}
           onDismiss={() => setState({ error: undefined, loading: false })}>
-          {errors[state.error] ||
-            'Une erreur est survenue, merci de réessayer plus tard.'}
+          {state.error}
         </Snackbar>
       </Portal>
     </>

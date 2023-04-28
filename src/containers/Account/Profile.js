@@ -5,13 +5,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useRecoilState } from 'recoil';
 
 import { deleteProfile } from '../../api/users';
-import { reportError } from '../../utils/errorMessage';
+import { getErrorMessage } from '../../utils/errorMessage';
 import { userState } from '../../store/atoms';
 import * as signOutProviders from './Providers/index.js';
-
-const errors = {
-  'Network request failed': 'Vérifiez votre connexion internet',
-};
 
 const Profile = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
@@ -40,17 +36,12 @@ const Profile = ({ navigation }) => {
   const deleteAccount = async () => {
     setState({ error: undefined, loading: true });
     try {
-      const { error } = await deleteProfile(user.jwt);
-      if (error) {
-        setState({ error, loading: false });
-        return;
-      }
+      await deleteProfile(user.jwt);
       signOutProviders[user.provider]?.signOut?.();
       setUser(null);
       navigation.goBack();
     } catch (err) {
-      reportError(err);
-      setState({ error: err.message, loading: false });
+      setState({ error: getErrorMessage(err), loading: false });
     }
   };
 
@@ -80,12 +71,7 @@ const Profile = ({ navigation }) => {
         disabled={state.loading}>
         Supprimer mon compte
       </Button>
-      {state.error && (
-        <HelperText type="error">
-          {errors[state.error] ||
-            'Erreur inconnue, nous avons été informés. Merci de réessayer plus tard'}
-        </HelperText>
-      )}
+      {state.error && <HelperText type="error">{state.error}</HelperText>}
     </KeyboardAwareScrollView>
   );
 };

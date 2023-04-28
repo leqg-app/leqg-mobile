@@ -6,12 +6,11 @@ import { useSetRecoilState } from 'recoil';
 
 import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
-import { reportError } from '../../utils/errorMessage';
+import { getErrorMessage } from '../../utils/errorMessage';
 
-const errors = {
+const ERROR_MESSAGES = {
   'user.username.taken':
     "Ce nom d'utilisateur est déjà utilisé, choisissez-en un autre",
-  'Network request failed': 'Vérifiez votre connexion internet',
 };
 
 function SignUpProvider({ route }) {
@@ -36,9 +35,8 @@ function SignUpProvider({ route }) {
         throw error;
       }
       setUser(user);
-    } catch (error) {
-      reportError(error);
-      setState({ error, loading: false });
+    } catch (err) {
+      setState({ error: getErrorMessage(err, ERROR_MESSAGES), loading: false });
     }
   };
 
@@ -63,12 +61,7 @@ function SignUpProvider({ route }) {
           value={username}
           blurOnSubmit={false}
         />
-        {state.error && (
-          <HelperText type="error">
-            {errors[state.error] ||
-              'Erreur inconnue, nous avons été informés. Merci de réessayer plus tard'}
-          </HelperText>
-        )}
+        {state.error && <HelperText type="error">{state.error}</HelperText>}
         <Button
           style={styles.space}
           mode="contained"

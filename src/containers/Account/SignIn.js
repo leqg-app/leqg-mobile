@@ -8,9 +8,9 @@ import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
 import GoogleAuth from './Providers/GoogleAuth';
 import AppleAuth from './Providers/AppleAuth';
-import { reportError } from '../../utils/errorMessage';
+import { getErrorMessage } from '../../utils/errorMessage';
 
-const errors = {
+const ERROR_MESSAGES = {
   'user.credentials': 'Identifiant ou mot de passe incorrect',
   'user.confirmed': 'Confirmez votre email afin de vous connecter',
   'user.blocked':
@@ -20,7 +20,6 @@ const errors = {
   'user.email.provide': 'Email invalide',
   'user.email.format': 'Email invalide',
   'user.password.provide': 'Mot de passe invalide',
-  'Network request failed': 'Vérifiez votre connexion internet',
 };
 
 const SignIn = ({ navigation }) => {
@@ -46,9 +45,8 @@ const SignIn = ({ navigation }) => {
         throw error;
       }
       setUser(user);
-    } catch (error) {
-      reportError(error);
-      setState({ error, loading: false });
+    } catch (err) {
+      setState({ error: getErrorMessage(err, ERROR_MESSAGES), loading: false });
     }
   };
 
@@ -87,12 +85,7 @@ const SignIn = ({ navigation }) => {
           secureTextEntry
           returnKeyType="done"
         />
-        {state.error && (
-          <HelperText type="error">
-            {errors[state.error] ||
-              'Erreur inconnue, nous avons été informés. Merci de réessayer plus tard'}
-          </HelperText>
-        )}
+        {state.error && <HelperText type="error">{state.error}</HelperText>}
         <Button
           style={styles.space}
           mode="text"

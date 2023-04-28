@@ -14,14 +14,13 @@ import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
 import GoogleAuth from './Providers/GoogleAuth';
 import AppleAuth from './Providers/AppleAuth';
-import { reportError } from '../../utils/errorMessage';
+import { getErrorMessage } from '../../utils/errorMessage';
 
-const errors = {
+const ERROR_MESSAGES = {
   'user.email.taken':
     'Cette adresse email est déjà utilisée, essayez de vous connecter',
   'user.username.taken':
     "Ce nom d'utilisateur est déjà utilisé, choisissez-en un autre",
-  'Network request failed': 'Vérifiez votre connexion internet',
 };
 
 const SignUp = ({ navigation }) => {
@@ -50,9 +49,8 @@ const SignUp = ({ navigation }) => {
         throw error;
       }
       setUser(user);
-    } catch (error) {
-      reportError(error);
-      setState({ error, loading: false });
+    } catch (err) {
+      setState({ error: getErrorMessage(err, ERROR_MESSAGES), loading: false });
     }
   };
 
@@ -108,12 +106,7 @@ const SignUp = ({ navigation }) => {
           value={password}
           secureTextEntry
         />
-        {state.error && (
-          <HelperText type="error">
-            {errors[state.error] ||
-              'Erreur inconnue, nous avons été informés. Merci de réessayer plus tard'}
-          </HelperText>
-        )}
+        {state.error && <HelperText type="error">{state.error}</HelperText>}
         <Button
           style={styles.space}
           mode="contained"

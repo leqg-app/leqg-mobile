@@ -4,10 +4,9 @@ import { Title, TextInput, Button, HelperText } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { resetPassword } from '../../api/users';
-import { reportError } from '../../utils/errorMessage';
+import { getErrorMessage } from '../../utils/errorMessage';
 
-const errors = {
-  'Network request failed': 'Vérifiez votre connexion internet',
+const ERROR_MESSAGES = {
   'email.format': 'Adresse email invalide',
   'user.not-exist': "Cet email n'a pas de compte",
   'user.blocked':
@@ -31,14 +30,13 @@ const ResetPassword = ({ navigation }) => {
     try {
       const { error } = await resetPassword({ email });
       if (error) {
-        setState({ error, loading: false });
-        return;
+        throw error;
       }
     } catch (err) {
-      reportError(err);
-      setState({ error: err.message, loading: false });
+      setState({ error: getErrorMessage(err, ERROR_MESSAGES), loading: false });
       return;
     }
+    setState({ loading: false });
     Alert.alert(
       'Envoyé !',
       'Vérifiez vos emails, vous trouverez un lien pour changer de mot de passe.',
@@ -68,12 +66,7 @@ const ResetPassword = ({ navigation }) => {
         onChangeText={setEmail}
         value={email}
       />
-      {state.error && (
-        <HelperText type="error">
-          {errors[state.error] ||
-            'Erreur inconnue, nous avons été informés. Merci de réessayer plus tard'}
-        </HelperText>
-      )}
+      {state.error && <HelperText type="error">{state.error}</HelperText>}
       <Button
         style={styles.space}
         mode="contained"

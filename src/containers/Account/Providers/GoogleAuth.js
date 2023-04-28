@@ -12,12 +12,11 @@ import { useSetRecoilState } from 'recoil';
 import SocialButton from '../../../components/social/SocialButton';
 import { signInProvider } from '../../../api/users';
 import { userState } from '../../../store/atoms';
-import { reportError } from '../../../utils/errorMessage';
+import { getErrorMessage } from '../../../utils/errorMessage';
 
-const errors = {
+const ERROR_MESSAGES = {
   'user.blocked':
     "Ce compte a été désactivé, contactez-nous pour plus d'information",
-  'Network request failed': 'Vérifiez votre connexion internet',
 };
 
 function GoogleAuth({ signUp }) {
@@ -50,7 +49,7 @@ function GoogleAuth({ signUp }) {
       }
 
       if (user.error !== 'user.notfound') {
-        return setState({ error: user.error, loading: false });
+        throw user.error;
       }
 
       if (signUp) {
@@ -74,12 +73,11 @@ function GoogleAuth({ signUp }) {
         { cancelable: true },
       );
       setState({ error: undefined, loading: false });
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+    } catch (err) {
+      if (err.code === statusCodes.SIGN_IN_CANCELLED) {
         return;
       }
-      reportError(error);
-      setState({ error, loading: false });
+      setState({ error: getErrorMessage(err, ERROR_MESSAGES), loading: false });
     }
   };
 
@@ -98,8 +96,7 @@ function GoogleAuth({ signUp }) {
             label: 'OK',
           }}
           onDismiss={() => setState({ error: undefined, loading: false })}>
-          {errors[state.error] ||
-            'Une erreur est survenue, merci de réessayer plus tard.'}
+          {state.error}
         </Snackbar>
       </Portal>
     </>

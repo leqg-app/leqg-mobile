@@ -22,7 +22,7 @@ const useFavoriteState = () => {
         favorites: favorites.map(({ id }) => ({ id })),
       });
     } catch (err) {
-      const error = getErrorMessage(err.message);
+      const error = getErrorMessage(err);
       setUser({
         ...user,
         favorites: user.favorites.filter(({ id }) => store.id !== id),
@@ -46,7 +46,7 @@ const useFavoriteState = () => {
         favorites: favorites.map(({ id }) => ({ id })),
       });
     } catch (err) {
-      const error = getErrorMessage(err.message);
+      const error = getErrorMessage(err);
       setUser({
         ...user,
         favorites: [...user.favorites, store],

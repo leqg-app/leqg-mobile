@@ -55,22 +55,12 @@ function useStoreActions() {
   };
 
   const saveStore = async storeEdition => {
-    const save = () => {
-      if (storeEdition.id) {
-        return editStore(storeEdition.id, storeEdition, user).catch(err => ({
-          error: err.message,
-        }));
-      } else {
-        return addStore(storeEdition, user).catch(err => ({
-          error: err.message,
-        }));
-      }
-    };
-
     try {
-      const response = await save(storeEdition);
-      if (response.error) {
-        return response;
+      let response;
+      if (storeEdition.id) {
+        response = await editStore(storeEdition.id, storeEdition, user);
+      } else {
+        response = await addStore(storeEdition, user);
       }
 
       const versions = storage.getObject('versions', {});
@@ -116,8 +106,8 @@ function useStoreActions() {
       });
 
       return { ...response, store };
-    } catch (err) {
-      return { error: err.message };
+    } catch (error) {
+      return { error };
     }
   };
 

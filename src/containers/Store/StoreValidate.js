@@ -8,6 +8,7 @@ import { validateStore } from '../../api/stores';
 import { sheetStoreState, storeState, userState } from '../../store/atoms';
 import { getCoordinatesDistance } from '../../utils/coordinates';
 import getLocation from '../../utils/location';
+import { getErrorMessage } from '../../utils/errorMessage';
 
 const ERROR_MESSAGES = {
   'position.blocked':
@@ -20,11 +21,6 @@ const ERROR_MESSAGES = {
   'store.validation.ratelimit':
     'Vous êtes trop rapide, attendez un peu avant de valider un nouveau lieu',
 };
-
-function getErrorMessage(error) {
-  const message = error.message || error;
-  return ERROR_MESSAGES[message] || message;
-}
 
 function StoreValidate({ id }) {
   const navigation = useNavigation();
@@ -73,7 +69,7 @@ function StoreValidate({ id }) {
       const userPosition = { longitude, latitude };
       const distance = getCoordinatesDistance(userPosition, store);
       if (distance > 0.04) {
-        throw getErrorMessage('store.validation.position');
+        throw 'store.validation.position';
       }
       const { error, reputation } = await validateStore(
         store.id,
@@ -90,7 +86,7 @@ function StoreValidate({ id }) {
       }));
       navigation.navigate('WonReputation', { reputation });
     } catch (err) {
-      setState({ loading: false, error: getErrorMessage(err) });
+      setState({ loading: false, error: getErrorMessage(err, ERROR_MESSAGES) });
     }
   };
 

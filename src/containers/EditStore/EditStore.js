@@ -118,7 +118,7 @@ const EditStore = ({ route, navigation }) => {
     }
     const { error, store, reputation } = await saveStore(storeEdition);
     if (error) {
-      return setState(getErrorMessage(error, { unknown: true }));
+      return setState({ error: getErrorMessage(error) });
     }
     if (!storeEdition.id) {
       setSheetStore({ ...store, focus: true });

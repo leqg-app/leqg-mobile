@@ -14,7 +14,7 @@ import { storage } from '../../store/storage';
 import getLocation from '../../utils/location';
 import { sheetStoreState, storesMapState } from '../../store/atoms';
 import { mapboxState } from '../../store/filterAtoms';
-import { reportError } from '../../utils/errorMessage';
+import { getErrorMessage } from '../../utils/errorMessage';
 
 MapboxGL.setWellKnownTileServer('mapbox');
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
@@ -165,8 +165,7 @@ const Mapbox = () => {
       }
       setCreateStore({ address, countryCode, longitude, latitude });
     } catch (err) {
-      reportError(err);
-      setCreateStore({ error: 'Erreur réseau, réessayez plus tard' });
+      setCreateStore({ error: getErrorMessage(err) });
     }
   };
 
