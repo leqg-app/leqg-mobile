@@ -13,7 +13,7 @@ function request(method) {
   };
 }
 
-export const get = request('get');
-export const post = request('post');
-export const put = request('put');
-export const del = request('delete');
+export const get = request('GET');
+export const post = request('POST');
+export const put = request('PUT');
+export const del = request('DELETE');
