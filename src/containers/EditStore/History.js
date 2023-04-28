@@ -65,7 +65,9 @@ const RevisionRow = memo(({ revision }) => {
 const History = ({ route }) => {
   const { store } = route.params;
 
-  const revisions = Array.from(store.revisions).sort(sortBy('creation_date'));
+  const revisions = Array.from(store.revisions).sort(
+    sortBy('createdAt', 'asc'),
+  );
 
   return (
     <SafeAreaView style={styles.container}>
