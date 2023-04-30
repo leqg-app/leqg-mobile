@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Map from './containers/Map/Map';
 import Favorites from './containers/Favorites/Favorites';
 import Account from './containers/Account/Account';
+import Products from './containers/Products/Products';
 
 const Tab = createBottomTabNavigator();
 
@@ -65,6 +66,22 @@ const TabNavigator = () => {
               return (
                 <Icon
                   name={focused ? 'map' : 'map-outline'}
+                  size={size}
+                  color={color}
+                />
+              );
+            },
+          }}
+        />
+        <Tab.Screen
+          name="ProductsTab"
+          component={Products}
+          options={{
+            tabBarLabel: 'Bières',
+            tabBarIcon: ({ color, size, focused }) => {
+              return (
+                <Icon
+                  name={focused ? 'beer' : 'beer-outline'}
                   size={size}
                   color={color}
                 />
