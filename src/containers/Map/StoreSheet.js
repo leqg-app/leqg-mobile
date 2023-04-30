@@ -11,11 +11,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRecoilState } from 'recoil';
 import { ErrorBoundary } from 'react-error-boundary';
+import StarRating from 'react-native-star-rating-widget';
 
 import SchedulesPreview from '../Store/SchedulesPreview';
 import Store from '../Store/Store';
 import { sheetStoreState } from '../../store/atoms';
 import StoreSheetMenu from './StoreSheetMenu';
+import StoreRateCount from './StoreRateCount';
 
 const StoreSheet = () => {
   const { colors } = useTheme();
@@ -86,7 +88,7 @@ const StoreSheet = () => {
         translateY: interpolate(
           sheetPosition.value,
           [0.5, 1],
-          [0, -previewHeight],
+          [0, -previewHeight + (sheetStore?.rate ? 10 : -2)],
         ),
       },
     ],
@@ -119,7 +121,7 @@ const StoreSheet = () => {
           {sheetStore?.id && (
             <ErrorBoundary fallback={<></>}>
               <Suspense fallback={<></>}>
-                {<StoreSheetMenu id={sheetStore.id} />}
+                <StoreSheetMenu id={sheetStore.id} />
               </Suspense>
             </ErrorBoundary>
           )}
@@ -143,6 +145,25 @@ const StoreSheet = () => {
               <Title numberOfLines={1} style={styles.title}>
                 {sheetStore?.name}
               </Title>
+              {sheetStore?.rate ? (
+                <View style={styles.rateRow}>
+                  <Text style={styles.rate}>
+                    {sheetStore?.rate.toFixed(1).replace('.', ',')}
+                  </Text>
+                  <StarRating
+                    rating={sheetStore?.rate}
+                    starSize={15}
+                    starStyle={styles.stars}
+                  />
+                  {sheetStore?.id && (
+                    <ErrorBoundary fallback={<></>}>
+                      <Suspense fallback={<></>}>
+                        <StoreRateCount id={sheetStore.id} />
+                      </Suspense>
+                    </ErrorBoundary>
+                  )}
+                </View>
+              ) : null}
               <View style={styles.preview}>
                 <View style={styles.previewSchedules}>
                   {sheetStore?.schedules && (
@@ -185,13 +206,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginHorizontal: 15,
   },
+  rateRow: {
+    flexDirection: 'row',
+    marginHorizontal: 15,
+    marginTop: 5,
+  },
+  rate: {
+    color: 'grey',
+    fontSize: 14,
+    marginRight: 6,
+  },
+  stars: {
+    marginHorizontal: 0,
+  },
   preview: {
     marginHorizontal: 16,
     marginBottom: 15,
   },
   previewSchedules: {
-    marginTop: 10,
-    marginBottom: 17,
+    marginTop: 6,
+    marginBottom: 8,
   },
   loading: {
     marginTop: 10,

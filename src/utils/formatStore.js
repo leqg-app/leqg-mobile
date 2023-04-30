@@ -57,6 +57,7 @@ export function decompressStore(compressedStore) {
     products,
     schedules,
     features,
+    rate,
   ] = compressedStore;
   return {
     id,
@@ -70,6 +71,7 @@ export function decompressStore(compressedStore) {
     productsById: getProductsById(products),
     schedules: decompressSchedules(schedules),
     features,
+    rate,
   };
 }
 

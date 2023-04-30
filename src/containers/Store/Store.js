@@ -1,8 +1,7 @@
-import React, { useMemo, Suspense } from 'react';
-import { Alert, Platform, StyleSheet, View, Linking } from 'react-native';
+import React, { Suspense } from 'react';
+import { Platform, StyleSheet, View, Linking } from 'react-native';
 import {
   ActivityIndicator,
-  Avatar,
   Button,
   Caption,
   Divider,
@@ -13,9 +12,8 @@ import {
   useTheme,
 } from 'react-native-paper';
 import Share from 'react-native-share';
-import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useNavigation } from '@react-navigation/native';
 import formatDistance from 'date-fns/formatDistance';
 import dateLocale from 'date-fns/locale/fr';
 
@@ -24,15 +22,11 @@ import SchedulesPreview from './SchedulesPreview';
 import Schedules from './Schedules';
 import { getUrlHost } from '../../utils/url';
 import StoreFeatures from './StoreFeatures';
-import {
-  sheetStoreState,
-  storeState,
-  userState,
-  storeQueryRequestIDState,
-} from '../../store/atoms';
-import { useFavoriteState } from '../../store/hooks';
+import { storeState, storeQueryRequestIDState } from '../../store/atoms';
 import StoreValidate from './StoreValidate';
 import { useStoreActions } from '../../store/storeActions';
+import StoreActionButtons, { ActionButton } from './StoreActions';
+import StoreRates from './StoreRates';
 
 function OfflineMessage({ resetErrorBoundary }) {
   return (
@@ -68,27 +62,6 @@ function UpdatedAt({ date }) {
     locale: dateLocale,
   });
   return <Caption style={styles.updateDate}>Mis à jour {updatedAt}</Caption>;
-}
-
-function ActionButton({ name, icon, onPress, color }) {
-  return (
-    <View>
-      <TouchableRipple
-        style={styles.actionRipple}
-        borderless
-        centered
-        onPress={onPress}
-        rippleColor="rgba(0, 0, 0, .25)">
-        <Avatar.Icon
-          style={styles.action}
-          size={45}
-          icon={icon}
-          color={color}
-        />
-      </TouchableRipple>
-      <Caption style={styles.actionCaption}>{name}</Caption>
-    </View>
-  );
 }
 
 function ListInfo({ onPress, content, icon, chevron = true }) {
@@ -127,72 +100,6 @@ function call(store) {
   if (store?.phone) {
     Linking.openURL(`tel:${store.phone}`);
   }
-}
-
-function StoreActionButtons({ id }) {
-  const { colors } = useTheme();
-  const store = useRecoilValue(storeState(id));
-  const user = useRecoilValue(userState);
-  const setSheetStore = useSetRecoilState(sheetStoreState);
-  const navigation = useNavigation();
-  const { addFavorite, removeFavorite } = useFavoriteState();
-
-  const isFavorite = useMemo(() => {
-    if (!user) {
-      return;
-    }
-    const { favorites = [] } = user;
-    return favorites.some(favorite => favorite.id === store.id);
-  }, [user]);
-
-  const toggleFavorite = async () => {
-    if (!user) {
-      Alert.alert(
-        '',
-        'Vous devez être connecté pour enregistrer ce bar dans vos favoris',
-        [
-          {
-            text: 'Annuler',
-            style: 'cancel',
-          },
-          {
-            text: 'Connexion',
-            onPress: () => {
-              navigation.navigate('AccountTab');
-              setSheetStore();
-            },
-          },
-        ],
-        { cancelable: true },
-      );
-      return;
-    }
-    if (isFavorite) {
-      removeFavorite(store);
-    } else {
-      addFavorite(store);
-    }
-  };
-
-  return (
-    <>
-      <ActionButton
-        onPress={toggleFavorite}
-        name="Enregistrer"
-        color={isFavorite ? 'gold' : colors.onPrimary}
-        icon={isFavorite ? 'star' : 'star-outline'}
-        disabled
-      />
-      {store.phone && (
-        <ActionButton
-          onPress={() => call(store)}
-          name="Appeler"
-          icon="phone"
-          color={colors.onPrimary}
-        />
-      )}
-    </>
-  );
 }
 
 function StoreContent({ id }) {
@@ -245,6 +152,12 @@ function StoreContent({ id }) {
           </View>
         </>
       ) : null}
+      <Text style={styles.title}>Avis</Text>
+      <StoreRates
+        rate={store.rate}
+        rateCount={store.rateCount}
+        storeName={store.name}
+      />
       {store.updatedAt && <UpdatedAt date={store.updatedAt} />}
     </>
   );
@@ -330,17 +243,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-  },
-  actionRipple: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionCaption: {
-    textAlign: 'center',
   },
   infoRow: {
     display: 'flex',

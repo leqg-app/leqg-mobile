@@ -30,6 +30,12 @@ function validateStore(id, data, { jwt }) {
   });
 }
 
+function rateStore(id, data, { jwt }) {
+  return post(`/v2/stores/${id}/rate`, data, {
+    Authorization: `bearer ${jwt}`,
+  });
+}
+
 export {
   getVersion,
   getStores,
@@ -38,4 +44,5 @@ export {
   addStore,
   editStore,
   validateStore,
+  rateStore,
 };

@@ -21,9 +21,13 @@ const DISPLAY_FIELDS = {
   address: 'Adresse',
   website: 'Site internet',
   phone: 'Téléphone',
-  products: 'Produit',
-  schedules: 'Horaire',
-  features: 'Caractéristique',
+  products: 'Produit(s)',
+  schedules: 'Horaire(s)',
+  features: 'Caractéristique(s)',
+  rate: 'Note',
+  comment: 'Commentaire',
+  longComment: 'Bonus commentaire long',
+  recommendedProduct: 'Produit(s) recommandé(s)',
 };
 
 const REASONS = {
@@ -94,8 +98,8 @@ const WonReputation = ({ navigation, route }) => {
               fields.map(({ fieldName, reputation, count }) => (
                 <View key={fieldName} style={styles.detailRow}>
                   <Text>
-                    {count} {fieldName}
-                    {count > 1 ? 's' : ''}
+                    {count > 1 ? ` ${count}` : null}
+                    {fieldName.replace(/\(s\)/g, () => (count > 1 ? 's' : ''))}
                   </Text>
                   <Text>+{reputation}</Text>
                 </View>

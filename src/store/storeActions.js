@@ -1,7 +1,6 @@
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
-import * as Sentry from '@sentry/react-native';
 
 import {
   sheetStoreState,
@@ -84,17 +83,15 @@ function useStoreActions() {
 
         if (versioned?.updated || versioned?.deleted) {
           const { updated = [], deleted = [] } = versioned;
+          const updatedIds = updated.map(([id]) => id);
           setStores(stores => {
             return stores
               .filter(
                 store =>
-                  updated.every(([id]) => store.id !== id) &&
-                  deleted.every(id => store.id !== id),
+                  !updatedIds.includes(store.id) && !deleted.includes(store.id),
               )
               .concat(updated.map(decompressStore));
           });
-        } else {
-          Sentry.captureException(versioned);
         }
       }
 

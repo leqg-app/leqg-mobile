@@ -8552,6 +8552,11 @@ react-native-share@^8.2.2:
   resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-8.2.2.tgz#987d6f164afe57b089950dca42e0555f19045d27"
   integrity sha512-kVCI/cT0GnuYUTXe6mAimrjrnt4VWoRfrWqJZjFeoYFqAyOEfos84RC4eZlZnOT5eVtmTXRIkor5vgSkKOlZhw==
 
+react-native-star-rating-widget@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-star-rating-widget/-/react-native-star-rating-widget-1.7.1.tgz#3dd02a2a0e43e9dee3ad96fd24c48ac442c583ea"
+  integrity sha512-AdEJHLrosjxv4vLNmEIcePuU8CAPsbyCjCHI21T2SOmwN9Gh4XiNS5JZOZtDQe3Q7ZCqYeQRj3oi0nYrNdUvAQ==
+
 react-native-svg-charts@^5.4.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/react-native-svg-charts/-/react-native-svg-charts-5.4.0.tgz#3817a4714c276b7024e60ae5c9f13191614aecc8"
