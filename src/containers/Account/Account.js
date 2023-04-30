@@ -1,5 +1,12 @@
 import React from 'react';
-import { Alert, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import {
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text } from 'react-native-paper';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -56,47 +63,49 @@ const Account = ({ navigation }) => {
   const currentLevel = getLevel(reputation);
 
   return (
-    <ScrollView style={styles.container}>
-      <Title>Mon Compte</Title>
-      <View style={styles.head}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <Title>Mon Compte</Title>
+        <View style={styles.head}>
+          <View>
+            <AnimatedCircle initial={reputation} won={0} />
+          </View>
+          <View style={styles.name}>
+            <Text variant="titleMedium">{username}</Text>
+            <Text>
+              Prochain niveau: {reputation}/{LEVELS[currentLevel]}
+            </Text>
+          </View>
+        </View>
         <View>
-          <AnimatedCircle initial={reputation} won={0} />
+          <Menu>
+            <Menu.Item
+              name="Mon profil"
+              icon="account"
+              onPress={() => navigation.navigate('Profile')}
+            />
+            <Menu.Item
+              name="Mes contributions"
+              icon="thumb-up"
+              onPress={() => navigation.navigate('Contributions')}
+              value={contributions.length}
+            />
+            <Menu.Item
+              name="Préférences"
+              icon="cog-outline"
+              onPress={() => navigation.navigate('SettingsStack')}
+              last
+            />
+            <Menu.Item
+              name="Se déconnecter"
+              icon="logout"
+              onPress={askForSignOut}
+            />
+          </Menu>
+          <VersionName />
         </View>
-        <View style={styles.name}>
-          <Text variant="titleMedium">{username}</Text>
-          <Text>
-            Prochain niveau: {reputation}/{LEVELS[currentLevel]}
-          </Text>
-        </View>
-      </View>
-      <View>
-        <Menu>
-          <Menu.Item
-            name="Mon profil"
-            icon="account"
-            onPress={() => navigation.navigate('Profile')}
-          />
-          <Menu.Item
-            name="Mes contributions"
-            icon="thumb-up"
-            onPress={() => navigation.navigate('Contributions')}
-            value={contributions.length}
-          />
-          <Menu.Item
-            name="Préférences"
-            icon="cog-outline"
-            onPress={() => navigation.navigate('SettingsStack')}
-            last
-          />
-          <Menu.Item
-            name="Se déconnecter"
-            icon="logout"
-            onPress={askForSignOut}
-          />
-        </Menu>
-        <VersionName />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
