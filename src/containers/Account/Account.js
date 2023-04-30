@@ -132,11 +132,20 @@ export default () => {
   return (
     <AccountStack.Navigator>
       {user?.jwt ? (
-        <AccountStack.Screen
-          options={{ title: 'Mon compte', headerShown: false }}
-          name="Account"
-          component={Account}
-        />
+        <>
+          <AccountStack.Screen
+            options={{ title: 'Mon compte', headerShown: false }}
+            name="Account"
+            component={Account}
+          />
+
+          <AccountStack.Screen name="Contributions" component={Contributions} />
+          <AccountStack.Screen
+            name="Profile"
+            options={{ title: 'Mon profil' }}
+            component={Profile}
+          />
+        </>
       ) : (
         <AccountStack.Screen
           options={{ headerShown: false }}
@@ -144,12 +153,6 @@ export default () => {
           component={Anonym}
         />
       )}
-      <AccountStack.Screen name="Contributions" component={Contributions} />
-      <AccountStack.Screen
-        name="Profile"
-        options={{ title: 'Mon profil' }}
-        component={Profile}
-      />
       <AccountStack.Screen
         options={{ headerShown: false }}
         name="SettingsStack"

@@ -11,6 +11,8 @@ import { getErrorMessage } from '../../utils/errorMessage';
 const ERROR_MESSAGES = {
   'user.username.taken':
     "Ce nom d'utilisateur est déjà utilisé, choisissez-en un autre",
+  'user.email.taken':
+    "Ce nom d'utilisateur est déjà utilisé, choisissez-en un autre",
 };
 
 function SignUpProvider({ route }) {

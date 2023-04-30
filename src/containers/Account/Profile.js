@@ -39,7 +39,8 @@ const Profile = ({ navigation }) => {
       await deleteProfile(user.jwt);
       signOutProviders[user.provider]?.signOut?.();
       setUser(null);
-      navigation.goBack();
+      setState({ error: undefined, loading: false });
+      navigation.navigate('AnonymStack');
     } catch (err) {
       setState({ error: getErrorMessage(err), loading: false });
     }

@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
   },
   giveStars: {
     marginBottom: 8,
-    fontSize: 16,
-    fontWeight: 800,
+    fontSize: 15,
+    fontWeight: 'bold',
   },
   stars: {
     marginVertical: 10,
