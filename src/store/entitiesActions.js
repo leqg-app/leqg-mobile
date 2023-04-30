@@ -26,13 +26,12 @@ function useEntitiesAction() {
   const setStoreLoading = useSetRecoilState(storeLoadingState);
   const setUser = useSetRecoilState(userState);
 
-  const localVersions = storage.getObject('versions', {});
-
   // -- Load stores
 
   async function loadStores() {
     const apiVersions = await getVersion;
     const localStores = storage.getObject('stores', []);
+    const localVersions = storage.getObject('versions', {});
     const appVersion = storage.getString('appVersion');
 
     // no internet, quit
@@ -90,6 +89,7 @@ function useEntitiesAction() {
   async function loadEntity(name, getEntity, setEntity) {
     const apiVersions = await getVersion;
     const appVersion = storage.getString('appVersion');
+    const localVersions = storage.getObject('versions', {});
 
     // no internet, quit
     if (!apiVersions?.[name]) {
@@ -148,6 +148,7 @@ function useEntitiesAction() {
     ]);
 
     const apiVersions = await getVersion;
+    const localVersions = storage.getObject('versions', {});
 
     if (apiVersions.reset !== localVersions.reset) {
       storage.setObject('versions', {

@@ -153,11 +153,7 @@ function StoreContent({ id }) {
         </>
       ) : null}
       <Text style={styles.title}>Avis</Text>
-      <StoreRates
-        rate={store.rate}
-        rateCount={store.rateCount}
-        storeName={store.name}
-      />
+      <StoreRates store={store} />
       {store.updatedAt && <UpdatedAt date={store.updatedAt} />}
     </>
   );

@@ -88,7 +88,7 @@ const StoreSheet = () => {
         translateY: interpolate(
           sheetPosition.value,
           [0.5, 1],
-          [0, -previewHeight + (sheetStore?.rate ? 10 : -2)],
+          [0, -previewHeight + (sheetStore?.rate ? 20 : -2)],
         ),
       },
     ],

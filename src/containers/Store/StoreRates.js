@@ -1,11 +1,44 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper';
 import StarRating from 'react-native-star-rating-widget';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-function StoreRates({ rate, rateCount, storeName }) {
+import { sheetStoreState, userState } from '../../store/atoms';
+
+function StoreRates({ store }) {
   const navigation = useNavigation();
+  const setSheetStore = useSetRecoilState(sheetStoreState);
+  const user = useRecoilValue(userState);
+  const { rate, rateCount, name, rates = [] } = store;
+
+  const userRate = rates.find(rate => rate.user.id === user.id);
+
+  const navigateRatingStore = rate => {
+    if (!user) {
+      Alert.alert(
+        '',
+        'Vous devez être connecté pour partager votre avis',
+        [
+          {
+            text: 'Annuler',
+            style: 'cancel',
+          },
+          {
+            text: 'Connexion',
+            onPress: () => {
+              navigation.navigate('AccountTab');
+              setSheetStore();
+            },
+          },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+    navigation.navigate('RatingStore', { rate, storeName: name });
+  };
 
   return (
     <View>
@@ -25,20 +58,31 @@ function StoreRates({ rate, rateCount, storeName }) {
         </View>
       )}
       <Divider />
-      <View style={styles.rating}>
-        <Text style={styles.giveStars}>Donner une note</Text>
-        <Text>Partagez votre expérience à la communauté</Text>
-        <View style={styles.stars}>
-          <StarRating
-            enableHalfStar={false}
-            rating={0}
-            onChange={rate =>
-              navigation.navigate('RatingStore', { rate, storeName })
-            }
-            emptyColor="grey"
-          />
+      {userRate ? (
+        <View style={styles.rating}>
+          <Text style={styles.giveStars}>Votre avis</Text>
+          <View style={styles.stars}>
+            <StarRating
+              rating={(userRate.rate1 + userRate.rate2 + userRate.rate3) / 3}
+              onChange={() => {}}
+              emptyColor="grey"
+            />
+          </View>
         </View>
-      </View>
+      ) : (
+        <View style={styles.rating}>
+          <Text style={styles.giveStars}>Donner une note</Text>
+          <Text>Partagez votre expérience à la communauté</Text>
+          <View style={styles.stars}>
+            <StarRating
+              enableHalfStar={false}
+              rating={0}
+              onChange={navigateRatingStore}
+              emptyColor="grey"
+            />
+          </View>
+        </View>
+      )}
       <Divider />
     </View>
   );

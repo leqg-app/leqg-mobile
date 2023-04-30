@@ -12,8 +12,14 @@ import StarRating from 'react-native-star-rating-widget';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { getErrorMessage } from '../../utils/errorMessage';
-import { sheetStoreState, storeState, userState } from '../../store/atoms';
+import {
+  sheetStoreState,
+  storeState,
+  storesState,
+  userState,
+} from '../../store/atoms';
 import { rateStore } from '../../api/stores';
+import { formatStoreToMap } from '../../utils/formatStore';
 
 const ERROR_MESSAGES = {
   'store.notfound': "Ce lieu n'existe pas ou plus",
@@ -25,6 +31,7 @@ const RatingStore = ({ navigation, route }) => {
 
   const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
   const setStore = useSetRecoilState(storeState(sheetStore.id));
+  const setStoresMap = useSetRecoilState(storesState);
 
   const user = useRecoilValue(userState);
   const [state, setState] = useState({ loading: false, error: undefined });
@@ -49,14 +56,18 @@ const RatingStore = ({ navigation, route }) => {
       }
       setState({ loading: false, error: undefined });
 
-      const {
-        store: { rate, rateCount },
-        reputation,
-      } = response;
-      setStore(store => ({ ...store, rate, rateCount }));
-      setSheetStore(store => ({ ...store, rate, rateCount }));
+      setStore(response.store);
+      setSheetStore(response.store);
+      setStoresMap(stores => {
+        return stores
+          .filter(({ id }) => id !== sheetStore.id)
+          .concat(formatStoreToMap(response.store));
+      });
 
-      navigation.replace('WonReputation', { reputation });
+      const { reputation } = response;
+      setTimeout(() => {
+        navigation.replace('WonReputation', { reputation });
+      });
     } catch (err) {
       setState({ loading: false, error: getErrorMessage(err, ERROR_MESSAGES) });
     }
@@ -116,9 +127,8 @@ const RatingStore = ({ navigation, route }) => {
           onPress={publish}
           mode="contained"
           style={styles.closeButton}
-          loading={state.loading}
           disabled={state.loading}>
-          Publier
+          {state.loading ? 'Chargement...' : 'Publier'}
         </Button>
         {state.error && <HelperText type="error">{state.error}</HelperText>}
       </View>
