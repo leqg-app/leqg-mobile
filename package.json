@@ -20,8 +20,8 @@
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
     "@react-navigation/stack": "^6.3.16",
-    "@rnmapbox/maps": "10.0.3",
-    "@sentry/react-native": "^5.4.0",
+    "@rnmapbox/maps": "10.0.4",
+    "@sentry/react-native": "^5.4.1",
     "@turf/circle": "^6.5.0",
     "date-fns": "^2.30.0",
     "deprecated-react-native-prop-types": "^4.1.0",
@@ -39,7 +39,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-mmkv": "^2.8.0",
     "react-native-modal-datetime-picker": "^15.0.0",
-    "react-native-paper": "5.7.0",
+    "react-native-paper": "5.7.2",
     "react-native-permissions": "^3.8.0",
     "react-native-reanimated": "3.1.0",
     "react-native-rheostat": "^1.0.2",
@@ -52,7 +52,7 @@
     "recoil": "^0.7.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.5",
+    "@babel/core": "^7.21.8",
     "@babel/plugin-transform-template-literals": "^7.18.9",
     "@babel/runtime": "^7.21.5",
     "@react-native-community/eslint-config": "^3.2.0",
@@ -65,7 +65,7 @@
     "prettier": "^2.8.8",
     "react-native-cli-bump-version": "^1.5.0",
     "react-test-renderer": "18.2.0",
-    "release-it": "^15.10.2"
+    "release-it": "^15.10.3"
   },
   "jest": {
     "preset": "react-native"
