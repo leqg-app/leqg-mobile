@@ -65,6 +65,7 @@ password YOUR_MAPBOX_SECRET_TOKEN
   - [x] Choose favorite currency
   - [x] Have contribution/reputation
   - [x] Read contribution/reputation history
+  - [ ] Delete account
   - [ ] Edit their profile
   - [ ] Edit their photo 
 
@@ -76,10 +77,10 @@ password YOUR_MAPBOX_SECRET_TOKEN
   - [x] Website
   - [x] Phone
   - [x] Features
+  - [x] Rate
+  - [x] Users could validate store
   - [ ] Photos
-  - [ ] Rate
   - [ ] Type (pub/cave/...)
-  - [ ] Users could validate store
   - [ ] Flag store as closed/duplicate
 
 - Features
