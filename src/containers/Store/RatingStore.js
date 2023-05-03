@@ -22,6 +22,7 @@ import { rateStore } from '../../api/stores';
 import { formatStoreToMap } from '../../utils/formatStore';
 
 const ERROR_MESSAGES = {
+  'user.notfound': 'Vous devez être connecté pour publier votre avis',
   'store.notfound': "Ce lieu n'existe pas ou plus",
   'store.rate.duplicate': 'Vous avez déjà donné votre avis à ce lieu',
 };
@@ -49,6 +50,9 @@ const RatingStore = ({ navigation, route }) => {
   const publish = async () => {
     setState({ loading: true, error: undefined });
     try {
+      if (!user) {
+        throw 'user.notfound';
+      }
       const data = { rate1, rate2, rate3, comment, recommendedProducts };
       const response = await rateStore(sheetStore.id, data, user);
       if (response.error) {
