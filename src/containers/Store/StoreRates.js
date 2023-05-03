@@ -13,7 +13,7 @@ function StoreRates({ store }) {
   const user = useRecoilValue(userState);
   const { rate, rateCount, name, rates = [] } = store;
 
-  const userRate = rates.find(rate => rate.user.id === user.id);
+  const userRate = user && rates.find(rate => rate.user?.id === user.id);
 
   const navigateRatingStore = rate => {
     if (!user) {
