@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Chip, Divider, Switch, Text } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ActionButtons from '../../../components/ActionButtons';
@@ -31,14 +31,13 @@ function getFilterName(filter) {
 function ProductFilter() {
   const sheet = useRef();
   const searchInput = useRef();
-  const products = useRecoilValue(productsState);
-  const setSheetStore = useSetRecoilState(sheetStoreState);
-  const [productFilter, setProductFilter] = useRecoilState(productFilterState);
+  const products = useAtomValue(productsState);
+  const setSheetStore = useSetAtom(sheetStoreState);
+  const [productFilter, setProductFilter] = useAtom(productFilterState);
   const [search, setSearch] = useState('');
   const [filterAll, setFilterAll] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const { bottom } = useSafeAreaInsets();
-  const [footerHeight, setFooterHeight] = useState(117);
 
   const openModal = () => {
     setSheetStore();
@@ -83,8 +82,38 @@ function ProductFilter() {
       .sort(sortByName);
   }, [search]);
 
-  const onLayoutFooter = event =>
-    setFooterHeight(event.nativeEvent.layout.height);
+  const footer = () => (
+    <View style={[styles.footerSheet, { paddingBottom: bottom }]}>
+      {selectedProducts.length ? (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.selectedProductsList}>
+          {selectedProducts.map(product => (
+            <Chip
+              mode="outlined"
+              key={product.id}
+              style={styles.selectedProduct}
+              onPress={() => unselectProduct(product)}
+              onClose={() => unselectProduct(product)}>
+              {product.name}
+            </Chip>
+          ))}
+        </ScrollView>
+      ) : null}
+      <View style={styles.filterType}>
+        <Text onPress={toggleType}>
+          Tous les critères doivent être présents:
+        </Text>
+        <Switch
+          style={styles.switchFilterType}
+          value={filterAll}
+          onValueChange={toggleType}
+        />
+      </View>
+      <ActionButtons onCancel={closeModal} onSubmit={submit} submitLabel="OK" />
+    </View>
+  );
 
   return (
     <>
@@ -94,7 +123,12 @@ function ProductFilter() {
         onRemove={productFilter.products?.length && reset}>
         {getFilterName(productFilter)}
       </Filter>
-      <ActionSheet ref={sheet} onDismiss={closeModal} backdrop snaps={['90%']}>
+      <ActionSheet
+        ref={sheet}
+        onDismiss={closeModal}
+        backdrop
+        snaps={['90%']}
+        footer={footer}>
         <BottomSheetTextInput
           ref={searchInput}
           style={styles.textInput}
@@ -103,49 +137,11 @@ function ProductFilter() {
           clearButtonMode="while-editing"
         />
         <Divider />
-        <View style={{ flex: 1, marginBottom: footerHeight }}>
-          <ProductsList
-            initialSelected={selectedProducts}
-            products={productsFiltered}
-            onChange={setSelectedProducts}
-          />
-        </View>
-        <View
-          style={[styles.footerSheet, { paddingBottom: bottom }]}
-          onLayout={onLayoutFooter}>
-          {selectedProducts.length ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.selectedProductsList}>
-              {selectedProducts.map(product => (
-                <Chip
-                  mode="outlined"
-                  key={product.id}
-                  style={styles.selectedProduct}
-                  onPress={() => unselectProduct(product)}
-                  onClose={() => unselectProduct(product)}>
-                  {product.name}
-                </Chip>
-              ))}
-            </ScrollView>
-          ) : null}
-          <View style={styles.filterType}>
-            <Text onPress={toggleType}>
-              Tous les critères doivent être présents:
-            </Text>
-            <Switch
-              style={styles.switchFilterType}
-              value={filterAll}
-              onValueChange={toggleType}
-            />
-          </View>
-          <ActionButtons
-            onCancel={closeModal}
-            onSubmit={submit}
-            submitLabel="OK"
-          />
-        </View>
+        <ProductsList
+          initialSelected={selectedProducts}
+          products={productsFiltered}
+          onChange={setSelectedProducts}
+        />
       </ActionSheet>
     </>
   );
@@ -180,10 +176,6 @@ const styles = StyleSheet.create({
     height: 33,
   },
   footerSheet: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: 'grey',
   },

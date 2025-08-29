@@ -11,16 +11,14 @@ import {
   ActivityIndicator,
   Appbar,
   Button,
-  Caption,
   Card,
-  Paragraph,
   Portal,
   Snackbar,
   Text,
   TextInput,
   TouchableRipple,
 } from 'react-native-paper';
-import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 
 import { sortByPrices } from '../../utils/price';
 import Menu from '../../components/Menu';
@@ -62,10 +60,10 @@ const Product = memo(({ product, onPress, hasHH }) => {
             <Text numberOfLines={1}>
               {product.product?.name || productName}
             </Text>
-            <Caption>
+            <Text variant="bodyMedium">
               {types[type]}
               {volume && ` - ${volume}cl`}
-            </Caption>
+            </Text>
           </View>
           <View style={styles.flex}>
             <View style={styles.prices}>
@@ -90,12 +88,12 @@ const Product = memo(({ product, onPress, hasHH }) => {
 });
 
 const EditStore = ({ route, navigation }) => {
-  const products = useRecoilValue(productsState);
+  const products = useAtomValue(productsState);
   const nameInput = useRef();
   const [state, setState] = useState({ error: false, loading: false });
-  const user = useRecoilValue(userState);
-  const setSheetStore = useSetRecoilState(sheetStoreState);
-  const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
+  const user = useAtomValue(userState);
+  const setSheetStore = useSetAtom(sheetStoreState);
+  const [storeEdition, setStoreEdition] = useAtom(storeEditionState);
   const { saveStore } = useStoreActions();
 
   const {
@@ -170,7 +168,9 @@ const EditStore = ({ route, navigation }) => {
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
           <View>
-            <Paragraph>Veuillez vous connecter pour contribuer</Paragraph>
+            <Text variant="bodyMedium">
+              Veuillez vous connecter pour contribuer
+            </Text>
             <Button
               onPress={() => {
                 setSheetStore();
@@ -257,9 +257,9 @@ const EditStore = ({ route, navigation }) => {
             <Card.Title titleStyle={styles.title} title="Bières" />
             <Card.Content>
               {!storeProducts.length ? (
-                <Paragraph style={styles.horizontalMargin}>
+                <Text variant="bodyMedium" style={styles.horizontalMargin}>
                   Aucune bière renseignée pour le moment
-                </Paragraph>
+                </Text>
               ) : (
                 <View style={styles.headRow}>
                   <Text style={styles.price}>Prix</Text>
@@ -290,9 +290,9 @@ const EditStore = ({ route, navigation }) => {
             <Card.Title titleStyle={styles.title} title="Horaires" />
             <Card.Content>
               {!schedules.length ? (
-                <Paragraph style={styles.emptyText}>
+                <Text variant="bodyMedium" style={styles.emptyText}>
                   Aucun horaire renseigné pour le moment
-                </Paragraph>
+                </Text>
               ) : (
                 <Pressable
                   style={styles.schedules}
@@ -313,9 +313,9 @@ const EditStore = ({ route, navigation }) => {
             <Card.Title titleStyle={styles.title} title="Caractéristiques" />
             <Card.Content>
               {!features.length ? (
-                <Paragraph style={styles.emptyText}>
+                <Text variant="bodyMedium" style={styles.emptyText}>
                   Aucune caractéristique pour le moment
-                </Paragraph>
+                </Text>
               ) : (
                 <Pressable onPress={() => navigation.navigate('EditFeatures')}>
                   <StoreFeatures features={features} />

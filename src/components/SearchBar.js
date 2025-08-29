@@ -7,14 +7,14 @@ import {
   Text,
   useTheme,
 } from 'react-native-paper';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 
 import leqgLogo from '../assets/icon-transparent.png';
 import { sheetStoreState } from '../store/atoms';
 
 function SearchBar({ onSearch, loading }) {
   const theme = useTheme();
-  const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
+  const [sheetStore, setSheetStore] = useAtom(sheetStoreState);
   return (
     <Surface
       style={[styles.container, { backgroundColor: theme.colors.background }]}>

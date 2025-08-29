@@ -13,7 +13,7 @@ import {
   useTheme,
 } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 
 import { minutesToTime } from '../../utils/time';
 import { daysFull, daysShort } from '../../constants';
@@ -227,7 +227,7 @@ function getInitialSchedules({ schedules }) {
 }
 
 function EditSchedules({ navigation }) {
-  const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
+  const [storeEdition, setStoreEdition] = useAtom(storeEditionState);
   const [schedules, setSchedules] = useState(getInitialSchedules(storeEdition));
   const [editingDays, setEditingDay] = useState(false);
 

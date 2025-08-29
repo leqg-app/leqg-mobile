@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text } from 'react-native-paper';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 
 import { LEVELS } from '../../constants';
 import Menu from '../../components/Menu';
@@ -25,7 +25,7 @@ import * as signOutProviders from './Providers/index.js';
 import Profile from './Profile';
 
 const Account = ({ navigation }) => {
-  const [user, setUser] = useRecoilState(userState);
+  const [user, setUser] = useAtom(userState);
 
   const signOut = () => {
     signOutProviders[user.provider]?.signOut?.();
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
 const AccountStack = createNativeStackNavigator();
 
 export default () => {
-  const user = useRecoilValue(userState);
+  const user = useAtomValue(userState);
   return (
     <AccountStack.Navigator>
       {user?.jwt ? (

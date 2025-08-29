@@ -1,7 +1,8 @@
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { atom, useAtomValue, useSetAtom } from 'jotai';
 
+import * as db from './database';
 import {
   sheetStoreState,
   storeEditionState,
@@ -11,18 +12,21 @@ import {
 } from './atoms';
 import { addStore, editStore, getStoresVersion } from '../api/stores';
 import { storage } from './storage';
-import { decompressStore, formatStoreToMap } from '../utils/formatStore';
+import { storeToDatabase, storesToDatabase } from '../utils/formatStore';
+
+// write-only helper to update both the sheet store and the store family atom
+const updateStoreAtom = atom(null, (get, set, { id, store }) => {
+  set(sheetStoreState, store);
+  set(storeState(id), store);
+});
 
 function useStoreActions() {
   const navigation = useNavigation();
-  const setSheetStore = useSetRecoilState(sheetStoreState);
-  const setStoreEdition = useSetRecoilState(storeEditionState);
-  const setStores = useSetRecoilState(storesState);
-  const user = useRecoilValue(userState);
-  const updateStoreState = useRecoilCallback(({ set }) => (id, store) => {
-    set(sheetStoreState, store);
-    set(storeState(id), store);
-  });
+  const setSheetStore = useSetAtom(sheetStoreState);
+  const setStoreEdition = useSetAtom(storeEditionState);
+  const setStores = useSetAtom(storesState);
+  const user = useAtomValue(userState);
+  const updateStoreState = useSetAtom(updateStoreAtom);
 
   const editStoreScreen = store => {
     if (!user) {
@@ -63,9 +67,10 @@ function useStoreActions() {
       }
 
       const versions = storage.getObject('versions', {});
-      const store = formatStoreToMap(response.store);
+      const store = storeToDatabase(response.store);
 
       if (versions.stores + 1 === response.version) {
+        db.setStore(store);
         setStores(stores => {
           if (!storeEdition.id) {
             return stores.concat(store);
@@ -90,12 +95,12 @@ function useStoreActions() {
                 store =>
                   !updatedIds.includes(store.id) && !deleted.includes(store.id),
               )
-              .concat(updated.map(decompressStore));
+              .concat(updated.map(storesToDatabase));
           });
         }
       }
 
-      updateStoreState(response.store.id, response.store);
+      updateStoreState({ id: response.store.id, store: response.store });
 
       storage.setObject('versions', {
         ...versions,

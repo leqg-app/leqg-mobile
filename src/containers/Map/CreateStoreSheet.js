@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { Text, Title } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import ActionSheet from '../../components/ActionSheet';
 import ActionButtons from '../../components/ActionButtons';
@@ -28,8 +28,8 @@ function getStateText(createStore) {
 const CreateStoreSheet = ({ createStore, onClose }) => {
   const navigation = useNavigation();
   const sheet = useRef();
-  const user = useRecoilValue(userState);
-  const setStoreEdition = useSetRecoilState(storeEditionState);
+  const user = useAtomValue(userState);
+  const setStoreEdition = useSetAtom(storeEditionState);
 
   const close = React.useCallback(() => {
     sheet.current?.close?.();

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Searchbar, Text, TouchableRipple } from 'react-native-paper';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 
 import { productsState } from '../../store/atoms';
 
@@ -19,7 +19,7 @@ function sortByName(a, b) {
 }
 
 const SelectProduct = ({ navigation }) => {
-  const products = useRecoilValue(productsState);
+  const products = useAtomValue(productsState);
   const [search, setSearch] = useState('');
 
   const onSelect = productId => {

@@ -3,7 +3,7 @@ import { FlatList, StatusBar, StyleSheet, View } from 'react-native';
 import { List, Searchbar, Text, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMMKVObject } from 'react-native-mmkv';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import { storage } from '../../store/storage';
 import SchedulesPreview from '../Store/SchedulesPreview';
@@ -32,8 +32,8 @@ const RowStore = memo(({ store, onSelect }) => {
 });
 
 function SearchStore({ navigation }) {
-  const stores = useRecoilValue(storesState);
-  const setSheetStore = useSetRecoilState(sheetStoreState);
+  const stores = useAtomValue(storesState);
+  const setSheetStore = useSetAtom(sheetStoreState);
   const [searchHistory = [], setSearchHistory] = useMMKVObject(
     'searchHistory',
     storage,

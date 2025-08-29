@@ -7,7 +7,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 import Config from 'react-native-config';
 import { useNavigation } from '@react-navigation/native';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 
 import SocialButton from '../../../components/social/SocialButton';
 import { signInProvider } from '../../../api/users';
@@ -22,7 +22,7 @@ const ERROR_MESSAGES = {
 function GoogleAuth({ signUp }) {
   const navigation = useNavigation();
   const [state, setState] = useState({ error: undefined, loading: false });
-  const setUser = useSetRecoilState(userState);
+  const setUser = useSetAtom(userState);
 
   const signUpProvider = idToken => {
     return navigation.navigate('SignUpProvider', {
@@ -104,6 +104,11 @@ function GoogleAuth({ signUp }) {
 }
 
 export function signOut() {
+  GoogleSignin.configure({
+    webClientId: Config.GOOGLE_WEB_CLIENT_ID,
+    offlineAccess: true,
+  });
+
   return GoogleSignin.revokeAccess();
 }
 

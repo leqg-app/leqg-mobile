@@ -9,7 +9,7 @@ import Animated, {
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
 import StarRating from 'react-native-star-rating-widget';
 
@@ -23,7 +23,7 @@ const StoreSheet = () => {
   const { colors } = useTheme();
   const sheet = useRef(null);
   const lastSheetStore = useRef(null);
-  const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
+  const [sheetStore, setSheetStore] = useAtom(sheetStoreState);
   const [previewHeight, setPreviewHeight] = useState(0);
   const [show, setShow] = useState(false);
   const sheetPosition = useSharedValue(0);

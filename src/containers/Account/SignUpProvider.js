@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Paragraph, TextInput, Button, HelperText } from 'react-native-paper';
+import { TextInput, Button, HelperText } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 
 import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
@@ -17,7 +17,7 @@ const ERROR_MESSAGES = {
 
 function SignUpProvider({ route }) {
   const pseudoInput = useRef();
-  const setUser = useSetRecoilState(userState);
+  const setUser = useSetAtom(userState);
   const [username, onChangeUsername] = useState('');
   const [state, setState] = useState({
     error: undefined,
@@ -49,9 +49,9 @@ function SignUpProvider({ route }) {
       keyboardShouldPersistTaps="always"
       contentContainerStyle={styles.container}>
       <View style={styles.form}>
-        <Paragraph>
+        <Text variant="bodyMedium">
           Choisissez un pseudo pour finaliser votre inscription
-        </Paragraph>
+        </Text>
         <TextInput
           ref={pseudoInput}
           style={styles.space}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 
 import PriceFilter from './PriceFilter';
 import FeatureFilter from './FeatureFilter';
@@ -9,8 +9,7 @@ import Filter from '../../../components/Filter';
 import { scheduleFilterState } from '../../../store/filterAtoms';
 
 const Filters = () => {
-  const [scheduleFilter, setScheduleFilter] =
-    useRecoilState(scheduleFilterState);
+  const [scheduleFilter, setScheduleFilter] = useAtom(scheduleFilterState);
 
   return (
     <ScrollView

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text, Paragraph } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Menu from '../../components/Menu';
@@ -31,11 +31,11 @@ const Anonym = ({ navigation }) => {
       </Menu>
       <View style={styles.whySignUp}>
         <Text variant="titleMedium">Inscrivez-vous gratuitement</Text>
-        <Paragraph>
+        <Text variant="bodyMedium">
           - Remerciez les contributeurs pour leur travail{'\n'}- Enregistrez vos
           bars favoris{'\n'}- Contribuez pour aider les autres utilisateurs
           {'\n'}- Gagnez en réputation et accédez à de nouvelles fonctionnalités
-        </Paragraph>
+        </Text>
       </View>
       <Menu>
         <Menu.Item

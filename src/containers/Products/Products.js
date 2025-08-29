@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 
 import Title from '../../components/Title';
 import { productsState } from '../../store/atoms';
@@ -13,7 +13,7 @@ const Product = ({ product }) => (
 );
 
 function Products() {
-  const products = useRecoilValue(productsState);
+  const products = useAtomValue(productsState);
   const productsList = Array.from(products).sort((a, b) =>
     a.name > b.name ? 1 : -1,
   );

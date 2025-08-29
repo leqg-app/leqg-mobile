@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { IconButton, Menu } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 
 import { storeState } from '../../store/atoms';
 import { useStoreActions } from '../../store/storeActions';
@@ -11,7 +11,7 @@ const StoreSheetMenu = ({ id }) => {
   const [menu, setMenu] = useState(false);
   const { top } = useSafeAreaInsets();
   const { editStoreScreen } = useStoreActions();
-  const store = useRecoilValue(storeState(id));
+  const store = useAtomValue(storeState(id));
 
   return (
     <Menu

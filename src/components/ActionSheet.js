@@ -5,7 +5,6 @@ import { Portal, useTheme } from 'react-native-paper';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
-  useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
 
 let currentIndex = -1;
@@ -16,14 +15,6 @@ const ActionSheet = React.forwardRef(
     const { top } = useSafeAreaInsets();
 
     const topbarHeight = useMemo(() => top + 30, []);
-    const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
-
-    const {
-      animatedHandleHeight,
-      animatedSnapPoints,
-      animatedContentHeight,
-      handleContentLayout,
-    } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
     useEffect(() => {
       const backHandler = BackHandler.addEventListener(
@@ -58,6 +49,7 @@ const ActionSheet = React.forwardRef(
             ref={ref}
             index={-1}
             snapPoints={snaps}
+            enableDynamicSizing={false}
             enablePanDownToClose
             onClose={onDismiss}
             onChange={onChange}
@@ -76,18 +68,14 @@ const ActionSheet = React.forwardRef(
         <BottomSheet
           ref={ref}
           index={-1}
-          snapPoints={animatedSnapPoints}
-          handleHeight={animatedHandleHeight}
-          contentHeight={animatedContentHeight}
+          enableDynamicSizing={true}
           enablePanDownToClose
           onClose={onDismiss}
           onChange={onChange}
           backdropComponent={backdrop && renderBackdrop}
           topInset={topbarHeight}
           backgroundStyle={{ backgroundColor: colors.background }}>
-          <BottomSheetView onLayout={handleContentLayout}>
-            {children}
-          </BottomSheetView>
+          <BottomSheetView>{children}</BottomSheetView>
         </BottomSheet>
       </Portal>
     );

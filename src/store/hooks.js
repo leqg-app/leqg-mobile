@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 
 import { updateProfile } from '../api/users';
 import { userState } from '../store/atoms';
@@ -7,7 +7,7 @@ import { getErrorMessage } from '../utils/errorMessage';
 
 const useFavoriteState = () => {
   const [loading, setLoading] = useState();
-  const [user, setUser] = useRecoilState(userState);
+  const [user, setUser] = useAtom(userState);
 
   const addFavorite = async store => {
     if (!user || loading) {

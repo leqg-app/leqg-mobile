@@ -4,7 +4,7 @@ import { Portal, Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNBootSplash from 'react-native-bootsplash';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 
 import Filters from './Filters/Filters';
 import Mapbox from './Mapbox';
@@ -15,7 +15,7 @@ import { storeLoadingState } from '../../store/atoms';
 
 const Map = ({ navigation, route }) => {
   const isDarkMode = useColorScheme() === 'dark';
-  const storeLoading = useRecoilValue(storeLoadingState);
+  const storeLoading = useAtomValue(storeLoadingState);
   const { params } = route;
 
   useEffect(() => {

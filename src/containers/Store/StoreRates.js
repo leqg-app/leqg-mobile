@@ -3,14 +3,14 @@ import { useNavigation } from '@react-navigation/native';
 import { Alert, StyleSheet, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper';
 import StarRating from 'react-native-star-rating-widget';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import { sheetStoreState, userState } from '../../store/atoms';
 
 function StoreRates({ store }) {
   const navigation = useNavigation();
-  const setSheetStore = useSetRecoilState(sheetStoreState);
-  const user = useRecoilValue(userState);
+  const setSheetStore = useSetAtom(sheetStoreState);
+  const user = useAtomValue(userState);
   const { rate, rateCount, name, rates = [] } = store;
 
   const userRate = user && rates.find(rate => rate.user?.id === user.id);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Caption, Text } from 'react-native-paper';
-import { useRecoilValue } from 'recoil';
+import { Text } from 'react-native-paper';
+import { useAtomValue } from 'jotai';
 
 import Price from '../../components/Price';
 import { sortByPrices } from '../../utils/price';
@@ -30,7 +30,7 @@ function sortByType(a) {
 }
 
 function StoreProducts(props) {
-  const products = useRecoilValue(productsState);
+  const products = useAtomValue(productsState);
 
   const hasHH = props.products.some(product => product.specialPrice);
 
@@ -71,7 +71,7 @@ function StoreProducts(props) {
                   {product.prices.map(({ price, volume, specialPrice }) => {
                     return (
                       <View style={styles.prices} key={volume}>
-                        <Caption>{`${volume}cl`}</Caption>
+                        <Text variant="bodyMedium">{`${volume}cl`}</Text>
                         <Text style={styles.pricesCell}>
                           {price ? (
                             <Price amount={price} currency={currencyCode} />

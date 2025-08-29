@@ -10,7 +10,7 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 
 import { theme } from '../../constants';
 import countries from '../../assets/countries.json';
@@ -30,8 +30,8 @@ const productTypes = [
 ];
 
 const EditProducts = ({ navigation, route }) => {
-  const products = useRecoilValue(productsState);
-  const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
+  const products = useAtomValue(productsState);
+  const [storeEdition, setStoreEdition] = useAtom(storeEditionState);
   const { colors } = useTheme();
   const [storeProduct, setProduct] = useState({
     product: null,

@@ -1,7 +1,10 @@
 import { get, post, put } from './index';
 
 const getVersion = get(`/v1/version`, { 'cache-control': 'no-store' }).catch(
-  () => ({}),
+  e => {
+    console.log(e);
+    return {};
+  },
 );
 
 function getStores(version) {

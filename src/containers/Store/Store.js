@@ -3,7 +3,6 @@ import { Platform, StyleSheet, View, Linking } from 'react-native';
 import {
   ActivityIndicator,
   Button,
-  Caption,
   Divider,
   IconButton,
   List,
@@ -12,7 +11,7 @@ import {
   useTheme,
 } from 'react-native-paper';
 import Share from 'react-native-share';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { useAtomValue, useAtom } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
 import formatDistance from 'date-fns/formatDistance';
 import dateLocale from 'date-fns/locale/fr';
@@ -61,7 +60,11 @@ function UpdatedAt({ date }) {
     addSuffix: true,
     locale: dateLocale,
   });
-  return <Caption style={styles.updateDate}>Mis à jour {updatedAt}</Caption>;
+  return (
+    <Text variant="bodyMedium" style={styles.updateDate}>
+      Mis à jour {updatedAt}
+    </Text>
+  );
 }
 
 function ListInfo({ onPress, content, icon, chevron = true }) {
@@ -104,7 +107,7 @@ function call(store) {
 
 function StoreContent({ id }) {
   const { editStoreScreen } = useStoreActions();
-  const store = useRecoilValue(storeState(id));
+  const store = useAtomValue(storeState(id));
 
   return (
     <>
@@ -161,7 +164,7 @@ function StoreContent({ id }) {
 
 const Store = ({ sheetStore }) => {
   const { colors } = useTheme();
-  const [requestId, setRequestID] = useRecoilState(storeQueryRequestIDState);
+  const [requestId, setRequestID] = useAtom(storeQueryRequestIDState);
 
   const [expandSchedules, setExpandSchedules] = React.useState(false);
   const refreshStore = () => setRequestID(requestId => requestId + 1);

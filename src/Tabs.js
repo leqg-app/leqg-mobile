@@ -41,8 +41,8 @@ const tabBar = ({ navigation, state, descriptors, insets }) => (
         options.tabBarLabel !== undefined
           ? options.tabBarLabel
           : options.title !== undefined
-          ? options.title
-          : route.title;
+            ? options.title
+            : route.title;
 
       return label;
     }}

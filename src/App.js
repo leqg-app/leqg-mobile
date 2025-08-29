@@ -5,18 +5,18 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Sentry from '@sentry/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
-import { RecoilRoot } from 'recoil';
+import BootSplash from 'react-native-bootsplash';
 
 import Routes from './Routes';
 import { CombinedDarkTheme, CombinedDefaultTheme } from './theme';
 
+Sentry.init({
+  dsn: 'https://247aa8fba4ca46688925bf9823ba239e@o1079194.ingest.sentry.io/6083816',
+  tracesSampleRate: 1.0,
+});
+
 // eslint-disable-next-line
-if (!__DEV__) {
-  Sentry.init({
-    dsn: 'https://247aa8fba4ca46688925bf9823ba239e@o1079194.ingest.sentry.io/6083816',
-    tracesSampleRate: 1.0,
-  });
-} else {
+if (__DEV__) {
   // @gorhom/bottom-sheet@4.1.5
   LogBox.ignoreLogs([
     /ViewPropType/, // react-native-mapbox-gl
@@ -32,13 +32,15 @@ const App = () => {
   return (
     <GestureHandlerRootView style={styles.container}>
       <SafeAreaProvider>
-        <RecoilRoot>
-          <PaperProvider theme={theme}>
-            <NavigationContainer theme={theme}>
-              <Routes />
-            </NavigationContainer>
-          </PaperProvider>
-        </RecoilRoot>
+        <PaperProvider theme={theme}>
+          <NavigationContainer
+            theme={theme}
+            onReady={() => {
+              BootSplash.hide();
+            }}>
+            <Routes />
+          </NavigationContainer>
+        </PaperProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

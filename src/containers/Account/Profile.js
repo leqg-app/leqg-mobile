@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText, Divider } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 
 import { deleteProfile } from '../../api/users';
 import { getErrorMessage } from '../../utils/errorMessage';
@@ -10,7 +10,7 @@ import { userState } from '../../store/atoms';
 import * as signOutProviders from './Providers/index.js';
 
 const Profile = ({ navigation }) => {
-  const [user, setUser] = useRecoilState(userState);
+  const [user, setUser] = useAtom(userState);
   const [state, setState] = useState({
     error: undefined,
     loading: false,

@@ -9,17 +9,12 @@ import {
 } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import StarRating from 'react-native-star-rating-widget';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
-import { getErrorMessage } from '../../utils/errorMessage';
-import {
-  sheetStoreState,
-  storeState,
-  storesState,
-  userState,
-} from '../../store/atoms';
+import * as db from '../../store/database';
+import { sheetStoreState, storeState, userState } from '../../store/atoms';
 import { rateStore } from '../../api/stores';
-import { formatStoreToMap } from '../../utils/formatStore';
+import { getErrorMessage } from '../../utils/errorMessage';
 
 const ERROR_MESSAGES = {
   'user.notfound': 'Vous devez être connecté pour publier votre avis',
@@ -30,11 +25,10 @@ const ERROR_MESSAGES = {
 const RatingStore = ({ navigation, route }) => {
   const { rate } = route.params;
 
-  const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
-  const setStore = useSetRecoilState(storeState(sheetStore.id));
-  const setStoresMap = useSetRecoilState(storesState);
+  const [sheetStore, setSheetStore] = useAtom(sheetStoreState);
+  const setStore = useSetAtom(storeState(sheetStore.id));
 
-  const user = useRecoilValue(userState);
+  const user = useAtomValue(userState);
   const [state, setState] = useState({ loading: false, error: undefined });
 
   const [rate1, setValueMoneyRate] = useState(rate);
@@ -62,11 +56,7 @@ const RatingStore = ({ navigation, route }) => {
 
       setStore(response.store);
       setSheetStore(response.store);
-      setStoresMap(stores => {
-        return stores
-          .filter(({ id }) => id !== sheetStore.id)
-          .concat(formatStoreToMap(response.store));
-      });
+      db.setStore(response.store);
 
       const { reputation } = response;
       setTimeout(() => {
