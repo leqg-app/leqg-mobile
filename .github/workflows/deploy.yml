@@ -31,7 +31,7 @@ jobs:
           node-version-file: '.nvmrc'
 
       - name: Install Node.js dependencies
-        run: yarn install --frozen-lockfile
+        run: corepack enable && yarn install --frozen-lockfile
 
       - name: Create env file
         run: |
@@ -126,7 +126,7 @@ jobs:
           node-version-file: '.nvmrc'
 
       - name: Install Node.js dependencies
-        run: yarn install --frozen-lockfile
+        run: corepack enable && yarn install --frozen-lockfile
 
       - name: Linter
         run: yarn lint
