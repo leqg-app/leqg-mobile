@@ -41,7 +41,6 @@ const Mapbox = () => {
   const camera = useRef();
   const { colors } = useTheme();
   const stores = useAtomValue(storesMapState);
-  console.log(stores);
   const [sheetStore, setSheetStore] = useAtom(sheetStoreState);
   const { filters, textField, symbolSortKey, textSize } =
     useAtomValue(mapboxState);
@@ -69,7 +68,7 @@ const Mapbox = () => {
           initialPosition: position,
           initialZoomLevel: 13,
         });
-      } catch (e) {
+      } catch {
         setMap({
           position: undefined,
           ...(!initialPosition && {
@@ -117,7 +116,7 @@ const Mapbox = () => {
       const position = await getLocation({ timeout: 5000, askedByUser: true });
       moveTo(position);
       setMap({ position });
-    } catch (e) {
+    } catch {
       setMap({ position: undefined });
     }
   };

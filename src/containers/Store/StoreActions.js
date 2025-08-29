@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Alert, StyleSheet, View, Linking } from 'react-native';
-import { Avatar, TouchableRipple, useTheme } from 'react-native-paper';
+import { Avatar, TouchableRipple, useTheme, Text } from 'react-native-paper';
 import Share from 'react-native-share';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { useNavigation } from '@react-navigation/native';

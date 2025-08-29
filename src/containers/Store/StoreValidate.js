@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Button, Portal, Snackbar } from 'react-native-paper';
+import { Button, Portal, Snackbar, Text } from 'react-native-paper';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import { validateStore } from '../../api/stores';

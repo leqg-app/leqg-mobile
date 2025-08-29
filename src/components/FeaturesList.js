@@ -8,7 +8,6 @@ import { featuresState } from '../store/atoms';
 
 const FeaturesList = ({ initialSelected = [], onChange }) => {
   const features = useAtomValue(featuresState);
-  console.log(features);
   const [selected, setSelected] = useState(initialSelected);
 
   useEffect(() => setSelected(initialSelected), [initialSelected]);
