@@ -34,18 +34,18 @@ function useEntitiesAction() {
     const dbStores = await db.getStores();
     const localVersions = storage.getObject('versions', {});
     const appVersion = storage.getString('appVersion');
-    console.log(apiVersions);
+
     // no internet, quit
     if (!apiVersions?.stores) {
       setStores(dbStores);
       return;
     }
 
-    const needReset = true;
-    // apiVersions.reset !== localVersions.reset ||
-    // (apiVersions.stores === localVersions.stores &&
-    //   apiVersions.count.stores !== dbStores.length) ||
-    // appVersion !== version;
+    const needReset =
+      apiVersions.reset !== localVersions.reset ||
+      (apiVersions.stores === localVersions.stores &&
+        apiVersions.count.stores !== dbStores.length) ||
+      appVersion !== version;
 
     if (!needReset && localVersions.stores === apiVersions.stores) {
       setStores(dbStores);
@@ -55,7 +55,6 @@ function useEntitiesAction() {
     if (needReset || !localVersions.stores || !dbStores.length) {
       // Load all stores
       const stores = await getStores(apiVersions.stores);
-      console.log(stores);
       const readableStores = stores.map(storesToDatabase);
       db.setStores(readableStores);
       setStores(readableStores);
@@ -108,7 +107,6 @@ function useEntitiesAction() {
     }
 
     const loaded = await getEntity(apiVersions[name]).catch(() => false);
-    console.log(loaded);
     if (!loaded) {
       return;
     }

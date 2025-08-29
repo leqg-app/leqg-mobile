@@ -31,7 +31,7 @@ function LocationPermission() {
         coordinates,
         zoom: 13,
       });
-    } catch (e) {
+    } catch {
       storage.setObject('mapPosition', {
         coordinates: DEFAULT_MAP.CENTER_COORDINATES,
         zoom: DEFAULT_MAP.ZOOM_LEVEL,

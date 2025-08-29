@@ -13,7 +13,7 @@ const sheetStoreState = atom(null);
 const storeQueryRequestIDState = atom(0);
 
 // Backing primitive per id so we can both fetch-on-read and imperatively set
-const storePrimitiveFamily = atomFamily(id => atom(null));
+const storePrimitiveFamily = atomFamily(() => atom(null));
 
 const storeState = atomFamily(id =>
   atom(

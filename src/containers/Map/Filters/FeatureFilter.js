@@ -17,7 +17,6 @@ function FeatureFilter() {
   const [featureFilter, setFeatureFilter] = useAtom(featureFilterState);
   const [filters, setFilters] = useState([]);
   const { bottom } = useSafeAreaInsets();
-  const [footerHeight, setFooterHeight] = useState(117);
 
   const openModal = () => {
     setSheetStore();
@@ -33,9 +32,6 @@ function FeatureFilter() {
     closeModal();
   }, [filters]);
 
-  const onLayoutFooter = event =>
-    setFooterHeight(event.nativeEvent.layout.height);
-
   return (
     <>
       <Filter
@@ -49,9 +45,7 @@ function FeatureFilter() {
         backdrop
         snaps={['80%']}
         footer={() => (
-          <View
-            style={[styles.footerSheet, { paddingBottom: bottom }]}
-            onLayout={onLayoutFooter}>
+          <View style={[styles.footerSheet, { paddingBottom: bottom }]}>
             <ActionButtons
               onCancel={closeModal}
               onSubmit={submit}
