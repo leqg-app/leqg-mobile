@@ -94,7 +94,7 @@ jobs:
           echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/v*}" >> $GITHUB_ENV
 
       - name: Bump version
-        uses: chkfung/android-version-actions@v1.1
+        uses: chkfung/android-version-actions@v1.2
         with:
           gradlePath: android/app/build.gradle
           versionName: ${{ env.RELEASE_VERSION }}
