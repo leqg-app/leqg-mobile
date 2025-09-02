@@ -94,9 +94,6 @@
     "node": ">=18"
   },
   "packageManager": "yarn@3.6.4",
-  "jest": {
-    "preset": "react-native"
-  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"
