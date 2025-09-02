@@ -85,8 +85,9 @@ jobs:
 
       - name: Get release note from release description
         run: |
+          mkdir ./distribution
           echo "${{ github.event.release.body }}"
-          echo "${{ github.event.release.body }}" > ./fastlane/metadata/android/fr-FR/changelogs/default.txt
+          echo "${{ github.event.release.body }}" > ./distribution/whatsnew-fr-FR
 
       - name: Get release version
         run: |
