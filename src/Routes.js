@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useMMKVBoolean } from 'react-native-mmkv';
 import { useMigrations } from 'drizzle-orm/op-sqlite/migrator';
@@ -13,7 +14,7 @@ import RatingStores from './containers/Store/RatingStore';
 import { storage } from './store/storage';
 import TabNavigator from './Tabs';
 import { useEntitiesAction } from './store/entitiesActions';
-import initialize from './store/database';
+import initialize, { db } from './store/database';
 import migrations from './store/drizzle/migrations';
 
 const Main = createNativeStackNavigator();
@@ -21,7 +22,7 @@ const Main = createNativeStackNavigator();
 initialize();
 
 const Routes = () => {
-  const { success, error } = useMigrations(migrations);
+  const { success, error } = useMigrations(db, migrations);
   const [firstOpen] = useMMKVBoolean('firstOpen', storage);
   const loadedEntities = useRef(false);
   const { loadEntities } = useEntitiesAction();
@@ -43,9 +44,11 @@ const Routes = () => {
 
   if (error) {
     return (
-      <View>
-        <Text>Migration error: {error.message}</Text>
-      </View>
+      <SafeAreaView>
+        <View>
+          <Text>Migration error: {error.message}</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
