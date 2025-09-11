@@ -89,7 +89,7 @@ android {
         applicationId "com.leqg"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2080936502
+        versionCode 2080936503
         versionName "1.0.1"
         resValue "string", "build_config_package", "com.leqg"
         testBuildType System.getProperty('testBuildType', 'debug')
