@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useMMKVBoolean } from 'react-native-mmkv';
+import { useMigrations } from 'drizzle-orm/op-sqlite/migrator';
 
 import EditStore from './containers/EditStore/EditStore';
 import IntroStack from './containers/Intro/Intro';
@@ -10,10 +11,14 @@ import { storage } from './store/storage';
 import TabNavigator from './Tabs';
 import { useEntitiesAction } from './store/entitiesActions';
 import initialize from './store/database';
+import migrations from './store/drizzle/migrations';
 
 const Main = createNativeStackNavigator();
 
+initialize();
+
 const Routes = () => {
+  useMigrations(migrations);
   const [firstOpen] = useMMKVBoolean('firstOpen', storage);
   const loadedEntities = useRef(false);
   const { loadEntities } = useEntitiesAction();
@@ -23,7 +28,7 @@ const Routes = () => {
       return;
     }
     loadedEntities.current = true;
-    initialize().then(loadEntities);
+    loadEntities();
   }, []);
 
   return (

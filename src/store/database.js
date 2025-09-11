@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 
 let db;
 
-export default async function initialize() {
+export default function initialize() {
   const opsqlite = open({ name: 'leqg', location: './leqg.sqlite' });
   db = drizzle(opsqlite);
 }

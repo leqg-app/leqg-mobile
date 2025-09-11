@@ -4,5 +4,11 @@ module.exports = {
     'react-native-paper/babel',
     '@babel/plugin-transform-template-literals',
     'react-native-worklets/plugin',
+    [
+      'inline-import',
+      {
+        extensions: ['.sql'],
+      },
+    ],
   ],
 };
