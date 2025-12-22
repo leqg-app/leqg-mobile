@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Button, Caption, Portal, Snackbar } from 'react-native-paper';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { Button, Portal, Snackbar } from 'react-native-paper';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import { validateStore } from '../../api/stores';
 import { sheetStoreState, storeState, userState } from '../../store/atoms';
@@ -25,9 +25,9 @@ const ERROR_MESSAGES = {
 function StoreValidate({ id }) {
   const navigation = useNavigation();
   const [state, setState] = useState({ loading: false, error: undefined });
-  const setSheetStore = useSetRecoilState(sheetStoreState);
-  const [store, setStore] = useRecoilState(storeState(id));
-  const user = useRecoilValue(userState);
+  const setSheetStore = useSetAtom(sheetStoreState);
+  const [store, setStore] = useAtom(storeState(id));
+  const user = useAtomValue(userState);
 
   if (!store.validations) {
     return <View />;
@@ -102,10 +102,10 @@ function StoreValidate({ id }) {
             disabled={state.loading}>
             J&apos;y suis
           </Button>
-          <Caption style={styles.helpText}>
+          <Text variant="bodyMedium" style={styles.helpText}>
             En validant votre position à ce bar, vous remerciez les
             contributeurs qui ont participé à la création de cette page.
-          </Caption>
+          </Text>
         </>
       ) : (
         <Button mode="outlined" style={styles.button} icon="check" disabled>

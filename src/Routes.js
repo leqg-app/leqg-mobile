@@ -9,6 +9,7 @@ import RatingStores from './containers/Store/RatingStore';
 import { storage } from './store/storage';
 import TabNavigator from './Tabs';
 import { useEntitiesAction } from './store/entitiesActions';
+import initialize from './store/database';
 
 const Main = createNativeStackNavigator();
 
@@ -22,7 +23,7 @@ const Routes = () => {
       return;
     }
     loadedEntities.current = true;
-    loadEntities();
+    initialize().then(loadEntities);
   }, []);
 
   return (

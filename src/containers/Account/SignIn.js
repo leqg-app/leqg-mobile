@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 
 import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
@@ -23,7 +23,7 @@ const ERROR_MESSAGES = {
 };
 
 const SignIn = ({ navigation }) => {
-  const setUser = useSetRecoilState(userState);
+  const setUser = useSetAtom(userState);
   const passwordInput = useRef();
 
   const [state, setState] = useState({

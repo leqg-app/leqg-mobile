@@ -1,8 +1,8 @@
 import React, { useCallback, useRef, useState, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Paragraph, Title, useTheme } from 'react-native-paper';
+import { useTheme, Text } from 'react-native-paper';
 import { BarRheostat } from 'react-native-rheostat';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import Filter from '../../../components/Filter';
 import ActionSheet from '../../../components/ActionSheet';
@@ -64,11 +64,11 @@ function getStats(stores, rates) {
 function PriceFilter() {
   const { colors } = useTheme();
   const sheet = useRef();
-  const setSheetStore = useSetRecoilState(sheetStoreState);
-  const [price, setPrice] = useRecoilState(priceFilterState);
+  const setSheetStore = useSetAtom(sheetStoreState);
+  const [price, setPrice] = useAtom(priceFilterState);
   const [values, setValues] = useState([0, 20]);
-  const stores = useRecoilValue(storesState);
-  const rates = useRecoilValue(ratesState);
+  const stores = useAtomValue(storesState);
+  const rates = useAtomValue(ratesState);
 
   const userCurrencyCode = storage.getString('userCurrencyCode') || 'EUR';
   const currencySymbol = currencies[userCurrencyCode]?.symbol || '€';
@@ -104,15 +104,15 @@ function PriceFilter() {
       </Filter>
       <ActionSheet ref={sheet} onDismiss={closeModal} backdrop>
         <View style={styles.sheet}>
-          <Title>Fourchette de prix</Title>
-          <Paragraph style={styles.rangeText}>
+          <Text variant="titleMedium">Fourchette de prix</Text>
+          <Text style={styles.rangeText}>
             {min} {currencySymbol} - {max === 10 ? 'Plus de 10' : max}{' '}
             {currencySymbol}
-          </Paragraph>
-          <Paragraph>
+          </Text>
+          <Text>
             Le prix moyen d&apos;une pinte de bière est de {average}{' '}
             {currencySymbol}
-          </Paragraph>
+          </Text>
           <BarRheostat
             theme={{ rheostat: { themeColor: colors.primary } }}
             values={values}

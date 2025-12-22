@@ -9,7 +9,7 @@ import {
   Text,
 } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 
 import { userState } from '../../store/atoms';
 import AnimatedCircle from '../../components/AnimatedCircle';
@@ -51,7 +51,7 @@ function groupFields(fields, { fieldName, reputation }) {
 }
 
 const WonReputation = ({ navigation, route }) => {
-  const [user, setUser] = useRecoilState(userState);
+  const [user, setUser] = useAtom(userState);
   const { reputation } = route.params;
 
   useEffect(() => StatusBar.setBarStyle('dark-content'), []);

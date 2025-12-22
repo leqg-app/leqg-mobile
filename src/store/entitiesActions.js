@@ -1,4 +1,4 @@
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 import * as Sentry from '@sentry/react-native';
 
 import { version } from '../../package.json';
@@ -7,7 +7,7 @@ import { getProducts } from '../api/products';
 import { getRates } from '../api/rates';
 import { getStores, getStoresVersion, getVersion } from '../api/stores';
 import { getProfile } from '../api/users';
-import { decompressStore } from '../utils/formatStore';
+import { storesToDatabase } from '../utils/formatStore';
 import {
   featuresState,
   productsState,
@@ -17,43 +17,48 @@ import {
   userState,
 } from './atoms';
 import { storage } from './storage';
+import * as db from './database';
 
 function useEntitiesAction() {
-  const setProducts = useSetRecoilState(productsState);
-  const setRates = useSetRecoilState(ratesState);
-  const setFeatures = useSetRecoilState(featuresState);
-  const setStores = useSetRecoilState(storesState);
-  const setStoreLoading = useSetRecoilState(storeLoadingState);
-  const setUser = useSetRecoilState(userState);
+  const setProducts = useSetAtom(productsState);
+  const setRates = useSetAtom(ratesState);
+  const setFeatures = useSetAtom(featuresState);
+  const setStores = useSetAtom(storesState);
+  const setStoreLoading = useSetAtom(storeLoadingState);
+  const setUser = useSetAtom(userState);
 
   // -- Load stores
 
   async function loadStores() {
     const apiVersions = await getVersion;
-    const localStores = storage.getObject('stores', []);
+    const dbStores = await db.getStores();
     const localVersions = storage.getObject('versions', {});
     const appVersion = storage.getString('appVersion');
-
+    console.log(apiVersions);
     // no internet, quit
     if (!apiVersions?.stores) {
+      setStores(dbStores);
       return;
     }
 
-    const needReset =
-      apiVersions.reset !== localVersions.reset ||
-      (localVersions.stores === apiVersions.stores &&
-        apiVersions.count.stores !== localStores.length) ||
-      appVersion !== version;
+    const needReset = true;
+    // apiVersions.reset !== localVersions.reset ||
+    // (apiVersions.stores === localVersions.stores &&
+    //   apiVersions.count.stores !== dbStores.length) ||
+    // appVersion !== version;
 
     if (!needReset && localVersions.stores === apiVersions.stores) {
-      // stores default value is local storage and doesn't need update
+      setStores(dbStores);
       return;
     }
 
-    if (needReset || !localVersions.stores || !localStores.length) {
+    if (needReset || !localVersions.stores || !dbStores.length) {
       // Load all stores
       const stores = await getStores(apiVersions.stores);
-      setStores(stores.map(decompressStore));
+      console.log(stores);
+      const readableStores = stores.map(storesToDatabase);
+      db.setStores(readableStores);
+      setStores(readableStores);
     } else {
       // Load only updated storesl
       const versioned = await getStoresVersion(
@@ -63,15 +68,14 @@ function useEntitiesAction() {
 
       if (versioned?.updated || versioned?.deleted) {
         const { updated = [], deleted = [] } = versioned;
-        setStores(
-          localStores
-            .filter(
-              store =>
-                updated.every(([id]) => store.id !== id) &&
-                deleted.every(id => store.id !== id),
-            )
-            .concat(updated.map(decompressStore)),
-        );
+        const readableStores = dbStores
+          .filter(
+            store =>
+              updated.every(([id]) => store.id !== id) &&
+              deleted.every(id => store.id !== id),
+          )
+          .concat(updated.map(storesToDatabase));
+        setStores(readableStores);
       } else {
         Sentry.captureException(versioned);
       }
@@ -104,6 +108,7 @@ function useEntitiesAction() {
     }
 
     const loaded = await getEntity(apiVersions[name]).catch(() => false);
+    console.log(loaded);
     if (!loaded) {
       return;
     }
@@ -119,12 +124,12 @@ function useEntitiesAction() {
   }
 
   async function loadUser() {
-    const userState = storage.getObject('userState');
-    if (!userState) {
+    const userStored = storage.getObject('userState');
+    if (!userStored) {
       return;
     }
     try {
-      const user = await getProfile(userState.jwt);
+      const user = await getProfile(userStored.jwt);
       if (user.error) {
         throw '';
       }

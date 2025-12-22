@@ -58,6 +58,9 @@ const CombinedDefaultTheme = {
     onSurfaceDisabled: 'rgba(25, 28, 29, 0.38)',
     backdrop: 'rgba(41, 50, 51, 0.4)',
   },
+  fonts: {
+    ...MD3LightTheme.fonts,
+  },
 };
 const CombinedDarkTheme = {
   ...MD3DarkTheme,
@@ -103,6 +106,9 @@ const CombinedDarkTheme = {
     surfaceDisabled: 'rgba(224, 227, 227, 0.12)',
     onSurfaceDisabled: 'rgba(224, 227, 227, 0.38)',
     backdrop: 'rgba(41, 50, 51, 0.4)',
+  },
+  fonts: {
+    ...MD3DarkTheme.fonts,
   },
 };
 

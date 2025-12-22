@@ -1,73 +1,39 @@
-import { atom, atomFamily, selector } from 'recoil';
+import { atom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
 
 import { getStore } from '../api/stores';
-import { getContributions, getProfile } from '../api/users';
+import { getContributions } from '../api/users';
 import { inHours } from '../utils/time';
 import { storage } from './storage';
+import { getLowest } from '../utils/formatStore';
 
-function persistUser({ setSelf, onSet }) {
-  const jwt = storage.getString('jwt');
-  if (jwt) {
-    setSelf(null);
-    getProfile(jwt).then(user => {
-      setSelf(user);
-      storage.set('jwt', '');
-      storage.setObject('userState', user);
-    });
-  }
-  setSelf(storage.getObject('userState', null));
-  onSet(newValue => storage.setObject('userState', newValue));
-}
+const storeEditionState = atom({});
+const userState = atom(null);
+const sheetStoreState = atom(null);
+const storeQueryRequestIDState = atom(0);
 
-async function getAllStores({ onSet }) {
-  // Everytime we update state, we store it
-  onSet(stores => {
-    storage.setObject('stores', stores);
-  });
-}
+// Backing primitive per id so we can both fetch-on-read and imperatively set
+const storePrimitiveFamily = atomFamily(id => atom(null));
 
-const storeEditionState = atom({
-  key: 'storeEditionState',
-  default: {},
-});
-
-const userState = atom({
-  key: 'userState',
-  effects_UNSTABLE: [persistUser],
-});
-
-const sheetStoreState = atom({
-  key: 'sheetStoreState',
-  default: null,
-});
-
-const storeQueryRequestIDState = atom({
-  key: 'StoreQueryRequestIDState',
-  default: 0,
-});
-
-const storeState = atomFamily({
-  key: 'storeState',
-  default: null,
-  effects: storeId => [
-    ({ setSelf, trigger }) => {
-      if (trigger === 'get') {
-        setSelf(getStore(storeId));
+const storeState = atomFamily(id =>
+  atom(
+    async get => {
+      const current = get(storePrimitiveFamily(id));
+      if (current) {
+        return current;
       }
+      return await getStore(id);
     },
-  ],
-});
+    (get, set, next) => {
+      set(storePrimitiveFamily(id), next);
+    },
+  ),
+);
 
-const storesState = atom({
-  key: 'storesState',
-  default: storage.getObject('stores', []),
-  effects_UNSTABLE: [getAllStores],
-});
-
-const storesMapState = selector({
-  key: 'storesMapState',
-  get: ({ get }) => {
-    const stores = get(storesState);
+const stores = atom([]);
+const storesState = atom(
+  get => {
+    const allStores = get(stores);
     const all = [];
     const date = new Date();
     const currentDay = date.getDay() || 7;
@@ -75,8 +41,12 @@ const storesMapState = selector({
 
     // If we are in special hours, replace price by special price
     // Same for all products
-    for (const store of stores) {
-      if (!store.price && !store.specialPrice) {
+    for (const store of allStores) {
+      const products = Object.values(store.productsById);
+      const price = getLowest(products.map(p => p.price));
+      const specialPrice = getLowest(products.map(p => p.specialPrice));
+
+      if (!price && !specialPrice) {
         continue;
       }
 
@@ -88,18 +58,18 @@ const storesMapState = selector({
           !today.closing ||
           inHours(today.opening, today.closing);
 
-      if (!store.price) {
-        all.push({ ...store, open, price: store.specialPrice });
+      if (!price) {
+        all.push({ ...store, open, price: specialPrice });
         continue;
       }
       if (
-        !store.specialPrice ||
+        !specialPrice ||
         !today ||
         today.closed ||
         !today.openingSpecial ||
         !today.closingSpecial
       ) {
-        all.push({ ...store, open });
+        all.push({ ...store, price, open });
         continue;
       }
 
@@ -109,7 +79,7 @@ const storesMapState = selector({
           : today.openingSpecial < now || now < today.closingSpecial;
 
       if (!specialHours) {
-        all.push({ ...store, open });
+        all.push({ ...store, price, open });
         continue;
       }
 
@@ -123,53 +93,40 @@ const storesMapState = selector({
         }),
         {},
       );
-      all.push({ ...store, open, price: store.specialPrice, productsById });
+      all.push({ ...store, open, price: specialPrice, productsById });
     }
-
-    return {
-      type: 'FeatureCollection',
-      features: all.map(store => ({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [store.longitude, store.latitude],
-        },
-        properties: store,
-      })),
-    };
+    return all;
   },
+  (_, set, update) => set(stores, update),
+);
+
+const storesMapState = atom(get => {
+  const all = get(storesState);
+  return {
+    type: 'FeatureCollection',
+    features: all.map(store => ({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [store.longitude, store.latitude],
+      },
+      properties: store,
+    })),
+  };
 });
 
-const productsState = atom({
-  key: 'productsState',
-  default: storage.getObject('products', []),
-});
+const productsState = atom(storage.getObject('products', []));
+const ratesState = atom(storage.getObject('rates', []));
+const featuresState = atom(storage.getObject('features', []));
+const storeLoadingState = atom(false);
 
-const ratesState = atom({
-  key: 'ratesState',
-  default: storage.getObject('rates', []),
-});
-
-const featuresState = atom({
-  key: 'featuresState',
-  default: storage.getObject('features', []),
-});
-
-const storeLoadingState = atom({
-  key: 'storeLoadingState',
-  default: false,
-});
-
-const contributionsState = selector({
-  key: 'contributionsState',
-  get: async ({ get }) => {
-    get(storeQueryRequestIDState);
-    const user = get(userState);
-    if (!user) {
-      return;
-    }
-    return getContributions(user.jwt);
-  },
+const contributionsState = atom(async get => {
+  get(storeQueryRequestIDState);
+  const user = get(userState);
+  if (!user) {
+    return [];
+  }
+  return await getContributions(user.jwt);
 });
 
 export {

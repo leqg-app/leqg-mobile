@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Title } from 'react-native-paper';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 
 import Badge from './Badge';
 import { featuresState } from '../store/atoms';
 
 const FeaturesList = ({ initialSelected = [], onChange }) => {
-  const features = useRecoilValue(featuresState);
+  const features = useAtomValue(featuresState);
+  console.log(features);
   const [selected, setSelected] = useState(initialSelected);
 
   useEffect(() => setSelected(initialSelected), [initialSelected]);

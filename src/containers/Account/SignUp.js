@@ -1,14 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import {
-  Paragraph,
-  Text,
-  TextInput,
-  Button,
-  HelperText,
-} from 'react-native-paper';
+import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 
 import { userState } from '../../store/atoms';
 import * as api from '../../api/users';
@@ -24,7 +18,7 @@ const ERROR_MESSAGES = {
 };
 
 const SignUp = ({ navigation }) => {
-  const setUser = useSetRecoilState(userState);
+  const setUser = useSetAtom(userState);
   const emailInput = useRef();
   const passwordInput = useRef();
 
@@ -58,9 +52,9 @@ const SignUp = ({ navigation }) => {
     <KeyboardAwareScrollView
       keyboardShouldPersistTaps="always"
       contentContainerStyle={styles.container}>
-      <Paragraph style={styles.helpText}>
+      <Text variant="bodyMedium" style={styles.helpText}>
         Inscrivez-vous et profitez de tous les avantages des membres
-      </Paragraph>
+      </Text>
       <View style={styles.form}>
         <GoogleAuth signUp />
         {Platform.OS === 'ios' && (

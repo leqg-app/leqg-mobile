@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { Alert, StyleSheet, View, Linking } from 'react-native';
-import { Avatar, Caption, TouchableRipple, useTheme } from 'react-native-paper';
+import { Avatar, TouchableRipple, useTheme } from 'react-native-paper';
 import Share from 'react-native-share';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useSetAtom, useAtomValue } from 'jotai';
 import { useNavigation } from '@react-navigation/native';
 
 import { sheetStoreState, storeState, userState } from '../../store/atoms';
@@ -24,7 +24,9 @@ export function ActionButton({ name, icon, onPress, color }) {
           color={color}
         />
       </TouchableRipple>
-      <Caption style={styles.actionCaption}>{name}</Caption>
+      <Text variant="bodyMedium" style={styles.actionCaption}>
+        {name}
+      </Text>
     </View>
   );
 }
@@ -44,9 +46,9 @@ function call(store) {
 
 function StoreActionButtons({ id }) {
   const { colors } = useTheme();
-  const store = useRecoilValue(storeState(id));
-  const user = useRecoilValue(userState);
-  const setSheetStore = useSetRecoilState(sheetStoreState);
+  const store = useAtomValue(storeState(id));
+  const user = useAtomValue(userState);
+  const setSheetStore = useSetAtom(sheetStoreState);
   const navigation = useNavigation();
   const { addFavorite, removeFavorite } = useFavoriteState();
 

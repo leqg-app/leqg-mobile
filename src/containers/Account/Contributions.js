@@ -1,7 +1,8 @@
 import React from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { loadable } from 'jotai/utils';
 import formatDistance from 'date-fns/formatDistance';
 import dateLocale from 'date-fns/locale/fr';
 
@@ -45,8 +46,10 @@ function sortByDate(a, b) {
 }
 
 const Contributions = () => {
-  const refresh = useSetRecoilState(storeQueryRequestIDState);
-  const { contents = [], state } = useRecoilValueLoadable(contributionsState);
+  const refresh = useSetAtom(storeQueryRequestIDState);
+  const loadableValue = useAtomValue(loadable(contributionsState));
+  const contents = loadableValue?.data || [];
+  const state = loadableValue?.state;
 
   return (
     <SafeAreaView style={styles.container}>

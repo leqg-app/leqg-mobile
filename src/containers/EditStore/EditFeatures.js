@@ -1,13 +1,13 @@
 import React, { useLayoutEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { IconButton, Text } from 'react-native-paper';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 
 import FeaturesList from '../../components/FeaturesList';
 import { storeEditionState } from '../../store/atoms';
 
 const EditFeatures = ({ navigation }) => {
-  const [storeEdition, setStoreEdition] = useRecoilState(storeEditionState);
+  const [storeEdition, setStoreEdition] = useAtom(storeEditionState);
 
   useLayoutEffect(() => {
     navigation.setOptions({

@@ -1,13 +1,13 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IconButton, Text, Title } from 'react-native-paper';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 
 import { theme } from '../../constants';
 import { featuresState } from '../../store/atoms';
 
 function StoreFeatures(props) {
-  const features = useRecoilValue(featuresState);
+  const features = useAtomValue(featuresState);
 
   if (!features.length) {
     return <View />;

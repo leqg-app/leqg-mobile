@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { Button, IconButton, List, Text } from 'react-native-paper';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import Title from '../../components/Title';
 import { theme } from '../../constants';
@@ -31,9 +31,9 @@ const Row = ({ store, onPress, onRemove }) => (
 );
 
 const Favorites = ({ navigation }) => {
-  const user = useRecoilValue(userState);
-  const stores = useRecoilValue(storesState);
-  const setSheetStore = useSetRecoilState(sheetStoreState);
+  const user = useAtomValue(userState);
+  const stores = useAtomValue(storesState);
+  const setSheetStore = useSetAtom(sheetStoreState);
   const { removeFavorite } = useFavoriteState();
 
   const navigate = store => {

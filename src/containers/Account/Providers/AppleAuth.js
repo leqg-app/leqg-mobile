@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Alert } from 'react-native';
 import { Portal, Snackbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 import SocialButton from '../../../components/social/SocialButton';
@@ -18,7 +18,7 @@ const ERROR_MESSAGES = {
 function AppleAuth({ signUp }) {
   const navigation = useNavigation();
   const [state, setState] = useState({ error: undefined, loading: false });
-  const setUser = useSetRecoilState(userState);
+  const setUser = useSetAtom(userState);
 
   const signUpProvider = idToken => {
     return navigation.navigate('SignUpProvider', {

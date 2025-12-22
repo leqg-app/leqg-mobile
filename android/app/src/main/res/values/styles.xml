@@ -6,12 +6,11 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
     </style>
 
-    <!-- BootTheme should inherit from Theme.SplashScreen -->
-    <style name="BootTheme" parent="Theme.SplashScreen">
-        <!-- set the generated bootsplash.xml drawable as activity background -->
-        <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
-        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    <!-- BootTheme should inherit from Theme.BootSplash or Theme.BootSplash.EdgeToEdge -->
+    <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
+        <item name="bootSplashBackground">@color/bootsplash_background</item>
+        <item name="bootSplashLogo">@mipmap/bootsplash_logo</item>
+        <item name="postBootSplashTheme">@style/AppTheme</item>
     </style>
 
 </resources>

@@ -1,0 +1,12 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -workspace ios/leqg.xcworkspace -scheme leqg -configuration Debug -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone 15,OS=latest" build
+
+Build settings from command line:
+    SDKROOT = iphonesimulator18.5
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  MapLibre GL Native: https://github.com/maplibre/maplibre-gl-native-distribution @ 5.12.1
+

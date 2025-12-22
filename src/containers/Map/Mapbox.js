@@ -4,7 +4,7 @@ import MapboxGL, { Images, Logger } from '@rnmapbox/maps';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
 import Config from 'react-native-config';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 
 import tooltipIcon from '../../assets/tooltip-50.png';
 import { DEFAULT_MAP, theme } from '../../constants';
@@ -16,7 +16,7 @@ import { sheetStoreState, storesMapState } from '../../store/atoms';
 import { mapboxState } from '../../store/filterAtoms';
 import { getErrorMessage } from '../../utils/errorMessage';
 
-MapboxGL.setWellKnownTileServer('mapbox');
+// MapboxGL.setWellKnownTileServer('mapbox');
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
 // https://github.com/react-native-mapbox-gl/maps/issues/943
@@ -40,10 +40,11 @@ const storedMapPosition = storage.getObject('mapPosition', {});
 const Mapbox = () => {
   const camera = useRef();
   const { colors } = useTheme();
-  const stores = useRecoilValue(storesMapState);
-  const [sheetStore, setSheetStore] = useRecoilState(sheetStoreState);
+  const stores = useAtomValue(storesMapState);
+  console.log(stores);
+  const [sheetStore, setSheetStore] = useAtom(sheetStoreState);
   const { filters, textField, symbolSortKey, textSize } =
-    useRecoilValue(mapboxState);
+    useAtomValue(mapboxState);
 
   const [createStore, setCreateStore] = useState();
   const [mapState, setState] = useState({

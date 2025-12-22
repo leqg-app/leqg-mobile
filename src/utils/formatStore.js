@@ -1,12 +1,9 @@
-function getLowest(numbers) {
+export function getLowest(numbers) {
   if (!numbers.length) {
     return 0;
   }
-  if (numbers.length === 1) {
-    return numbers[0];
-  }
   return numbers.reduce((lowest, number) =>
-    lowest < number ? lowest : number,
+    (!number || number > lowest) && lowest ? lowest : number,
   );
 }
 
@@ -41,7 +38,7 @@ function getProductsById(products) {
   return products.reduce(groupById, {});
 }
 
-export function decompressStore(compressedStore) {
+export function storesToDatabase(compressedStore) {
   if (!Array.isArray(compressedStore)) {
     return {};
   }
@@ -51,13 +48,15 @@ export function decompressStore(compressedStore) {
     address,
     longitude,
     latitude,
-    price,
-    specialPrice,
+    ,
+    ,
+    // TODO: remove fields from API
     currencyCode,
     products,
     schedules,
     features,
     rate,
+    rateCount,
   ] = compressedStore;
   return {
     id,
@@ -65,24 +64,21 @@ export function decompressStore(compressedStore) {
     address,
     longitude,
     latitude,
-    price,
-    specialPrice,
     currencyCode,
     productsById: getProductsById(products),
     schedules: decompressSchedules(schedules),
     features,
     rate,
+    rateCount,
   };
 }
 
-export function formatStoreToMap(store) {
+export function storeToDatabase(store) {
   const { longitude, latitude, products } = store;
   return {
     ...store,
     longitude: +longitude.toFixed(5),
     latitude: +latitude.toFixed(5),
-    price: getLowest(products.map(p => p.price).filter(Boolean)),
-    specialPrice: getLowest(products.map(p => p.specialPrice).filter(Boolean)),
     currencyCode: products?.[0]?.currencyCode || 'EUR',
     productsById: products.reduce(
       (products, product) => ({ ...products, [product.id]: product }),
