@@ -1,5 +1,5 @@
-import { MMKV } from 'react-native-mmkv';
-const storage = new MMKV({ id: 'leqg', encryptionKey: 'dml2ZWxhYmllcmUK' });
+import { createMMKV } from 'react-native-mmkv';
+const storage = createMMKV({ id: 'leqg', encryptionKey: 'dml2ZWxhYmllcmUK' });
 
 storage.setObject = function (key, obj) {
   try {

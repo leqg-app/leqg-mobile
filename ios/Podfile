@@ -31,7 +31,7 @@ if linkage != nil
 end
 
 $RNMapboxMapsImpl = 'mapbox'
-$RNMapboxMapsVersion = '= 11.13.4'
+$RNMapboxMapsVersion = '= 11.15.2'
 
 target 'leqg' do
   config = use_native_modules!
@@ -58,7 +58,6 @@ target 'leqg' do
     end
     $RNMapboxMaps.post_install(installer)
 
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
