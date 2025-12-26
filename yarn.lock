@@ -4705,7 +4705,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@turf/destination@npm:7.3.1":
+"@turf/destination@npm:7.3.1, @turf/destination@npm:^7.3.1":
   version: 7.3.1
   resolution: "@turf/destination@npm:7.3.1"
   dependencies:
@@ -10697,6 +10697,7 @@ __metadata:
     "@sentry/react-native": ^7.8.0
     "@shopify/react-native-skia": ^2.4.14
     "@turf/circle": ^7.3.1
+    "@turf/destination": ^7.3.1
     "@types/react": ^19.2.7
     "@typescript-eslint/eslint-plugin": ^8.50.1
     "@typescript-eslint/parser": ^8.50.1

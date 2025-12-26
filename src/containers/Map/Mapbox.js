@@ -138,6 +138,9 @@ const Mapbox = () => {
   };
 
   const onUpdateLocation = ({ coords }) => {
+    if (!coords?.longitude || !coords?.latitude) {
+      return;
+    }
     setMap({ position: [coords.longitude, coords.latitude] });
   };
 
@@ -190,6 +193,7 @@ const Mapbox = () => {
         <MapboxGL.UserLocation
           onUpdate={onUpdateLocation}
           minDisplacement={10}
+          animated={false} // https://github.com/rnmapbox/maps/issues/4060
         />
         <MapboxGL.ShapeSource
           id="stores"
