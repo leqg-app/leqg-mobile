@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Searchbar } from 'react-native-paper';
 import Config from 'react-native-config';

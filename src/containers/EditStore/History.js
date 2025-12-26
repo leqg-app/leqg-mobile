@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from 'react-native-paper';
 import formatDistance from 'date-fns/formatDistance';
 import dateLocale from 'date-fns/locale/fr';

@@ -1,5 +1,6 @@
 import React from 'react';
-import { FlatList, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { FlatList, StatusBar, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { List } from 'react-native-paper';
 import { useAtomValue } from 'jotai';
 

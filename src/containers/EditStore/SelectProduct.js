@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Searchbar, Text, TouchableRipple } from 'react-native-paper';
 import { useAtomValue } from 'jotai';
 
