@@ -31,7 +31,7 @@ function useStoreActions() {
   const editStoreScreen = store => {
     if (!user) {
       Alert.alert(
-        '',
+        'Connexion requise',
         'Vous devez être connecté pour modifier ce bar',
         [
           {

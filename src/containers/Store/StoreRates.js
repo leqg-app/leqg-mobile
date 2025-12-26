@@ -18,7 +18,7 @@ function StoreRates({ store }) {
   const navigateRatingStore = rate => {
     if (!user) {
       Alert.alert(
-        '',
+        'Connexion requise',
         'Vous devez être connecté pour partager votre avis',
         [
           {

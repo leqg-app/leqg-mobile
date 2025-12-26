@@ -63,7 +63,7 @@ function StoreActionButtons({ id }) {
   const toggleFavorite = () => {
     if (!user) {
       Alert.alert(
-        '',
+        'Connexion requise',
         'Vous devez être connecté pour enregistrer ce bar dans vos favoris',
         [
           {

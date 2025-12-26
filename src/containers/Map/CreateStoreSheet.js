@@ -39,7 +39,7 @@ const CreateStoreSheet = ({ createStore, onClose }) => {
   const submit = () => {
     if (!user) {
       Alert.alert(
-        '',
+        'Connexion requise',
         'Vous devez être connecté pour ajouter un nouveau bar',
         [
           {

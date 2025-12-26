@@ -34,13 +34,13 @@ function StoreValidate({ id }) {
   }
 
   const alreadyValidated = store.validations.some(
-    validation => validation.user.id === user.id,
+    validation => validation.user.id === user?.id,
   );
 
   const validate = async () => {
     if (!user) {
       Alert.alert(
-        '',
+        'Connexion requise',
         'Vous devez être connecté pour valider ce bar',
         [
           {
