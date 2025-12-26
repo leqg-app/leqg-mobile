@@ -31,6 +31,7 @@
     "deprecated-react-native-prop-types": "^5.0.0",
     "drizzle-orm": "^0.45.1",
     "jotai": "^2.16.0",
+    "jotai-family": "^1.0.1",
     "patch-package": "^8.0.1",
     "react": "19.2.3",
     "react-error-boundary": "^6.0.0",
