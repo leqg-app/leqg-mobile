@@ -14,23 +14,22 @@ const errorMessages = {
 async function getLocation(options = {}) {
   const { timeout = 2000, askedByUser = false } = options;
 
+  const permissions = Platform.select({
+    ios: [PERMISSIONS.IOS.LOCATION_WHEN_IN_USE],
+    android: [
+      PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+    ],
+  });
+  const status = await checkMultiple(permissions);
   const permission = Platform.select({
     ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
     android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
   });
-  const status = await checkMultiple([
-    PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
-    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-    PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-  ]);
   if (!askedByUser && status[permission] !== 'granted') {
     throw errorMessages[status[permission]] || status[permission];
   }
-  const asked = await requestMultiple([
-    PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
-    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-    PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-  ]);
+  const asked = await requestMultiple(permissions);
   if (asked[permission] !== 'granted') {
     if (status[permission] === 'blocked' && askedByUser) {
       Alert.alert(
