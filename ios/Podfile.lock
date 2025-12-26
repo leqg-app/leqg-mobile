@@ -36,13 +36,13 @@ PODS:
   - hermes-engine (0.14.0):
     - hermes-engine/Pre-built (= 0.14.0)
   - hermes-engine/Pre-built (0.14.0)
-  - MapboxCommon (24.15.2):
+  - MapboxCommon (24.16.2):
     - Turf (= 4.0.0)
-  - MapboxCoreMaps (11.15.2):
-    - MapboxCommon (= 24.15.2)
-  - MapboxMaps (11.15.2):
-    - MapboxCommon (= 24.15.2)
-    - MapboxCoreMaps (= 11.15.2)
+  - MapboxCoreMaps (11.16.2):
+    - MapboxCommon (= 24.16.2)
+  - MapboxMaps (11.16.2):
+    - MapboxCommon (= 24.16.2)
+    - MapboxCoreMaps (= 11.16.2)
     - Turf (= 4.0.0)
   - MMKVCore (2.2.4)
   - NitroMmkv (4.1.0):
@@ -105,7 +105,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - op-sqlite (15.1.14):
+  - op-sqlite (15.1.15):
     - boost
     - DoubleConversion
     - fast_float
@@ -2842,7 +2842,7 @@ PODS:
     - SocketRocket
     - Yoga
   - rnmapbox-maps (10.2.10):
-    - MapboxMaps (= 11.15.2)
+    - MapboxMaps (= 11.16.2)
     - React
     - React-Core
     - rnmapbox-maps/DynamicLibrary (= 10.2.10)
@@ -2853,7 +2853,7 @@ PODS:
     - fast_float
     - fmt
     - hermes-engine
-    - MapboxMaps (= 11.15.2)
+    - MapboxMaps (= 11.16.2)
     - RCT-Folly
     - RCT-Folly/Fabric
     - RCTRequired
@@ -3624,13 +3624,13 @@ SPEC CHECKSUMS:
   GTMAppAuth: 217a876b249c3c585a54fd6f73e6b58c4f5c4238
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   hermes-engine: 694cee5fc92c27a5711acc9f4f4c8a7cc2cafc95
-  MapboxCommon: 5b702d1562a1bc56a8a9d141ebbbaa72390536c9
-  MapboxCoreMaps: ae6fcbe255e3fa9f290ee9cd72d125d1a2ecabfa
-  MapboxMaps: 7627bc07bcad10259668d83a3f0ed3920ee0eaf7
+  MapboxCommon: 9fec00e2642725476496d68f29995910dda1f4f8
+  MapboxCoreMaps: c3667118567e29c7718afc5126100a6acb898379
+  MapboxMaps: f06f0aefeb5ee6c880fd57b93c3ec165e2367f9d
   MMKVCore: f2dd4c9befea04277a55e84e7812f930537993df
   NitroMmkv: ce1df9b9f0e06dfbde2455d863047e0411fceb6e
   NitroModules: f964d2f3f5b392d0c0303737085cc30e375dc43f
-  op-sqlite: 313580825871160f4f48976c21684a7f065b40c5
+  op-sqlite: 28a9c908cb5896d920128934d21093d592858761
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: a41bbdd9af30bf2e5715796b313e44ec43eefff1
@@ -3711,7 +3711,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 36d7f232bfe7c9b5c494cb7793230424ed32c388
   RNGestureHandler: cd4be101cfa17ea6bbd438710caa02e286a84381
   RNGoogleSignin: 4122717989e2544988cb4cec3e917da3ebc969a5
-  rnmapbox-maps: 2213d2a2ccf152cd909a9884cebe22bc0d625571
+  rnmapbox-maps: d43f84c1b65b4c152f66b5523572c96cf5c8fd7f
   RNPermissions: a31e8836acdd42570a8f16f04da327423028ddc1
   RNReanimated: 292cd58688552a22b3fc1cefcfbc49b336dfed68
   RNScreens: ffbb0296608eb3560de641a711bbdb663ed1f6b4
@@ -3725,6 +3725,6 @@ SPEC CHECKSUMS:
   Turf: c9eb11a65d96af58cac523460fd40fec5061b081
   Yoga: 5bd0956bf9cb16f75101e78b5e852c7577bc5a45
 
-PODFILE CHECKSUM: d0dbadb7f8360d3c77639d5f5e80016a205481a3
+PODFILE CHECKSUM: 93d89ad57f5f0a1fc7910af2bee4e88372b3d9b9
 
 COCOAPODS: 1.15.2

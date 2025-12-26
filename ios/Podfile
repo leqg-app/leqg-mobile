@@ -31,7 +31,7 @@ if linkage != nil
 end
 
 $RNMapboxMapsImpl = 'mapbox'
-$RNMapboxMapsVersion = '= 11.15.2'
+$RNMapboxMapsVersion = '= 11.16.2'
 
 target 'leqg' do
   config = use_native_modules!
