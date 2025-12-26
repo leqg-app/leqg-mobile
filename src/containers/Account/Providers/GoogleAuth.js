@@ -39,9 +39,8 @@ function GoogleAuth({ signUp }) {
         offlineAccess: true,
       });
 
-      await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      const { idToken } = userInfo;
+      const { idToken } = userInfo.data;
       const user = await signInProvider('google', idToken);
 
       if (user && !user.error) {
@@ -74,6 +73,7 @@ function GoogleAuth({ signUp }) {
       );
       setState({ error: undefined, loading: false });
     } catch (err) {
+      console.log(err);
       if (err.code === statusCodes.SIGN_IN_CANCELLED) {
         return;
       }
