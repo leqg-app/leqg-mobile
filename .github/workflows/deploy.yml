@@ -17,6 +17,13 @@ jobs:
     name: Android App
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          echo "Removing .NET..."
+          sudo rm -rf /usr/share/dotnet || true
+          echo "Removing GHC / Haskell..."
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/.ghcup || true
+
       - name: Checkout
         uses: actions/checkout@v5
 
