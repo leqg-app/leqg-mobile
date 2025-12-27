@@ -8,6 +8,13 @@
       "when": 1757613688340,
       "tag": "0000_empty_killmonger",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1766847563565,
+      "tag": "0001_far_zeigeist",
+      "breakpoints": true
     }
   ]
 }
