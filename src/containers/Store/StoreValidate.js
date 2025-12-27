@@ -50,7 +50,9 @@ function StoreValidate({ id }) {
           {
             text: 'Connexion',
             onPress: () => {
-              navigation.navigate('AccountTab');
+              navigation.navigate('TabNavigator', {
+                screen: 'AccountTab',
+              });
               setSheetStore();
             },
           },

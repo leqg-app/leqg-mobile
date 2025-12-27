@@ -37,8 +37,11 @@ const Favorites = ({ navigation }) => {
       return;
     }
     setSheetStore({ ...selectedStore, focus: true });
-    navigation.navigate('MapTab', {
-      screen: 'MapScreen',
+    navigation.navigate('TabNavigator', {
+      screen: 'MapTab',
+      params: {
+        screen: 'MapScreen',
+      },
     });
   };
 
@@ -51,7 +54,12 @@ const Favorites = ({ navigation }) => {
             <Text variant="bodyMedium" style={styles.textCenter}>
               Veuillez vous connecter pour voir vos bars favoris
             </Text>
-            <Button onPress={() => navigation.navigate('AccountTab')}>
+            <Button
+              onPress={() =>
+                navigation.navigate('TabNavigator', {
+                  screen: 'AccountTab',
+                })
+              }>
               Connexion
             </Button>
           </View>

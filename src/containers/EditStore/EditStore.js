@@ -1,10 +1,5 @@
 import React, { useEffect, useRef, memo, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
@@ -124,7 +119,13 @@ const EditStore = ({ route, navigation }) => {
     if (reputation.total) {
       navigation.replace('WonReputation', { reputation });
     } else {
-      navigation.navigate('MapScreen', { contribute: true });
+      navigation.navigate('TabNavigator', {
+        screen: 'MapTab',
+        params: {
+          screen: 'MapScreen',
+          params: { contribute: true },
+        },
+      });
     }
   };
 
@@ -174,7 +175,9 @@ const EditStore = ({ route, navigation }) => {
             <Button
               onPress={() => {
                 setSheetStore();
-                navigation.navigate('AccountTab');
+                navigation.navigate('TabNavigator', {
+                  screen: 'AccountTab',
+                });
               }}>
               Connexion
             </Button>
