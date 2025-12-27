@@ -1,8 +1,10 @@
 import React, { useCallback, useRef, useState, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BarRheostat } from 'react-native-rheostat';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { BottomSheetFooter } from '@gorhom/bottom-sheet';
 
 import Filter from '../../../components/Filter';
 import ActionSheet from '../../../components/ActionSheet';
@@ -69,7 +71,7 @@ function PriceFilter() {
   const [values, setValues] = useState([0, 20]);
   const stores = useAtomValue(storesState);
   const rates = useAtomValue(ratesState);
-
+  const { bottom } = useSafeAreaInsets();
   const userCurrencyCode = storage.getString('userCurrencyCode') || 'EUR';
   const currencySymbol = currencies[userCurrencyCode]?.symbol || '€';
 
@@ -94,6 +96,18 @@ function PriceFilter() {
     closeModal();
   }, [min, max]);
 
+  const footer = props => (
+    <BottomSheetFooter {...props} bottomInset={bottom}>
+      <View style={styles.footerSheet}>
+        <ActionButtons
+          onCancel={closeModal}
+          onSubmit={submit}
+          submitLabel="OK"
+        />
+      </View>
+    </BottomSheetFooter>
+  );
+
   return (
     <>
       <Filter
@@ -102,7 +116,7 @@ function PriceFilter() {
         onRemove={price && (() => setPrice(null))}>
         {getPrice(price)}
       </Filter>
-      <ActionSheet ref={sheet} onDismiss={closeModal} backdrop>
+      <ActionSheet ref={sheet} onDismiss={closeModal} backdrop footer={footer}>
         <View style={styles.sheet}>
           <Text variant="titleMedium">Fourchette de prix</Text>
           <Text style={styles.rangeText}>
@@ -113,26 +127,24 @@ function PriceFilter() {
             Le prix moyen d&apos;une pinte de bière est de {average}{' '}
             {currencySymbol}
           </Text>
-          <BarRheostat
-            theme={{ rheostat: { themeColor: colors.primary } }}
-            values={values}
-            min={0}
-            max={20}
-            snapPoints={new Array(21).fill().map((_, i) => i)}
-            snap={true}
-            svgData={snaps}
-            onValuesUpdated={({ values }) => {
-              if (memoValues[0] !== values[0] || memoValues[1] !== values[1]) {
-                memoValues = values; // bc no access to updated "values" state, dkw
-                setValues(values);
-              }
-            }}
-          />
-          <View style={styles.actionButtons}>
-            <ActionButtons
-              onCancel={closeModal}
-              onSubmit={submit}
-              submitLabel="OK"
+          <View style={styles.rheostatContainer}>
+            <BarRheostat
+              theme={{ rheostat: { themeColor: colors.primary } }}
+              values={values}
+              min={0}
+              max={20}
+              snapPoints={new Array(21).fill().map((_, i) => i)}
+              snap={true}
+              svgData={snaps}
+              onValuesUpdated={({ values }) => {
+                if (
+                  memoValues[0] !== values[0] ||
+                  memoValues[1] !== values[1]
+                ) {
+                  memoValues = values; // bc no access to updated "values" state, dkw
+                  setValues(values);
+                }
+              }}
             />
           </View>
         </View>
@@ -144,14 +156,19 @@ function PriceFilter() {
 const styles = StyleSheet.create({
   sheet: {
     paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
   },
   rangeText: {
     fontSize: 17,
     marginTop: 15,
   },
-  actionButtons: {
-    marginTop: 15,
-    // marginBottom: 5,
+  rheostatContainer: {
+    height: 270,
+  },
+  footerSheet: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'grey',
   },
 });
 

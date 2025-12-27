@@ -74,6 +74,7 @@ const ActionSheet = React.forwardRef(
           onChange={onChange}
           backdropComponent={backdrop && renderBackdrop}
           topInset={topbarHeight}
+          footerComponent={footer}
           backgroundStyle={{ backgroundColor: colors.background }}>
           <BottomSheetView>{children}</BottomSheetView>
         </BottomSheet>
