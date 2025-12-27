@@ -8,7 +8,20 @@ import { storage } from './storage';
 import { getLowest } from '../utils/formatStore';
 
 const storeEditionState = atom({});
-const userState = atom(null);
+
+const userPrimitiveState = atom(storage.getObject('user', null));
+const userState = atom(
+  get => get(userPrimitiveState),
+  (get, set, newValue) => {
+    set(userPrimitiveState, newValue);
+    if (newValue === null) {
+      storage.remove('user');
+    } else {
+      storage.setObject('user', newValue);
+    }
+  },
+);
+
 const sheetStoreState = atom(null);
 const storeQueryRequestIDState = atom(0);
 

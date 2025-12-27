@@ -73,7 +73,6 @@ function GoogleAuth({ signUp }) {
       );
       setState({ error: undefined, loading: false });
     } catch (err) {
-      console.log(err);
       if (err.code === statusCodes.SIGN_IN_CANCELLED) {
         return;
       }
