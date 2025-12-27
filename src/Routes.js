@@ -5,9 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useMMKVBoolean } from 'react-native-mmkv';
 import { useMigrations } from 'drizzle-orm/op-sqlite/migrator';
-import * as Sentry from '@sentry/react-native';
 
 import EditStore from './containers/EditStore/EditStore';
+import { logError } from './utils/logError';
 import IntroStack from './containers/Intro/Intro';
 import WonReputation from './containers/Account/WonReputation';
 import RatingStores from './containers/Store/RatingStore';
@@ -32,7 +32,7 @@ const Routes = () => {
       return;
     }
     if (error) {
-      Sentry.captureException(error);
+      logError(error, { context: 'database migration' });
       return;
     }
     if (!success) {

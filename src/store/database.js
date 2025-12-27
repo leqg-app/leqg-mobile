@@ -1,9 +1,9 @@
 import { open } from '@op-engineering/op-sqlite';
 import { drizzle } from 'drizzle-orm/op-sqlite';
-import * as Sentry from '@sentry/react-native';
+import { eq } from 'drizzle-orm';
 
 import * as schema from './schema.js';
-import { eq } from 'drizzle-orm';
+import { logError } from '../utils/logError';
 
 let db;
 
@@ -16,7 +16,7 @@ export async function getStores() {
   try {
     return await db.select().from(schema.stores);
   } catch (error) {
-    Sentry.captureException(error);
+    logError(error, { function: 'getStores' });
     return [];
   }
 }
@@ -26,7 +26,7 @@ export async function setStores(stores) {
     await db.delete(schema.stores);
     await db.insert(schema.stores).values(stores);
   } catch (e) {
-    Sentry.captureException(e);
+    logError(e, { function: 'setStores', storesCount: stores?.length });
   }
 }
 
@@ -37,7 +37,7 @@ export async function setStore(store) {
       .set(store)
       .where(eq(schema.stores.id, store.id));
   } catch (e) {
-    Sentry.captureException(e);
+    logError(e, { function: 'setStore', storeId: store?.id });
   }
 }
 

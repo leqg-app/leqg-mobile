@@ -1,7 +1,7 @@
 import { useSetAtom } from 'jotai';
-import * as Sentry from '@sentry/react-native';
 
 import { version } from '../../package.json';
+import { logError } from '../utils/logError';
 import { getFeatures } from '../api/features';
 import { getProducts } from '../api/products';
 import { getRates } from '../api/rates';
@@ -76,7 +76,11 @@ function useEntitiesAction() {
           .concat(updated.map(storesToDatabase));
         setStores(readableStores);
       } else {
-        Sentry.captureException(versioned);
+        logError(versioned, {
+          context: 'loadStores - versioned stores update',
+          localVersions,
+          apiVersions,
+        });
       }
     }
 

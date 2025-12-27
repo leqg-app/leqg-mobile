@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native';
+import { logError } from './logError';
 
 function getErrorMessage(error, errorMessages = {}) {
   const message = error.message || error;
@@ -8,7 +8,7 @@ function getErrorMessage(error, errorMessages = {}) {
   if (errorMessages[message]) {
     return errorMessages[message];
   }
-  Sentry.captureException(error);
+  logError(error);
   return 'Une erreur est survenue, merci de réessayer plus tard';
 }
 
