@@ -17,7 +17,6 @@ Sentry.init({
   environment: __DEV__ ? 'development' : 'production',
 });
 
-// eslint-disable-next-line
 if (__DEV__) {
   // @gorhom/bottom-sheet@4.1.5
   LogBox.ignoreLogs([

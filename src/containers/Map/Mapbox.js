@@ -20,7 +20,6 @@ import { getErrorMessage } from '../../utils/errorMessage';
 MapboxGL.setAccessToken(Config.MAPBOX_API_KEY);
 
 // https://github.com/react-native-mapbox-gl/maps/issues/943
-// eslint-disable-next-line
 if (__DEV__) {
   Logger.setLogCallback(log => {
     const { message } = log;
@@ -209,7 +208,7 @@ const Mapbox = () => {
             id="storeName"
             filter={['all', ...filters]}
             belowLayerID="store"
-            minZoomLevel={9}
+            minZoomLevel={10}
             style={layerStyles.storeName}
           />
         </MapboxGL.ShapeSource>
@@ -328,7 +327,7 @@ const layerStyles = {
     textTranslate: [0, -11],
     textHaloWidth: 2,
     textJustify: 'auto',
-    textOptional: true,
+    // textOptional: true,
     textVariableAnchor: [
       'left',
       'right',
@@ -339,7 +338,7 @@ const layerStyles = {
       'bottom-left',
       'bottom-right',
     ],
-    textRadialOffset: 1.1,
+    textRadialOffset: 1.4,
   },
   nearLine: {
     lineWidth: 1.4,

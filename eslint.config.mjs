@@ -46,5 +46,8 @@ export default [
     settings: {
       react: { version: 'detect' },
     },
+    globals: {
+      __DEV__: 'readonly',
+    },
   }),
 ];
