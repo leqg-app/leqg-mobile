@@ -18,4 +18,25 @@ function getCoordinatesDistance(cord1, cord2) {
   return dist;
 }
 
-export { getCoordinatesDistance };
+function isStoreInBounds(store, bounds) {
+  if (!bounds) {
+    return true;
+  }
+
+  const { longitude, latitude } = store;
+  const ne = bounds.ne || bounds.northEast;
+  const sw = bounds.sw || bounds.southWest;
+
+  if (!ne || !sw) {
+    return true;
+  }
+
+  return (
+    longitude >= sw[0] &&
+    longitude <= ne[0] &&
+    latitude >= sw[1] &&
+    latitude <= ne[1]
+  );
+}
+
+export { getCoordinatesDistance, isStoreInBounds };

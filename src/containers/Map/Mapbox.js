@@ -4,7 +4,7 @@ import MapboxGL, { Images, Logger } from '@rnmapbox/maps';
 import circle from '@turf/circle';
 import { FAB, useTheme } from 'react-native-paper';
 import Config from 'react-native-config';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import tooltipIcon from '../../assets/tooltip-50.png';
 import { DEFAULT_MAP, theme } from '../../constants';
@@ -13,7 +13,7 @@ import CreateStoreSheet from './CreateStoreSheet';
 import { storage } from '../../store/storage';
 import getLocation from '../../utils/location';
 import { sheetStoreState, storesMapState } from '../../store/atoms';
-import { mapboxState } from '../../store/filterAtoms';
+import { mapboxState, mapBoundsState } from '../../store/filterAtoms';
 import { getErrorMessage } from '../../utils/errorMessage';
 
 // MapboxGL.setWellKnownTileServer('mapbox');
@@ -43,6 +43,7 @@ const Mapbox = () => {
   const [sheetStore, setSheetStore] = useAtom(sheetStoreState);
   const { filters, textField, symbolSortKey, textSize } =
     useAtomValue(mapboxState);
+  const setMapBounds = useSetAtom(mapBoundsState);
 
   const [createStore, setCreateStore] = useState();
   const [mapState, setState] = useState({
@@ -134,6 +135,9 @@ const Mapbox = () => {
       coordinates: properties.center,
       zoom: properties.zoom,
     });
+    if (properties.bounds) {
+      setMapBounds(properties.bounds);
+    }
   };
 
   const onUpdateLocation = ({ coords }) => {

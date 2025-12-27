@@ -1,16 +1,12 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { useAtom } from 'jotai';
 
 import PriceFilter from './PriceFilter';
 import FeatureFilter from './FeatureFilter';
 import ProductFilter from './ProductFilter';
-import Filter from '../../../components/Filter';
-import { scheduleFilterState } from '../../../store/filterAtoms';
+import ScheduleFilter from './ScheduleFilter';
 
 const Filters = () => {
-  const [scheduleFilter, setScheduleFilter] = useAtom(scheduleFilterState);
-
   return (
     <ScrollView
       style={styles.scroll}
@@ -19,12 +15,7 @@ const Filters = () => {
       <View style={styles.filters}>
         <PriceFilter />
         <ProductFilter />
-        <Filter
-          icon="clock-outline"
-          onPress={() => setScheduleFilter(true)}
-          onRemove={scheduleFilter && (() => setScheduleFilter(false))}>
-          Ouvert
-        </Filter>
+        <ScheduleFilter />
         <FeatureFilter />
       </View>
     </ScrollView>

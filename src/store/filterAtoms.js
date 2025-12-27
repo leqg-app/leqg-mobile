@@ -8,6 +8,7 @@ const productFilterState = atom({
 const priceFilterState = atom(null);
 const featureFilterState = atom(null);
 const scheduleFilterState = atom(null);
+const mapBoundsState = atom(null);
 
 const mapboxState = atom(get => {
   const filters = [];
@@ -54,7 +55,7 @@ const mapboxState = atom(get => {
     filters.push(...featureFilter.map(id => ['in', id, ['get', 'features']]));
   }
   if (scheduleFilter) {
-    filters.push(['get', 'open']);
+    filters.push(['get', 'matchesScheduleFilter']);
   }
 
   return {
@@ -75,5 +76,6 @@ export {
   priceFilterState,
   featureFilterState,
   scheduleFilterState,
+  mapBoundsState,
   mapboxState,
 };
