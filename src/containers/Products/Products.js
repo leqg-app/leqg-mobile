@@ -39,7 +39,6 @@ function Products() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
   },
   productRow: {
     height: ITEM_HEIGHT,
