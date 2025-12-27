@@ -12,9 +12,8 @@ import ActionButtons from '../../../components/ActionButtons';
 import { storage } from '../../../store/storage';
 import currencies from '../../../assets/currencies.json';
 import { ratesState, sheetStoreState, storesState } from '../../../store/atoms';
-import { priceFilterState } from '../../../store/filterAtoms';
-
-// TODO: use only stores visible on map
+import { priceFilterState, mapBoundsState } from '../../../store/filterAtoms';
+import { isStoreInBounds } from '../../../utils/coordinates';
 
 function getPrice(priceRangeFilter) {
   if (!priceRangeFilter) {
@@ -42,7 +41,7 @@ function getRate(currencyCode, rates) {
   return rates.find(rate => rate.code === currencyCode)?.rate || 1;
 }
 
-function getStats(stores, rates) {
+function getStats(stores, rates, bounds) {
   const userCurrencyCode = storage.getString('userCurrencyCode') || 'EUR';
   const userCurrencyRate = getRate(userCurrencyCode, rates);
   const snaps = new Array(20).fill(0);
@@ -50,6 +49,9 @@ function getStats(stores, rates) {
     storeCount = 0;
   for (const store of stores) {
     if (!store.price) {
+      continue;
+    }
+    if (!isStoreInBounds(store, bounds)) {
       continue;
     }
     const price =
@@ -71,12 +73,14 @@ function PriceFilter() {
   const [values, setValues] = useState([0, 20]);
   const stores = useAtomValue(storesState);
   const rates = useAtomValue(ratesState);
+  const mapBounds = useAtomValue(mapBoundsState);
   const { bottom } = useSafeAreaInsets();
   const userCurrencyCode = storage.getString('userCurrencyCode') || 'EUR';
   const currencySymbol = currencies[userCurrencyCode]?.symbol || '€';
 
-  const { snaps, average } = useMemo(getStats(stores, rates), [
+  const { snaps, average } = useMemo(getStats(stores, rates, mapBounds), [
     stores,
+    mapBounds,
     userCurrencyCode,
   ]);
 
