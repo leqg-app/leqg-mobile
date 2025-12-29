@@ -1539,7 +1539,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.25.0, @babel/runtime@npm:^7.28.4, @babel/runtime@npm:^7.7.2":
+"@babel/runtime@npm:^7.25.0, @babel/runtime@npm:^7.28.4, @babel/runtime@npm:^7.7.2":
   version: 7.28.4
   resolution: "@babel/runtime@npm:7.28.4"
   checksum: 934b0a0460f7d06637d93fcd1a44ac49adc33518d17253b5a0b55ff4cb90a45d8fe78bf034b448911dbec7aff2a90b918697559f78d21c99ff8dbadae9565b55
@@ -3640,13 +3640,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@op-engineering/op-sqlite@npm:^15.1.14":
-  version: 15.1.15
-  resolution: "@op-engineering/op-sqlite@npm:15.1.15"
+"@op-engineering/op-sqlite@npm:^15.1.16":
+  version: 15.1.16
+  resolution: "@op-engineering/op-sqlite@npm:15.1.16"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 72b1dfb6eb1f673e74d335463a0bdea01b064770cad2a46321ba7c3d68836099b85ef04ae1c3958889cd0085bd4627b932b320578340e86619c394c3a03b8e2b
+  checksum: 08e259c568c0a38e769c293e8bcd6aefa67d1c5f56d8e198c29f680d217e541ebe5a22e95a1c65d36afc3ebf62ccdca993a6b68753eb5eade41885e0f4c7ac9d
   languageName: node
   linkType: hard
 
@@ -10455,9 +10455,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jotai@npm:^2.16.0":
-  version: 2.16.0
-  resolution: "jotai@npm:2.16.0"
+"jotai@npm:^2.16.1":
+  version: 2.16.1
+  resolution: "jotai@npm:2.16.1"
   peerDependencies:
     "@babel/core": ">=7.0.0"
     "@babel/template": ">=7.0.0"
@@ -10472,7 +10472,7 @@ __metadata:
       optional: true
     react:
       optional: true
-  checksum: 839a2408ad670779f832145fd808b8e6a59c63d9541160299942f71e0c9422cff2b3c852358d04d26e192b66bc1b0968bed7e08ed9bfe49412f769e06144bfc1
+  checksum: 2b265d16c8c2bc937dcf6b124f072a647d9388ebcc851d4c274e9df92cb0014f632246c00dc7b29aa4fccc3143819e02af03b6834f9f05625887e22f72f9da1f
   languageName: node
   linkType: hard
 
@@ -10678,7 +10678,7 @@ __metadata:
     "@gorhom/bottom-sheet": ^5.2.8
     "@invertase/react-native-apple-authentication": ^2.5.0
     "@one-am/react-native-rheostat-slider": ^0.1.2
-    "@op-engineering/op-sqlite": ^15.1.14
+    "@op-engineering/op-sqlite": ^15.1.16
     "@react-native-community/cli": 20.0.2
     "@react-native-community/cli-platform-android": 20.0.2
     "@react-native-community/cli-platform-ios": 20.0.2
@@ -10714,14 +10714,14 @@ __metadata:
     eslint-plugin-react: ^7.37.5
     husky: ^9.1.7
     jest: ^30.2.0
-    jotai: ^2.16.0
+    jotai: ^2.16.1
     jotai-family: ^1.0.1
     mbsprite: ^0.2.0
     metro-react-native-babel-preset: 0.77.0
     patch-package: ^8.0.1
     prettier: 3.7.4
     react: 19.2.3
-    react-error-boundary: ^6.0.0
+    react-error-boundary: ^6.0.1
     react-native: 0.83.1
     react-native-bootsplash: ^6.3.11
     react-native-cli-bump-version: ^1.5.1
@@ -10729,7 +10729,7 @@ __metadata:
     react-native-device-info: ^15.0.1
     react-native-geolocation-service: ^5.3.1
     react-native-gesture-handler: ^2.30.0
-    react-native-google-places-autocomplete: ^2.6.1
+    react-native-google-places-autocomplete: ^2.6.3
     react-native-intro-screens: ^1.4.2
     react-native-keyboard-aware-scroll-view: ^0.9.5
     react-native-mmkv: ^4.1.0
@@ -12823,14 +12823,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-error-boundary@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "react-error-boundary@npm:6.0.0"
-  dependencies:
-    "@babel/runtime": ^7.12.5
+"react-error-boundary@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "react-error-boundary@npm:6.0.1"
   peerDependencies:
-    react: ">=16.13.1"
-  checksum: d6807004d2b5c0a971b433b8698d3c95ebb43d407b304d87d59d57ba2a08d10113e481031ca778a1b8529bbddb421c96e508dbd9a5b5d6f084f1d1f653b05941
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  checksum: 709a19d05a892c75c7c013b64b0154f9ba3c0df48f3619fac5ddfb40d8464f052e0b61703153946bfca4544b34d2af2a7064a3860ad1a41645cfad261ffd000a
   languageName: node
   linkType: hard
 
@@ -12942,16 +12941,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-google-places-autocomplete@npm:^2.6.1":
-  version: 2.6.1
-  resolution: "react-native-google-places-autocomplete@npm:2.6.1"
+"react-native-google-places-autocomplete@npm:^2.6.3":
+  version: 2.6.3
+  resolution: "react-native-google-places-autocomplete@npm:2.6.3"
   dependencies:
     lodash.debounce: ^4.0.8
     qs: ~6.9.1
     react-native-uuid: ^2.0.3
   peerDependencies:
     react-native: ">= 0.59"
-  checksum: f7f501b22b1a49a33b926fc8f529f8f6271fb1aa49e5c24b5096612f48cfaa95164e530f9b4de05afda2ed69525d7d1346996556ec3b336bd3f66549041dbc67
+  checksum: 965c2b4558285f7c244cb5061341c5fe7f106a28e04f7a7ea700a8e723e2d20cc440b9b870b6d204e63bef2accf1526f2757f1bf988c8422ffd4e6b4d38619bc
   languageName: node
   linkType: hard
 
