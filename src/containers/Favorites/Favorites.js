@@ -47,7 +47,7 @@ const Favorites = ({ navigation }) => {
 
   if (!user?.jwt || !user.favorites?.length) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <Title>Enregistrés</Title>
         {!user?.jwt ? (
           <View style={styles.center}>
@@ -78,7 +78,7 @@ const Favorites = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Title>Enregistrés</Title>
       <FlatList
         data={user.favorites}
