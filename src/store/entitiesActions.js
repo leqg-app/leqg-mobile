@@ -126,7 +126,7 @@ function useEntitiesAction() {
   }
 
   async function loadUser() {
-    const userStored = storage.getObject('userState');
+    const userStored = storage.getObject('user');
     if (!userStored) {
       return;
     }
