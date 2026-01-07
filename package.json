@@ -14,6 +14,7 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.8",
     "@invertase/react-native-apple-authentication": "^2.5.0",
+    "@legendapp/list": "^2.0.19",
     "@one-am/react-native-rheostat-slider": "^0.1.2",
     "@op-engineering/op-sqlite": "^15.1.14",
     "@react-native-community/datetimepicker": "^8.5.1",

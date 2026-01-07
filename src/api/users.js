@@ -24,8 +24,10 @@ function getProfile(jwt) {
   return get('/v2/users/me', { Authorization: `Bearer ${jwt}` });
 }
 
-function getContributions(jwt) {
-  return get('/v2/users/me/contributions', { Authorization: `Bearer ${jwt}` });
+function getContributions(jwt, page = 1) {
+  return get(`/v2/users/me/contributions?page=${page}&limit=50`, {
+    Authorization: `Bearer ${jwt}`,
+  });
 }
 
 function updateProfile(jwt, data) {

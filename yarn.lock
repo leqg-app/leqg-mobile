@@ -3425,6 +3425,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@legendapp/list@npm:^2.0.19":
+  version: 2.0.19
+  resolution: "@legendapp/list@npm:2.0.19"
+  dependencies:
+    use-sync-external-store: ^1.5.0
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: f2d44fa496b7d550ed441a4e5fe6dc25819895c03217dac9a2bf41629c0bbb82ad608e583fd94289e75f78ee06a068854b4bf62ff0e7a55065639c8441b899bc
+  languageName: node
+  linkType: hard
+
 "@napi-rs/wasm-runtime@npm:^0.2.11":
   version: 0.2.12
   resolution: "@napi-rs/wasm-runtime@npm:0.2.12"
@@ -10677,6 +10689,7 @@ __metadata:
     "@eslint/js": ^9.39.2
     "@gorhom/bottom-sheet": ^5.2.8
     "@invertase/react-native-apple-authentication": ^2.5.0
+    "@legendapp/list": ^2.0.19
     "@one-am/react-native-rheostat-slider": ^0.1.2
     "@op-engineering/op-sqlite": ^15.1.14
     "@react-native-community/cli": 20.0.2

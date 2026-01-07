@@ -1,16 +1,13 @@
-import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState, useCallback, useEffect } from 'react';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { useAtomValue } from 'jotai';
 import formatDistance from 'date-fns/formatDistance';
 import dateLocale from 'date-fns/locale/fr';
 
-import {
-  contributionsState,
-  storeQueryRequestIDState,
-} from '../../store/atoms';
+import { userState } from '../../store/atoms';
+import { getContributions } from '../../api/users';
+import { LegendList } from '@legendapp/list';
 
 const reasons = {
   'store.creation': "Création d'un bar",
@@ -40,42 +37,69 @@ const Row = ({ contribution }) => {
   );
 };
 
-const ITEM_HEIGHT = 65;
-
-function sortByDate(a, b) {
-  return a.createdAt < b.createdAt ? 1 : -1;
-}
-
 const Contributions = () => {
-  const refresh = useSetAtom(storeQueryRequestIDState);
-  const loadableValue = useAtomValue(loadable(contributionsState));
-  const contents = loadableValue?.data || [];
-  const state = loadableValue?.state;
+  const user = useAtomValue(userState);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const loadContributions = useCallback(
+    async page => {
+      setPage(page);
+      setLoading(true);
+      try {
+        const newItems = await getContributions(user.jwt, page);
+        if (newItems.length < 50) {
+          setHasMore(false);
+        }
+        setData(prev => [...prev, ...newItems]);
+      } catch (error) {
+        setError(`Error: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user?.jwt],
+  );
+
+  useEffect(() => {
+    loadContributions(1);
+  }, []);
+
+  const loadMore = useCallback(() => {
+    if (!hasMore || loading) {
+      return;
+    }
+    loadContributions(page + 1);
+  }, [hasMore, loading, page, loadContributions]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={Array.from(contents).sort(sortByDate)}
-        renderItem={({ item }) => <Row contribution={item} />}
-        keyExtractor={contribution => contribution.id}
-        getItemLayout={(_, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
-          index,
-        })}
-        onRefresh={() => refresh(a => a + 1)}
-        refreshing={state === 'loading'}
-      />
-    </SafeAreaView>
+    <LegendList
+      data={data}
+      renderItem={({ item }) => <Row contribution={item} />}
+      keyExtractor={contribution => contribution.id}
+      ListFooterComponent={() =>
+        loading ? (
+          <ActivityIndicator />
+        ) : error ? (
+          <Text style={styles.grey}>{error}</Text>
+        ) : (
+          <Text style={styles.grey}>{data.length} contributions</Text>
+        )
+      }
+      ListFooterComponentStyle={styles.footer}
+      onEndReached={loadMore}
+      onEndReachedThreshold={0.5}
+      recycleItems
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   contributionRow: {
-    height: ITEM_HEIGHT,
+    height: 65,
     justifyContent: 'center',
     paddingHorizontal: 20,
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -91,6 +115,10 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: 17,
     marginTop: 5,
+  },
+  footer: {
+    paddingVertical: 20,
+    alignItems: 'center',
   },
 });
 
