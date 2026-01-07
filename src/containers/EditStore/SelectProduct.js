@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Searchbar, Text, TouchableRipple } from 'react-native-paper';
 import { useAtomValue } from 'jotai';
 
@@ -44,7 +43,7 @@ const SelectProduct = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       <Searchbar
         placeholder="Nommer ou rechercher une bière"
         style={styles.searchBar}
@@ -70,7 +69,7 @@ const SelectProduct = ({ navigation }) => {
         })}
         keyboardShouldPersistTaps="always"
       />
-    </SafeAreaView>
+    </>
   );
 };
 
