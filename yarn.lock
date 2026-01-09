@@ -1601,6 +1601,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@d11/react-native-fast-image@npm:^8.13.0":
+  version: 8.13.0
+  resolution: "@d11/react-native-fast-image@npm:8.13.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 225942c3910022ca51cf9254760edad9e81cc140f1a39a94522bff2ab3daf3dec1e7c37c05e12529b6747ee159240cd4d3208e21a9f84188ff391c4863a54f9b
+  languageName: node
+  linkType: hard
+
 "@drizzle-team/brocli@npm:^0.10.2":
   version: 0.10.2
   resolution: "@drizzle-team/brocli@npm:0.10.2"
@@ -10685,6 +10695,7 @@ __metadata:
     "@babel/plugin-transform-template-literals": ^7.27.1
     "@babel/preset-env": ^7.28.5
     "@babel/runtime": ^7.28.4
+    "@d11/react-native-fast-image": ^8.13.0
     "@eslint/eslintrc": ^3.3.3
     "@eslint/js": ^9.39.2
     "@gorhom/bottom-sheet": ^5.2.8
@@ -10743,6 +10754,7 @@ __metadata:
     react-native-geolocation-service: ^5.3.1
     react-native-gesture-handler: ^2.30.0
     react-native-google-places-autocomplete: ^2.6.1
+    react-native-image-crop-picker: ^0.51.1
     react-native-intro-screens: ^1.4.2
     react-native-keyboard-aware-scroll-view: ^0.9.5
     react-native-mmkv: ^4.1.0
@@ -12965,6 +12977,16 @@ __metadata:
   peerDependencies:
     react-native: ">= 0.59"
   checksum: f7f501b22b1a49a33b926fc8f529f8f6271fb1aa49e5c24b5096612f48cfaa95164e530f9b4de05afda2ed69525d7d1346996556ec3b336bd3f66549041dbc67
+  languageName: node
+  linkType: hard
+
+"react-native-image-crop-picker@npm:^0.51.1":
+  version: 0.51.1
+  resolution: "react-native-image-crop-picker@npm:0.51.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 56acf486af8861e2128cf2f23adbafd02c329281a73edf1543d1fc12dd177a9639258dc9d2b4c55e661ff3ffb0a184fafc2649a4ccf1d204b3e1368651ee1d05
   languageName: node
   linkType: hard
 

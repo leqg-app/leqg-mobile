@@ -13,8 +13,7 @@ import { CombinedDarkTheme, CombinedDefaultTheme } from './theme';
 Sentry.init({
   dsn: 'https://247aa8fba4ca46688925bf9823ba239e@o1079194.ingest.sentry.io/6083816',
   tracesSampleRate: 1.0,
-  debug: __DEV__,
-  environment: __DEV__ ? 'development' : 'production',
+  enabled: !__DEV__,
 });
 
 if (__DEV__) {

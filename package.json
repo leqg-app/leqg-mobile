@@ -12,6 +12,7 @@
     "release": "release-it --"
   },
   "dependencies": {
+    "@d11/react-native-fast-image": "^8.13.0",
     "@gorhom/bottom-sheet": "^5.2.8",
     "@invertase/react-native-apple-authentication": "^2.5.0",
     "@legendapp/list": "^2.0.19",
@@ -44,6 +45,7 @@
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "^2.30.0",
     "react-native-google-places-autocomplete": "^2.6.1",
+    "react-native-image-crop-picker": "^0.51.1",
     "react-native-intro-screens": "^1.4.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-mmkv": "^4.1.0",

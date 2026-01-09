@@ -5,10 +5,18 @@ function request(method) {
     return fetch(`${apiEndpoint}${path}`, {
       method,
       headers: {
-        ...(method === 'GET' ? data : { 'Content-Type': 'application/json' }),
+        ...(method === 'GET'
+          ? data
+          : data instanceof FormData
+            ? { 'Content-Type': 'multipart/form-data' }
+            : { 'Content-Type': 'application/json' }),
         ...headers,
       },
-      ...(method !== 'GET' && { body: JSON.stringify(data) }),
+      ...(method !== 'GET'
+        ? data instanceof FormData
+          ? { body: data }
+          : { body: JSON.stringify(data) }
+        : undefined),
     }).then(res => res.json());
   };
 }

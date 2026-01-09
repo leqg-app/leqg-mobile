@@ -39,6 +39,12 @@ function rateStore(id, data, { jwt }) {
   });
 }
 
+function addStorePhoto(storeId, formData, { jwt }) {
+  return post(`/v2/stores/${storeId}/photos`, formData, {
+    Authorization: `bearer ${jwt}`,
+  });
+}
+
 export {
   getVersion,
   getStores,
@@ -48,4 +54,5 @@ export {
   editStore,
   validateStore,
   rateStore,
+  addStorePhoto,
 };

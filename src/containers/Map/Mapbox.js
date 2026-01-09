@@ -85,11 +85,14 @@ const Mapbox = () => {
       return;
     }
     setCreateStore();
-    camera.current.setCamera({
-      centerCoordinate: [sheetStore.longitude, sheetStore.latitude],
-      zoomLevel: 17,
-      animationDuration: 1000,
-    });
+    const timeout = setTimeout(() => {
+      camera.current.setCamera({
+        centerCoordinate: [sheetStore.longitude, sheetStore.latitude],
+        zoomLevel: 17,
+        animationDuration: 1000,
+      });
+    }, 100);
+    return () => clearTimeout(timeout);
   }, [sheetStore]);
 
   useEffect(() => {

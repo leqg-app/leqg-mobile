@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold',
+    letterSpacing: -0.5,
   },
 });
 

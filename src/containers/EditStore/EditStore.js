@@ -27,6 +27,7 @@ import Schedules from '../Store/Schedules';
 import SelectCurrency from './SelectCurrency';
 import StoreFeatures from '../Store/StoreFeatures';
 import EditFeatures from './EditFeatures';
+import AddPhoto from './AddPhoto';
 import {
   productsState,
   sheetStoreState,
@@ -204,178 +205,187 @@ const EditStore = ({ route, navigation }) => {
     );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView keyboardShouldPersistTaps="always">
-        {storeEdition?.revisions?.length ? (
-          <Menu>
-            <Menu.Item
-              name="Voir l'historique des modifications"
-              icon="clock-outline"
-              onPress={() =>
-                navigation.navigate('History', { store: storeEdition })
-              }
-              last
-            />
-          </Menu>
-        ) : null}
-        <View style={styles.scrollView}>
-          <Card style={styles.card}>
-            <Card.Content>
-              <TextInput
-                ref={nameInput}
-                style={styles.fieldName}
-                label="Nom"
-                mode="flat"
-                textContentType="name"
-                onChangeText={name =>
-                  setStoreEdition({ ...storeEdition, name })
-                }
-                value={name}
-                returnKeyType="done"
-              />
-            </Card.Content>
-          </Card>
+    <ScrollView keyboardShouldPersistTaps="always">
+      {storeEdition?.revisions?.length ? (
+        <Menu>
+          <Menu.Item
+            name="Voir l'historique des modifications"
+            icon="clock-outline"
+            onPress={() =>
+              navigation.navigate('History', { store: storeEdition })
+            }
+            last
+          />
+        </Menu>
+      ) : null}
+      <View style={styles.scrollView}>
+        <TextInput
+          ref={nameInput}
+          style={styles.fieldName}
+          label="Nom"
+          mode="outlined"
+          textContentType="name"
+          onChangeText={name => setStoreEdition({ ...storeEdition, name })}
+          value={name}
+          returnKeyType="done"
+        />
 
-          <Card style={styles.card}>
-            <Card.Title titleStyle={styles.title} title="Adresse">
-              Adresse
-            </Card.Title>
+        <Card style={styles.card} mode="outlined">
+          <Card.Title titleStyle={styles.title} title="Adresse">
+            Adresse
+          </Card.Title>
+          <Card.Content>
+            <Text>
+              {validAddress
+                ? address
+                : 'Aucune adresse renseignée pour le moment'}
+            </Text>
+            <Button
+              mode="outlined"
+              uppercase={false}
+              onPress={() => navigation.navigate('EditAddress')}
+              style={styles.addButton}>
+              {validAddress ? 'Modifier' : 'Préciser'} l&apos;adresse
+            </Button>
+          </Card.Content>
+        </Card>
+
+        <Card style={styles.card} mode="outlined">
+          <Card.Title titleStyle={styles.title} title="Bières" />
+          <Card.Content>
+            {!storeProducts.length ? (
+              <Text variant="bodyMedium" style={styles.horizontalMargin}>
+                Aucune bière renseignée pour le moment
+              </Text>
+            ) : (
+              <View style={styles.headRow}>
+                <Text style={styles.price}>Prix</Text>
+                {hasHH && <Text style={styles.price}>HH.</Text>}
+              </View>
+            )}
+            {storeProducts.map((product, i) => (
+              <Product
+                key={i}
+                product={product}
+                onPress={() => navigation.navigate('EditProduct', { product })}
+                hasHH={hasHH}
+              />
+            ))}
+            <Button
+              mode="outlined"
+              uppercase={false}
+              onPress={() => navigation.navigate('SelectProduct')}
+              style={styles.addButton}>
+              Ajouter une bière
+            </Button>
+          </Card.Content>
+        </Card>
+
+        <Card style={styles.card} mode="outlined">
+          <Card.Title titleStyle={styles.title} title="Horaires" />
+          <Card.Content>
+            {!schedules.length ? (
+              <Text variant="bodyMedium" style={styles.emptyText}>
+                Aucun horaire renseigné pour le moment
+              </Text>
+            ) : (
+              <Pressable
+                style={styles.schedules}
+                onPress={() => navigation.navigate('EditSchedules')}>
+                <Schedules schedules={schedules} />
+              </Pressable>
+            )}
+            <Button
+              mode="outlined"
+              uppercase={false}
+              onPress={() => navigation.navigate('EditSchedules')}>
+              Modifier les horaires
+            </Button>
+          </Card.Content>
+        </Card>
+
+        <Card style={styles.card} mode="outlined">
+          <Card.Title titleStyle={styles.title} title="Caractéristiques" />
+          <Card.Content>
+            {!features.length ? (
+              <Text variant="bodyMedium" style={styles.emptyText}>
+                Aucune caractéristique pour le moment
+              </Text>
+            ) : (
+              <Pressable onPress={() => navigation.navigate('EditFeatures')}>
+                <StoreFeatures features={features} />
+              </Pressable>
+            )}
+            <Button
+              mode="outlined"
+              uppercase={false}
+              onPress={() => navigation.navigate('EditFeatures')}>
+              Modifier les caractéristiques
+            </Button>
+          </Card.Content>
+        </Card>
+
+        {storeEdition.id && (
+          <Card style={styles.card} mode="outlined">
+            <Card.Title titleStyle={styles.title} title="Photos" />
             <Card.Content>
-              <Text>
-                {validAddress
-                  ? address
-                  : 'Aucune adresse renseignée pour le moment'}
+              <Text variant="bodyMedium" style={styles.emptyText}>
+                Ajoutez des photos pour illustrer ce bar
               </Text>
               <Button
                 mode="outlined"
                 uppercase={false}
-                onPress={() => navigation.navigate('EditAddress')}
+                icon="camera"
+                onPress={() => navigation.navigate('AddPhoto')}
                 style={styles.addButton}>
-                {validAddress ? 'Modifier' : 'Préciser'} l&apos;adresse
+                Ajouter une photo
               </Button>
             </Card.Content>
           </Card>
+        )}
 
-          <Card style={styles.card}>
-            <Card.Title titleStyle={styles.title} title="Bières" />
-            <Card.Content>
-              {!storeProducts.length ? (
-                <Text variant="bodyMedium" style={styles.horizontalMargin}>
-                  Aucune bière renseignée pour le moment
-                </Text>
-              ) : (
-                <View style={styles.headRow}>
-                  <Text style={styles.price}>Prix</Text>
-                  {hasHH && <Text style={styles.price}>HH.</Text>}
-                </View>
-              )}
-              {storeProducts.map((product, i) => (
-                <Product
-                  key={i}
-                  product={product}
-                  onPress={() =>
-                    navigation.navigate('EditProduct', { product })
-                  }
-                  hasHH={hasHH}
-                />
-              ))}
-              <Button
-                mode="outlined"
-                uppercase={false}
-                onPress={() => navigation.navigate('SelectProduct')}
-                style={styles.addButton}>
-                Ajouter une bière
-              </Button>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.card}>
-            <Card.Title titleStyle={styles.title} title="Horaires" />
-            <Card.Content>
-              {!schedules.length ? (
-                <Text variant="bodyMedium" style={styles.emptyText}>
-                  Aucun horaire renseigné pour le moment
-                </Text>
-              ) : (
-                <Pressable
-                  style={styles.schedules}
-                  onPress={() => navigation.navigate('EditSchedules')}>
-                  <Schedules schedules={schedules} />
-                </Pressable>
-              )}
-              <Button
-                mode="outlined"
-                uppercase={false}
-                onPress={() => navigation.navigate('EditSchedules')}>
-                Modifier les horaires
-              </Button>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.card}>
-            <Card.Title titleStyle={styles.title} title="Caractéristiques" />
-            <Card.Content>
-              {!features.length ? (
-                <Text variant="bodyMedium" style={styles.emptyText}>
-                  Aucune caractéristique pour le moment
-                </Text>
-              ) : (
-                <Pressable onPress={() => navigation.navigate('EditFeatures')}>
-                  <StoreFeatures features={features} />
-                </Pressable>
-              )}
-              <Button
-                mode="outlined"
-                uppercase={false}
-                onPress={() => navigation.navigate('EditFeatures')}>
-                Modifier les caractéristiques
-              </Button>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.card}>
-            <Card.Title titleStyle={styles.title} title="Autres informations" />
-            <Card.Content>
-              <TextInput
-                style={styles.fieldName}
-                label="Téléphone"
-                mode="flat"
-                keyboardType="phone-pad"
-                textContentType="telephoneNumber"
-                onChangeText={phone =>
-                  setStoreEdition({ ...storeEdition, phone })
-                }
-                value={storeEdition.phone}
-                returnKeyType="done"
-              />
-              <TextInput
-                style={styles.fieldName}
-                label="Site internet"
-                mode="flat"
-                keyboardType="url"
-                textContentType="URL"
-                onChangeText={website =>
-                  setStoreEdition({ ...storeEdition, website })
-                }
-                value={storeEdition.website}
-                returnKeyType="done"
-              />
-            </Card.Content>
-          </Card>
-        </View>
-        <Portal>
-          <Snackbar
-            visible={state.error}
-            duration={3000}
-            action={{
-              label: 'OK',
-            }}
-            onDismiss={() => setState({ error: false })}>
-            {state.error}
-          </Snackbar>
-        </Portal>
-      </ScrollView>
-    </SafeAreaView>
+        <Card style={styles.card} mode="outlined">
+          <Card.Title titleStyle={styles.title} title="Autres informations" />
+          <Card.Content>
+            <TextInput
+              style={styles.fieldName}
+              label="Téléphone"
+              mode="flat"
+              keyboardType="phone-pad"
+              textContentType="telephoneNumber"
+              onChangeText={phone =>
+                setStoreEdition({ ...storeEdition, phone })
+              }
+              value={storeEdition.phone}
+              returnKeyType="done"
+            />
+            <TextInput
+              style={styles.fieldName}
+              label="Site internet"
+              mode="flat"
+              keyboardType="url"
+              textContentType="URL"
+              onChangeText={website =>
+                setStoreEdition({ ...storeEdition, website })
+              }
+              value={storeEdition.website}
+              returnKeyType="done"
+            />
+          </Card.Content>
+        </Card>
+      </View>
+      <Portal>
+        <Snackbar
+          visible={state.error}
+          duration={3000}
+          action={{
+            label: 'OK',
+          }}
+          onDismiss={() => setState({ error: false })}>
+          {state.error}
+        </Snackbar>
+      </Portal>
+    </ScrollView>
   );
 };
 
@@ -391,6 +401,8 @@ const styles = StyleSheet.create({
   },
   fieldName: {
     backgroundColor: 'transparent',
+    marginTop: 10,
+    marginHorizontal: 10,
   },
   scrollView: {
     flex: 1,
@@ -398,7 +410,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginTop: 10,
-    marginHorizontal: 8,
+    marginHorizontal: 10,
   },
   title: { fontSize: 18 },
   headRow: {
@@ -483,6 +495,11 @@ export default () => (
       options={{ title: 'Modifier une bière' }}
       name="EditProduct"
       component={EditProduct}
+    />
+    <AddStack.Screen
+      options={{ title: 'Ajouter une photo' }}
+      name="AddPhoto"
+      component={AddPhoto}
     />
     <AddStack.Screen
       options={{ title: 'Historique' }}

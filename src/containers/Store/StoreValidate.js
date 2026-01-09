@@ -136,7 +136,9 @@ const styles = StyleSheet.create({
   },
   helpText: {
     textAlign: 'center',
-    marginBottom: 30,
+    color: 'grey',
+    fontSize: 12,
+    marginBottom: 10,
     marginHorizontal: 20,
   },
 });

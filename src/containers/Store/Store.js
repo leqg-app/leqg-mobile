@@ -1,8 +1,9 @@
 import React, { Suspense } from 'react';
-import { Platform, StyleSheet, View, Linking } from 'react-native';
+import { Platform, StyleSheet, View, Linking, ScrollView } from 'react-native';
 import {
   ActivityIndicator,
   Button,
+  Card,
   Divider,
   IconButton,
   List,
@@ -15,8 +16,10 @@ import { useAtomValue, useAtom } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
 import formatDistance from 'date-fns/formatDistance';
 import dateLocale from 'date-fns/locale/fr';
+import { useNavigation } from '@react-navigation/native';
+import FastImage from '@d11/react-native-fast-image';
+import { api as apiEndpoint } from '../../../app.json';
 
-import StoreProducts from './StoreProducts';
 import SchedulesPreview from './SchedulesPreview';
 import Schedules from './Schedules';
 import { getUrlHost } from '../../utils/url';
@@ -67,6 +70,30 @@ function UpdatedAt({ date }) {
   );
 }
 
+function StoreEnrichedPhotos({ id }) {
+  const store = useAtomValue(storeState(id));
+  if (!store.photos || store.photos.length === 0) {
+    return null;
+  }
+
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={styles.photosScrollView}
+      contentContainerStyle={styles.photosContent}>
+      {store.photos.map((photo, index) => (
+        <FastImage
+          key={photo.id || index}
+          source={{ uri: `${apiEndpoint}${photo.url}` || photo }}
+          style={styles.photo}
+          resizeMode="cover"
+        />
+      ))}
+    </ScrollView>
+  );
+}
+
 function ListInfo({ onPress, content, icon, chevron = true }) {
   return (
     <TouchableRipple onPress={onPress} rippleColor="rgba(0, 0, 0, .25)">
@@ -106,46 +133,47 @@ function call(store) {
 }
 
 function StoreContent({ id }) {
+  const navigation = useNavigation();
   const { editStoreScreen } = useStoreActions();
   const store = useAtomValue(storeState(id));
 
   return (
     <>
-      {store.products && (
-        <>
-          <ListInfo
-            onPress={() => editStoreScreen(store)}
-            content={
-              <Text style={styles.infoTextItalic}>
-                Suggérer une modification
-              </Text>
-            }
-            icon="pencil"
-            chevron={false}
-          />
-          <Divider />
-          <StoreProducts products={store.products} />
-        </>
-      )}
-      {store.website && (
-        <>
-          <ListInfo
-            onPress={() => Linking.openURL(store.website)}
-            content={getUrlHost(store.website)}
-            icon="earth"
-          />
-          <Divider />
-        </>
-      )}
-      {store.phone && (
-        <>
-          <ListInfo
-            onPress={() => call(store)}
-            content={store.phone}
-            icon="phone"
-          />
-          <Divider />
-        </>
+      <Button onPress={() => editStoreScreen(store)} icon="pencil" mode="text">
+        Suggérer une modification
+      </Button>
+      <Card elevation={1} mode="outlined" style={styles.card}>
+        <ListInfo
+          onPress={() =>
+            navigation.navigate('StoreProductsScreen', { storeId: id })
+          }
+          content="Voir la carte"
+          icon="beer"
+        />
+      </Card>
+      {(store.website || store.phone) && (
+        <Card elevation={1} mode="outlined" style={styles.card}>
+          {store.website && (
+            <>
+              <Divider />
+              <ListInfo
+                onPress={() => Linking.openURL(store.website)}
+                content={getUrlHost(store.website)}
+                icon="earth"
+              />
+            </>
+          )}
+          {store.phone && (
+            <>
+              <Divider />
+              <ListInfo
+                onPress={() => call(store)}
+                content={store.phone}
+                icon="phone"
+              />
+            </>
+          )}
+        </Card>
       )}
       {store.features?.length ? (
         <>
@@ -196,36 +224,41 @@ const Store = ({ sheetStore }) => {
       </View>
       <ErrorBoundary fallback={<></>} resetKeys={[requestId]}>
         <Suspense fallback={<></>}>
+          <StoreEnrichedPhotos id={sheetStore.id} />
+        </Suspense>
+      </ErrorBoundary>
+      <ErrorBoundary fallback={<></>} resetKeys={[requestId]}>
+        <Suspense fallback={<></>}>
           <StoreValidate id={sheetStore.id} />
         </Suspense>
       </ErrorBoundary>
-      <Divider />
-      <ListInfo
-        onPress={() => openAddress(sheetStore)}
-        content={sheetStore.address}
-        icon="map-marker"
-      />
-      <Divider />
-      <TouchableRipple
-        onPress={() => setExpandSchedules(!expandSchedules)}
-        rippleColor="rgba(0, 0, 0, .25)">
-        <View style={styles.row}>
-          {!expandSchedules ? (
-            <View style={styles.infoRow}>
-              <List.Icon style={styles.infoIcon} size={40} icon="clock" />
-              <SchedulesPreview schedules={sheetStore.schedules} />
-            </View>
-          ) : (
-            <View style={styles.schedulesWrapper}>
-              <Schedules schedules={sheetStore.schedules} />
-            </View>
-          )}
-          {!expandSchedules && (
-            <List.Icon icon="chevron-down" style={styles.chevron} />
-          )}
-        </View>
-      </TouchableRipple>
-      <Divider />
+      <Card elevation={1} mode="outlined" style={styles.card}>
+        <ListInfo
+          onPress={() => openAddress(sheetStore)}
+          content={sheetStore.address}
+          icon="map-marker"
+        />
+        <Divider />
+        <TouchableRipple
+          onPress={() => setExpandSchedules(!expandSchedules)}
+          rippleColor="rgba(0, 0, 0, .25)">
+          <View style={styles.row}>
+            {!expandSchedules ? (
+              <View style={styles.infoRow}>
+                <List.Icon style={styles.infoIcon} size={40} icon="clock" />
+                <SchedulesPreview schedules={sheetStore.schedules} />
+              </View>
+            ) : (
+              <View style={styles.schedulesWrapper}>
+                <Schedules schedules={sheetStore.schedules} />
+              </View>
+            )}
+            {!expandSchedules && (
+              <List.Icon icon="chevron-down" style={styles.chevron} />
+            )}
+          </View>
+        </TouchableRipple>
+      </Card>
       <ErrorBoundary FallbackComponent={OfflineMessage} onReset={refreshStore}>
         <Suspense fallback={<Loading />}>
           <StoreContent id={sheetStore.id} />
@@ -268,6 +301,7 @@ const styles = StyleSheet.create({
   },
   chevron: {
     width: 30,
+    marginRight: 10,
   },
   schedulesWrapper: {
     marginHorizontal: 20,
@@ -297,6 +331,23 @@ const styles = StyleSheet.create({
   updateDate: {
     marginTop: 10,
     textAlign: 'center',
+  },
+  card: {
+    marginHorizontal: 15,
+    marginVertical: 10,
+  },
+  photosScrollView: {
+    marginVertical: 10,
+    height: 100,
+  },
+  photosContent: {
+    paddingHorizontal: 15,
+  },
+  photo: {
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+    marginRight: 10,
   },
 });
 

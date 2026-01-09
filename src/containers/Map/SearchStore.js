@@ -68,7 +68,7 @@ function SearchStore({ navigation }) {
     history.unshift({ ...focusStore, history: true });
     setSearchHistory(history);
     setSheetStore({ ...focusStore, focus: true });
-    navigation.navigate('MapScreen');
+    navigation.goBack();
   };
 
   return (
