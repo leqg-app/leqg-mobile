@@ -120,6 +120,11 @@ jobs:
           keyStorePassword: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
 
+      - name: Upload signed AAB to GitHub Release
+        run: gh release upload ${{ github.event.release.tag_name }} android/app/build/outputs/bundle/release/app-release.aab --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Deploy to Play Store
         uses: r0adkll/upload-google-play@v1
         with:
