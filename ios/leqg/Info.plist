@@ -57,7 +57,9 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>La localisation est utilisée pour vous situer sur la carte et trouver plus facilement les bars proches de vous</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>L'accès à la photothèque est nécessaire pour ajouter une photo de profil ou illustrer un lieu ou un produit</string>
+	<string>L'accès à la photothèque est nécessaire pour illustrer un lieu ou un produit</string>
+	<key>NSCameraUsageDescription</key>
+	<string>L'accès à la caméra est nécessaire pour illustrer un lieu ou un produit</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>
