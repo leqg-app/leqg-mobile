@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useMMKVString } from 'react-native-mmkv';
+import { Appbar } from 'react-native-paper';
 
 import Menu from '../../components/Menu';
 import SelectCurrency from '../EditStore/SelectCurrency';
@@ -18,6 +19,12 @@ const Settings = ({ navigation, route }) => {
       setCurrency(route.params?.currencyCode);
     }
   }, [route.params]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => <Appbar.BackAction onPress={navigation.goBack} />,
+    });
+  }, []);
 
   return (
     <ScrollView>
