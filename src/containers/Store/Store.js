@@ -30,7 +30,23 @@ import { useStoreActions } from '../../store/storeActions';
 import StoreActionButtons, { ActionButton } from './StoreActions';
 import StoreRates from './StoreRates';
 
-function OfflineMessage({ resetErrorBoundary }) {
+function OfflineMessage({ resetErrorBoundary, error }) {
+  if (error?.message?.includes('Internal Server Error')) {
+    return (
+      <View style={styles.contentCenter}>
+        <Text>Une erreur est survenue, merci de réessayer plus tard</Text>
+        <IconButton icon="cloud-alert" />
+        <Button
+          style={styles.offlineRetryButton}
+          mode="outlined"
+          icon="reload"
+          onPress={resetErrorBoundary}
+          uppercase={false}>
+          Touchez ici pour réessayer
+        </Button>
+      </View>
+    );
+  }
   return (
     <View style={styles.contentCenter}>
       <Text>Veuillez vérifier votre connexion internet</Text>
@@ -154,24 +170,24 @@ function StoreContent({ id }) {
       {(store.website || store.phone) && (
         <Card elevation={1} mode="outlined" style={styles.card}>
           {store.website && (
-            <>
+            <View>
               <Divider />
               <ListInfo
                 onPress={() => Linking.openURL(store.website)}
                 content={getUrlHost(store.website)}
                 icon="earth"
               />
-            </>
+            </View>
           )}
           {store.phone && (
-            <>
+            <View>
               <Divider />
               <ListInfo
                 onPress={() => call(store)}
                 content={store.phone}
                 icon="phone"
               />
-            </>
+            </View>
           )}
         </Card>
       )}

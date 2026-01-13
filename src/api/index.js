@@ -17,7 +17,14 @@ function request(method) {
           ? { body: data }
           : { body: JSON.stringify(data) }
         : undefined),
-    }).then(res => res.json());
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.error) {
+          throw new Error(json.error);
+        }
+        return json;
+      });
   };
 }
 
