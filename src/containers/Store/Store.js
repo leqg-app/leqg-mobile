@@ -161,7 +161,10 @@ function StoreContent({ id }) {
       <Card elevation={1} mode="outlined" style={styles.card}>
         <ListInfo
           onPress={() =>
-            navigation.navigate('StoreProductsScreen', { storeId: id })
+            navigation.navigate('StoreProductsScreen', {
+              screen: 'StoreProductsList',
+              params: { storeId: id },
+            })
           }
           content="Voir la carte"
           icon="beer"

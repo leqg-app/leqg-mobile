@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Searchbar, Text, TouchableRipple } from 'react-native-paper';
 import { useAtomValue } from 'jotai';
@@ -21,6 +21,11 @@ function sortByName(a, b) {
 const SelectProduct = ({ navigation }) => {
   const products = useAtomValue(productsState);
   const [search, setSearch] = useState('');
+  const searchInput = useRef();
+
+  useEffect(() => {
+    searchInput.current?.focus?.();
+  }, [searchInput.current]);
 
   const onSelect = productId => {
     if (productId) {
@@ -45,6 +50,7 @@ const SelectProduct = ({ navigation }) => {
   return (
     <>
       <Searchbar
+        ref={searchInput}
         placeholder="Nommer ou rechercher une bière"
         style={styles.searchBar}
         onChangeText={setSearch}

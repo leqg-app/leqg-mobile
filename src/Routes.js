@@ -63,7 +63,7 @@ const Routes = () => {
       <Main.Screen
         name="StoreProductsScreen"
         component={StoreProductsScreen}
-        options={{ headerShown: true, title: 'Carte' }}
+        options={{ headerShown: false, title: 'Carte' }}
       />
     </Main.Navigator>
   );

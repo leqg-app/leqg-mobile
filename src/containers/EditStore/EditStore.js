@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -11,25 +11,18 @@ import {
   Snackbar,
   Text,
   TextInput,
-  TouchableRipple,
 } from 'react-native-paper';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 
-import { sortByPrices } from '../../utils/price';
 import Menu from '../../components/Menu';
-import Price from '../../components/Price';
 import EditSchedules, { newSchedule } from './EditSchedules';
 import EditAddress from './EditAddress';
-import SelectProduct from './SelectProduct';
-import EditProduct from './EditProduct';
 import History from './History';
 import Schedules from '../Store/Schedules';
-import SelectCurrency from './SelectCurrency';
 import StoreFeatures from '../Store/StoreFeatures';
 import EditFeatures from './EditFeatures';
 import AddPhoto from './AddPhoto';
 import {
-  productsState,
   sheetStoreState,
   storeEditionState,
   userState,
@@ -37,54 +30,7 @@ import {
 import { useStoreActions } from '../../store/storeActions';
 import { getErrorMessage } from '../../utils/errorMessage';
 
-const types = {
-  draft: 'Pression',
-  bottle: 'Bouteille',
-};
-
-const Product = memo(({ product, onPress, hasHH }) => {
-  const { price, specialPrice, productName, type, volume, currencyCode } =
-    product;
-  return (
-    <View style={styles.productRow}>
-      <TouchableRipple
-        onPress={onPress}
-        rippleColor="#000"
-        style={styles.productDetails}>
-        <View style={styles.flex}>
-          <View>
-            <Text numberOfLines={1}>
-              {product.product?.name || productName}
-            </Text>
-            <Text variant="bodyMedium">
-              {types[type]}
-              {volume && ` - ${volume}cl`}
-            </Text>
-          </View>
-          <View style={styles.flex}>
-            <View style={styles.prices}>
-              <Text style={styles.price}>
-                {price ? <Price amount={price} currency={currencyCode} /> : '-'}
-              </Text>
-              {hasHH && (
-                <Text style={styles.price}>
-                  {specialPrice ? (
-                    <Price amount={specialPrice} currency={currencyCode} />
-                  ) : (
-                    ' '
-                  )}
-                </Text>
-              )}
-            </View>
-          </View>
-        </View>
-      </TouchableRipple>
-    </View>
-  );
-});
-
 const EditStore = ({ route, navigation }) => {
-  const products = useAtomValue(productsState);
   const nameInput = useRef();
   const [state, setState] = useState({ error: false, loading: false });
   const user = useAtomValue(userState);
@@ -102,13 +48,18 @@ const EditStore = ({ route, navigation }) => {
   } = storeEdition;
 
   const validAddress = address && longitude && latitude;
-  const validForm =
-    name && validAddress && storeEdition.products?.length && user;
+  const validForm = name && validAddress && user;
 
   const save = async () => {
     setState({ loading: true });
     if (!validForm) {
       return setState({ error: 'Certains champs sont manquants' });
+    }
+    if (!storeEdition.products?.length) {
+      return setState({
+        loading: false,
+        error: 'Veuillez ajouter au moins une bière à la carte',
+      });
     }
     const { error, store, reputation } = await saveStore(storeEdition);
     if (error) {
@@ -188,22 +139,6 @@ const EditStore = ({ route, navigation }) => {
     );
   }
 
-  const storeProducts =
-    storeEdition?.products
-      ?.map(storeProduct => ({
-        ...storeProduct,
-        ...(storeProduct.productId && {
-          product: products.find(({ id }) => id === storeProduct.productId),
-        }),
-      }))
-      .sort(sortByPrices) || [];
-
-  const hasHH =
-    storeProducts.some(({ specialPrice }) => specialPrice) ||
-    schedules.some(
-      schedule => schedule.openingSpecial || schedule.closingSpecial,
-    );
-
   return (
     <ScrollView keyboardShouldPersistTaps="always">
       {storeEdition?.revisions?.length ? (
@@ -251,32 +186,25 @@ const EditStore = ({ route, navigation }) => {
         </Card>
 
         <Card style={styles.card} mode="outlined">
-          <Card.Title titleStyle={styles.title} title="Bières" />
+          <Card.Title titleStyle={styles.title} title="Carte des bières" />
           <Card.Content>
-            {!storeProducts.length ? (
-              <Text variant="bodyMedium" style={styles.horizontalMargin}>
-                Aucune bière renseignée pour le moment
-              </Text>
-            ) : (
-              <View style={styles.headRow}>
-                <Text style={styles.price}>Prix</Text>
-                {hasHH && <Text style={styles.price}>HH.</Text>}
-              </View>
-            )}
-            {storeProducts.map((product, i) => (
-              <Product
-                key={i}
-                product={product}
-                onPress={() => navigation.navigate('EditProduct', { product })}
-                hasHH={hasHH}
-              />
-            ))}
+            <Text variant="bodyMedium" style={styles.emptyText}>
+              {storeEdition.id
+                ? `${storeEdition.products?.length || 0} bière(s) ajoutée(s)`
+                : 'La carte sera modifiable après avoir créé le bar'}
+            </Text>
             <Button
               mode="outlined"
               uppercase={false}
-              onPress={() => navigation.navigate('SelectProduct')}
+              disabled={!storeEdition.id}
+              onPress={() => {
+                navigation.navigate('StoreProductsScreen', {
+                  screen: 'StoreProductsList',
+                  params: { storeId: storeEdition.id, editMode: true },
+                });
+              }}
               style={styles.addButton}>
-              Ajouter une bière
+              Modifier le menu
             </Button>
           </Card.Content>
         </Card>
@@ -413,46 +341,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   title: { fontSize: 18 },
-  headRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-start',
-    height: 25,
-  },
-  productRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    borderTopColor: '#ddd',
-    borderTopWidth: 0.5,
-  },
-  productDetails: {
-    flex: 1,
-    paddingVertical: 7,
-    paddingLeft: 20,
-  },
   schedules: {
     marginBottom: 10,
-  },
-  flex: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  prices: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  price: {
-    width: 50,
-    textAlign: 'center',
-  },
-  editButton: {
-    marginRight: 10,
-  },
-  transparentIcon: {
-    backgroundColor: 'transparent',
   },
   addButton: { marginTop: 20, zIndex: 0, position: 'relative' },
   emptyText: {
@@ -487,16 +377,6 @@ export default () => (
       component={EditFeatures}
     />
     <AddStack.Screen
-      options={{ title: 'Ajouter une bière' }}
-      name="SelectProduct"
-      component={SelectProduct}
-    />
-    <AddStack.Screen
-      options={{ title: 'Modifier une bière' }}
-      name="EditProduct"
-      component={EditProduct}
-    />
-    <AddStack.Screen
       options={{ title: 'Ajouter une photo' }}
       name="AddPhoto"
       component={AddPhoto}
@@ -505,11 +385,6 @@ export default () => (
       options={{ title: 'Historique' }}
       name="History"
       component={History}
-    />
-    <AddStack.Screen
-      options={{ title: 'Devise' }}
-      name="SelectCurrency"
-      component={SelectCurrency}
     />
   </AddStack.Navigator>
 );

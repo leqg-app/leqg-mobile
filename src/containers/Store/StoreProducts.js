@@ -1,11 +1,25 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
-import { useAtomValue } from 'jotai';
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+import {
+  Text,
+  TouchableRipple,
+  ActivityIndicator,
+  Portal,
+  Snackbar,
+  Appbar,
+} from 'react-native-paper';
+import { useAtomValue, useAtom } from 'jotai';
 
 import Price from '../../components/Price';
 import { sortByPrices } from '../../utils/price';
-import { productsState } from '../../store/atoms';
+import {
+  productsState,
+  storeState,
+  storeEditionState,
+  userState,
+} from '../../store/atoms';
+import { useStoreActions } from '../../store/storeActions';
+import { getErrorMessage } from '../../utils/errorMessage';
 
 // TODO: load types from API
 const types = {
@@ -29,78 +43,222 @@ function sortByType(a) {
   return a.type === 'draft' ? -1 : 1;
 }
 
-function StoreProducts(props) {
+function StoreProducts({ storeId, initialEditMode, navigation }) {
   const products = useAtomValue(productsState);
+  const store = useAtomValue(storeState(storeId));
+  const user = useAtomValue(userState);
+  const [storeEdition, setStoreEdition] = useAtom(storeEditionState);
+  const [state, setState] = useState({
+    error: false,
+    isSaving: false,
+    editMode: initialEditMode || false,
+  });
+  const { saveStore } = useStoreActions();
 
-  const hasHH = props.products.some(product => product.specialPrice);
+  const toggleEditMode = () => {
+    if (!user) {
+      Alert.alert(
+        'Connexion requise',
+        'Vous devez être connecté pour modifier ce bar',
+        [
+          {
+            text: 'Annuler',
+            style: 'cancel',
+          },
+          {
+            text: 'Connexion',
+            onPress: () => {
+              navigation.navigate('TabNavigator', {
+                screen: 'AccountTab',
+              });
+            },
+          },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+    if (!state.editMode) {
+      // Entrer en mode édition
+      setStoreEdition(store);
+      setState(prev => ({ ...prev, editMode: true }));
+    }
+  };
 
-  const productsByTypes = Array.from(props.products)
+  const validateChanges = async () => {
+    // Vérifier s'il y a des modifications
+    if (
+      storeEdition?.id === store?.id &&
+      storeEdition?.products &&
+      JSON.stringify(storeEdition.products) !== JSON.stringify(store.products)
+    ) {
+      setState(prev => ({ ...prev, isSaving: true, error: false }));
+      const { error } = await saveStore(storeEdition);
+      if (error) {
+        setState(prev => ({
+          ...prev,
+          isSaving: false,
+          error: getErrorMessage(error),
+        }));
+        return;
+      }
+    }
+    // Sortir du mode édition
+    setState(prev => ({ ...prev, editMode: false, isSaving: false }));
+  };
+
+  const navigateToAddProduct = () => {
+    navigation.navigate('SelectProduct');
+  };
+
+  const onProductPress = product => {
+    navigation.navigate('EditProduct', { product });
+  };
+
+  // Détecter les modifications quand on revient d'un écran d'édition
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Si on revient en mode édition, s'assurer que storeEdition est initialisé
+      if (state.editMode && (!storeEdition || storeEdition.id !== store?.id)) {
+        setStoreEdition(store);
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, state.editMode, storeEdition, store]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => <Appbar.BackAction onPress={navigation.goBack} />,
+      headerRight: () => (
+        <>
+          {state.editMode ? (
+            <>
+              <Appbar.Action icon="plus" onPress={navigateToAddProduct} />
+              <Appbar.Action
+                icon="check"
+                onPress={validateChanges}
+                disabled={state.isSaving}
+              />
+            </>
+          ) : (
+            <Appbar.Action icon="pencil" onPress={toggleEditMode} />
+          )}
+        </>
+      ),
+    });
+  }, [store, user, state.editMode, state.isSaving, storeEdition]);
+
+  const storeProducts = state.editMode
+    ? storeEdition?.products || store?.products || []
+    : store?.products || [];
+
+  const hasHH = storeProducts.some(product => product.specialPrice);
+
+  const productsByTypes = Array.from(storeProducts)
     .sort(sortByType)
     .sort(sortByPrices)
     .reduce(groupByType, {});
 
   return (
-    <View>
-      <View style={[styles.row, styles.headRow]}>
-        <Text style={styles.title}>Bières</Text>
-      </View>
-      {Object.keys(productsByTypes).map(type => (
-        <View key={type}>
-          <View style={styles.row}>
-            <Text style={styles.typeTitle}>{types[type] || 'Autre'}</Text>
-            {hasHH && (
-              <View style={styles.prices}>
-                <Text style={styles.pricesCell}>Prix</Text>
-                <Text style={styles.pricesCell}>HH.</Text>
-              </View>
-            )}
+    <>
+      {state.isSaving && (
+        <View style={styles.savingOverlay}>
+          <View style={styles.savingContainer}>
+            <ActivityIndicator size="large" />
+            <Text style={styles.savingText}>Sauvegarde en cours...</Text>
           </View>
-          {Object.values(productsByTypes[type]).map((product, i) => {
-            const { productName, currencyCode } = product;
-            const productDetail = products.find(
-              ({ id }) => id === product.productId,
-            );
-            return (
-              <View key={i} style={styles.row}>
-                <View style={{ flex: 1 }}>
-                  <Text numberOfLines={1}>
-                    {productDetail?.name || productName || 'Bière'}
-                  </Text>
+        </View>
+      )}
+      <View>
+        <View style={[styles.row, styles.headRow]}>
+          <Text style={styles.title}>Bières</Text>
+        </View>
+        {Object.keys(productsByTypes).map(type => (
+          <View key={type}>
+            <View style={styles.row}>
+              <Text style={styles.typeTitle}>{types[type] || 'Autre'}</Text>
+              {hasHH && (
+                <View style={styles.prices}>
+                  <Text style={styles.pricesCell}>Prix</Text>
+                  <Text style={styles.pricesCell}>HH.</Text>
                 </View>
-                <View>
-                  {product.prices.map(({ price, volume, specialPrice }) => {
+              )}
+            </View>
+            {Object.values(productsByTypes[type]).map((product, i) => {
+              const { productName, currencyCode } = product;
+              const productDetail = products.find(
+                ({ id }) => id === product.productId,
+              );
+              return (
+                <View key={i}>
+                  {product.prices.map((priceItem, priceIndex) => {
+                    const { price, volume, specialPrice } = priceItem;
+                    const productToEdit = {
+                      ...priceItem,
+                      product: productDetail,
+                    };
                     return (
-                      <View style={styles.prices} key={volume}>
-                        <Text variant="bodyMedium">{`${volume}cl`}</Text>
-                        <Text style={styles.pricesCell}>
-                          {price ? (
-                            <Price amount={price} currency={currencyCode} />
-                          ) : (
-                            '-'
-                          )}
-                        </Text>
-                        {hasHH && (
-                          <Text style={styles.pricesCell}>
-                            {specialPrice ? (
-                              <Price
-                                amount={specialPrice}
-                                currency={currencyCode}
-                              />
-                            ) : (
-                              ' '
+                      <TouchableRipple
+                        key={volume}
+                        onPress={() => {
+                          if (state.editMode) {
+                            onProductPress(productToEdit);
+                          }
+                        }}
+                        disabled={!state.editMode}>
+                        <View style={styles.row} pointerEvents="none">
+                          <View style={{ flex: 1 }}>
+                            <Text numberOfLines={1}>
+                              {priceIndex === 0
+                                ? productDetail?.name || productName || 'Bière'
+                                : ''}
+                            </Text>
+                          </View>
+                          <View style={styles.prices}>
+                            <Text variant="bodyMedium">{`${volume}cl`}</Text>
+                            <Text style={styles.pricesCell}>
+                              {price ? (
+                                <Price amount={price} currency={currencyCode} />
+                              ) : (
+                                '-'
+                              )}
+                            </Text>
+                            {hasHH && (
+                              <Text style={styles.pricesCell}>
+                                {specialPrice ? (
+                                  <Price
+                                    amount={specialPrice}
+                                    currency={currencyCode}
+                                  />
+                                ) : (
+                                  ' '
+                                )}
+                              </Text>
                             )}
-                          </Text>
-                        )}
-                      </View>
+                          </View>
+                        </View>
+                      </TouchableRipple>
                     );
                   })}
                 </View>
-              </View>
-            );
-          })}
-        </View>
-      ))}
-    </View>
+              );
+            })}
+          </View>
+        ))}
+      </View>
+      <Portal>
+        <Snackbar
+          visible={!!state.error}
+          duration={3000}
+          action={{
+            label: 'OK',
+          }}
+          onDismiss={() => setState(prev => ({ ...prev, error: false }))}>
+          {state.error}
+        </Snackbar>
+      </Portal>
+    </>
   );
 }
 
@@ -144,6 +302,26 @@ const styles = StyleSheet.create({
     width: 50,
     marginLeft: 10,
     textAlign: 'left',
+  },
+  savingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1000,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  savingContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  savingText: {
+    marginTop: 10,
   },
 });
 
