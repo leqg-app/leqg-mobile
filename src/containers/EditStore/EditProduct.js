@@ -3,9 +3,11 @@ import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import {
   Button,
   IconButton,
+  Menu,
   Text,
   TextInput,
   TouchableRipple,
+  useTheme,
 } from 'react-native-paper';
 import { useAtom, useAtomValue } from 'jotai';
 
@@ -18,12 +20,14 @@ import { productsState, storeEditionState } from '../../store/atoms';
 const EditProducts = ({ navigation, route }) => {
   const products = useAtomValue(productsState);
   const [storeEdition, setStoreEdition] = useAtom(storeEditionState);
+  const { colors } = useTheme();
   const [productData, setProductData] = useState({
     productId: null,
     productName: '',
     currencyCode: countries[storeEdition.countryCode || 'FR'],
     variants: [],
   });
+  const [openTypeMenu, setOpenTypeMenu] = useState(null);
 
   useEffect(() => {
     if (!route.params) {
@@ -99,11 +103,26 @@ const EditProducts = ({ navigation, route }) => {
   };
 
   const addVariant = () => {
+    const lastVariant = productData.variants[productData.variants.length - 1];
+    let volume = lastVariant.volume,
+      price = lastVariant.price;
+    if (lastVariant.type === 'draft') {
+      if (volume === 50) {
+        volume = 25;
+        price = parseFloat(price) * 0.5;
+        price = Math.ceil(price * 10) / 10;
+      } else if (volume === 25) {
+        volume = 50;
+        price = parseFloat(price) * 2;
+        price = Math.floor(price * 10) / 10;
+      }
+    }
+
     setProductData({
       ...productData,
       variants: [
         ...productData.variants,
-        { type: 'draft', volume: 50, price: '', specialPrice: '' },
+        { type: 'draft', volume, price, specialPrice: '' },
       ],
     });
   };
@@ -226,7 +245,11 @@ const EditProducts = ({ navigation, route }) => {
       </View>
 
       {/* Variants table header */}
-      <View style={styles.tableHeader}>
+      <View
+        style={[
+          styles.tableHeader,
+          { backgroundColor: colors.surfaceVariant },
+        ]}>
         <Text style={[styles.headerCell, styles.typeCell]}>Type</Text>
         <Text style={[styles.headerCell, styles.volumeCell]}>Vol.</Text>
         <Text style={[styles.headerCell, styles.priceCell]}>Prix</Text>
@@ -239,19 +262,35 @@ const EditProducts = ({ navigation, route }) => {
         <View key={index} style={styles.variantRow}>
           {/* Type selector - compact */}
           <View style={styles.typeCell}>
-            <TouchableRipple
-              onPress={() =>
-                updateVariant(
-                  index,
-                  'type',
-                  variant.type === 'draft' ? 'bottle' : 'draft',
-                )
-              }
-              style={styles.typeButton}>
-              <Text variant="bodySmall" style={styles.typeText}>
-                {variant.type === 'draft' ? '🍺' : '🍾'}
-              </Text>
-            </TouchableRipple>
+            <Menu
+              visible={openTypeMenu === index}
+              onDismiss={() => setOpenTypeMenu(null)}
+              anchor={
+                <IconButton
+                  onPress={() =>
+                    setOpenTypeMenu(openTypeMenu === index ? null : index)
+                  }
+                  style={styles.typeButton}
+                  icon={variant.type === 'draft' ? 'beer' : 'bottle-soda'}
+                />
+              }>
+              <Menu.Item
+                onPress={() => {
+                  updateVariant(index, 'type', 'draft');
+                  setOpenTypeMenu(null);
+                }}
+                title="Pression"
+                leadingIcon={variant.type === 'draft' ? 'check' : undefined}
+              />
+              <Menu.Item
+                onPress={() => {
+                  updateVariant(index, 'type', 'bottle');
+                  setOpenTypeMenu(null);
+                }}
+                title="Bouteille"
+                leadingIcon={variant.type === 'bottle' ? 'check' : undefined}
+              />
+            </Menu>
           </View>
 
           {/* Volume */}
@@ -264,6 +303,8 @@ const EditProducts = ({ navigation, route }) => {
             keyboardType="numeric"
             returnKeyType="done"
             right={<TextInput.Affix text="cl" textStyle={styles.affixText} />}
+            selectTextOnFocus
+            textAlignVertical="center"
           />
 
           {/* Price */}
@@ -279,6 +320,7 @@ const EditProducts = ({ navigation, route }) => {
             value={variant.price ? String(variant.price) : ''}
             keyboardType="decimal-pad"
             returnKeyType="done"
+            selectTextOnFocus
           />
 
           {/* Special Price (HH) */}
@@ -292,6 +334,7 @@ const EditProducts = ({ navigation, route }) => {
             value={variant.specialPrice ? String(variant.specialPrice) : ''}
             keyboardType="decimal-pad"
             returnKeyType="done"
+            selectTextOnFocus
           />
 
           {/* Delete button */}
@@ -357,7 +400,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 4,
-    backgroundColor: '#f5f5f5',
     borderRadius: 4,
     marginBottom: 8,
   },
@@ -390,7 +432,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   volumeCell: {
-    width: 70,
+    width: 90,
     marginHorizontal: 4,
   },
   priceCell: {
@@ -409,6 +451,7 @@ const styles = StyleSheet.create({
   },
   affixText: {
     fontSize: 11,
+    textAlignVertical: 'center',
   },
   addButton: {
     marginTop: 12,
