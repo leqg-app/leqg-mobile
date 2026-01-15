@@ -21,14 +21,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version-file: '.nvmrc'
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Install Node.js dependencies
+        run: corepack enable && yarn install --frozen-lockfile
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -89,14 +88,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version-file: '.nvmrc'
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Install Node.js dependencies
+        run: corepack enable && yarn install --frozen-lockfile
 
       - name: Setup Java
         uses: actions/setup-java@v4
