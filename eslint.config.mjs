@@ -50,4 +50,17 @@ export default [
       __DEV__: 'readonly',
     },
   }),
+  // Detox globals for e2e tests
+  {
+    files: ['test/e2e/**/*.js', 'e2e/**/*.js'],
+    languageOptions: {
+      globals: {
+        device: 'readonly',
+        element: 'readonly',
+        by: 'readonly',
+        waitFor: 'readonly',
+        expect: 'readonly',
+      },
+    },
+  },
 ];
