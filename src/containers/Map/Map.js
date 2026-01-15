@@ -31,7 +31,7 @@ const Map = ({ navigation, route }) => {
   }, [isDarkMode]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID="map-screen">
       <Mapbox />
       <SearchBar
         onSearch={() => navigation.navigate('SearchStore')}

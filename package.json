@@ -9,7 +9,13 @@
     "test": "jest",
     "lint": "eslint .",
     "postinstall": "patch-package",
-    "release": "release-it --"
+    "release": "release-it --",
+    "e2e:build:ios": "detox build --configuration ios.sim.debug",
+    "e2e:test:ios": "bash test/e2e/start-metro.sh && detox test --configuration ios.sim.debug",
+    "e2e:test:ios:no-metro": "detox test --configuration ios.sim.debug",
+    "e2e:build:android": "detox build --configuration android.emu.debug",
+    "e2e:test:android": "bash test/e2e/start-metro.sh && detox test --configuration android.emu.debug",
+    "e2e:test:android:no-metro": "detox test --configuration android.emu.debug"
   },
   "dependencies": {
     "@d11/react-native-fast-image": "^8.13.0",
@@ -84,6 +90,7 @@
     "babel-jest": "^30.2.0",
     "babel-plugin-inline-import": "^3.0.0",
     "babel-plugin-module-resolver": "^5.0.2",
+    "detox": "^20.46.3",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.39.2",
     "eslint-plugin-jest": "^29.12.1",
@@ -91,13 +98,15 @@
     "eslint-plugin-react": "^7.37.5",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
+    "jest-circus": "^30.2.0",
     "mbsprite": "^0.2.0",
     "metro-react-native-babel-preset": "0.77.0",
     "prettier": "3.7.4",
     "react-native-cli-bump-version": "^1.5.1",
     "react-test-renderer": "19.2.3",
     "release-it": "^19.2.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wait-on": "^9.0.3"
   },
   "engines": {
     "node": ">=18"

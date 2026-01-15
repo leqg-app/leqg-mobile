@@ -24,9 +24,17 @@ initialize();
 
 const Routes = () => {
   const { success, error } = useMigrations(db, migrations);
-  const [firstOpen] = useMMKVBoolean('firstOpen', storage);
+  const [firstOpen, setFirstOpen] = useMMKVBoolean('firstOpen', storage);
   const loadedEntities = useRef(false);
   const { loadEntities } = useEntitiesAction();
+
+  useEffect(() => {
+    if (__DEV__ && firstOpen === undefined) {
+      setFirstOpen(true);
+    }
+  }, [firstOpen, setFirstOpen]);
+
+  const shouldShowIntro = !firstOpen;
 
   useEffect(() => {
     if (loadedEntities.current) {
@@ -55,7 +63,9 @@ const Routes = () => {
 
   return (
     <Main.Navigator screenOptions={{ headerShown: false }}>
-      {!firstOpen && <Main.Screen name="IntroStack" component={IntroStack} />}
+      {shouldShowIntro && (
+        <Main.Screen name="IntroStack" component={IntroStack} />
+      )}
       <Main.Screen name="TabNavigator" component={TabNavigator} />
       <Main.Screen name="EditStoreScreen" component={EditStore} />
       <Main.Screen name="WonReputation" component={WonReputation} />

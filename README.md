@@ -67,7 +67,7 @@ password YOUR_MAPBOX_SECRET_TOKEN
   - [x] Read contribution/reputation history
   - [ ] Delete account
   - [ ] Edit their profile
-  - [ ] Edit their photo 
+  - [ ] Edit their photo
 
 - Stores
   - [x] Name
