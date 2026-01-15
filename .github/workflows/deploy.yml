@@ -17,7 +17,8 @@ jobs:
     name: Android App
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Free up space
+        run: |
           echo "Removing .NET..."
           sudo rm -rf /usr/share/dotnet || true
           echo "Removing GHC / Haskell..."

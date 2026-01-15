@@ -18,6 +18,14 @@ jobs:
     timeout-minutes: 60
 
     steps:
+      - name: Free up space
+        run: |
+          echo "Removing .NET..."
+          sudo rm -rf /usr/share/dotnet || true
+          echo "Removing GHC / Haskell..."
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/.ghcup || true
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -29,17 +37,36 @@ jobs:
       - name: Install Node.js dependencies
         run: corepack enable && yarn install --frozen-lockfile
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7'
-          bundler-cache: true
+      - name: Linter
+        run: yarn lint
 
-      - name: Install CocoaPods dependencies
+      - name: Unit tests
+        run: yarn test
+
+      - name: Create netrc file
+        uses: extractions/netrc@v2
+        with:
+          machine: api.mapbox.com
+          username: mapbox
+          password: ${{ secrets.MAPBOX_SECRET_KEY }}
+
+      - name: Create env file
         run: |
-          cd ios
-          pod install
-          cd ..
+          cat << EOF > .env
+          GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}
+          MAPBOX_API_KEY=${{ secrets.MAPBOX_API_KEY }}
+          GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+          EOF
+
+      - name: Create Google Services file
+        run: |
+          cat << EOF > ios/GoogleService-Info.plist
+          ${{ secrets.GOOGLESERVICE_INFO_PLIST }}
+          EOF
+
+      - name: Install iOS dependencies
+        run: pod install
+        working-directory: ios
 
       - name: Get Xcode version
         run: xcodebuild -version
@@ -85,6 +112,14 @@ jobs:
     timeout-minutes: 60
 
     steps:
+      - name: Free up space
+        run: |
+          echo "Removing .NET..."
+          sudo rm -rf /usr/share/dotnet || true
+          echo "Removing GHC / Haskell..."
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/.ghcup || true
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -97,10 +132,27 @@ jobs:
         run: corepack enable && yarn install --frozen-lockfile
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
+
+      - name: Create env file
+        run: |
+          cat << EOF > .env
+          GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}
+          MAPBOX_API_KEY=${{ secrets.MAPBOX_API_KEY }}
+          GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+          EOF
+
+      - name: Create Google Services file
+        run: |
+          cat << EOF > android/app/google-services.json
+          ${{ secrets.GOOGLE_SERVICES_JSON }}
+          EOF
+
+      - name: Add Mapbox token
+        run: echo "MAPBOX_SECRET_KEY=${{ secrets.MAPBOX_SECRET_KEY }}" >> ./android/gradle.properties
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
