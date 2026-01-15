@@ -371,7 +371,7 @@ const layerStyles = {
 
 const styles = StyleSheet.create({
   absolute: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'transparent',
   },
   fabContainer: {

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { Platform, StatusBar, StyleSheet, useColorScheme } from 'react-native';
+import { Platform, StatusBar, useColorScheme, View } from 'react-native';
 import { Portal, Snackbar } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNBootSplash from 'react-native-bootsplash';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAtomValue } from 'jotai';
 
 import Filters from './Filters/Filters';
@@ -14,6 +14,7 @@ import SearchStore from './SearchStore';
 import { storeLoadingState } from '../../store/atoms';
 
 const Map = ({ navigation, route }) => {
+  const insets = useSafeAreaInsets();
   const isDarkMode = useColorScheme() === 'dark';
   const storeLoading = useAtomValue(storeLoadingState);
   const { params } = route;
@@ -31,7 +32,7 @@ const Map = ({ navigation, route }) => {
   }, [isDarkMode]);
 
   return (
-    <SafeAreaView style={styles.container} testID="map-screen">
+    <View style={{ paddingTop: insets.top, flex: 1 }} testID="map-screen">
       <Mapbox />
       <SearchBar
         onSearch={() => navigation.navigate('SearchStore')}
@@ -47,15 +48,9 @@ const Map = ({ navigation, route }) => {
           Merci pour votre contribution !
         </Snackbar>
       </Portal>
-    </SafeAreaView>
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 const MapStack = createNativeStackNavigator();
 
