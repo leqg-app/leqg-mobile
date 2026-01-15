@@ -1,4 +1,4 @@
-import { displayPrice, parsePrice } from '../../src/utils/price';
+import { displayPrice, parsePrice } from '../../../src/utils/price';
 
 const displayPriceData = [
   { input: 0, output: '' },
