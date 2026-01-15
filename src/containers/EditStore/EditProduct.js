@@ -107,11 +107,11 @@ const EditProducts = ({ navigation, route }) => {
     let volume = lastVariant.volume,
       price = lastVariant.price;
     if (lastVariant.type === 'draft') {
-      if (volume === 50) {
+      if (parseInt(volume) === 50) {
         volume = 25;
         price = parseFloat(price) * 0.5;
         price = Math.ceil(price * 10) / 10;
-      } else if (volume === 25) {
+      } else if (parseInt(volume) === 25) {
         volume = 50;
         price = parseFloat(price) * 2;
         price = Math.floor(price * 10) / 10;
@@ -129,11 +129,11 @@ const EditProducts = ({ navigation, route }) => {
 
   const removeVariant = index => {
     if (productData.variants.length === 1) {
-      Alert.alert('Erreur', 'Vous devez conserver au moins un variant.');
+      Alert.alert('Erreur', 'Vous devez conserver au moins un produit.');
       return;
     }
 
-    Alert.alert('Confirmation', 'Voulez-vous vraiment supprimer ce variant ?', [
+    Alert.alert('Confirmation', 'Voulez-vous vraiment supprimer ce produit ?', [
       { text: 'Annuler', style: 'cancel' },
       {
         text: 'OK',
@@ -199,33 +199,25 @@ const EditProducts = ({ navigation, route }) => {
   );
 
   const removeProduct = () => {
-    Alert.alert(
-      'Confirmation',
-      'Voulez-vous vraiment supprimer ce produit et tous ses variants ?',
-      [
-        {
-          text: 'Annuler',
-          style: 'cancel',
+    Alert.alert('Confirmation', 'Voulez-vous vraiment supprimer ce produit ?', [
+      {
+        text: 'Annuler',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          const remainingProducts = (storeEdition?.products || []).filter(p => {
+            if (productData.productId) {
+              return p.productId !== productData.productId;
+            }
+            return p.productName?.trim() !== productData.productName?.trim();
+          });
+          setStoreEdition({ ...storeEdition, products: remainingProducts });
+          navigation.goBack();
         },
-        {
-          text: 'OK',
-          onPress: () => {
-            const remainingProducts = (storeEdition?.products || []).filter(
-              p => {
-                if (productData.productId) {
-                  return p.productId !== productData.productId;
-                }
-                return (
-                  p.productName?.trim() !== productData.productName?.trim()
-                );
-              },
-            );
-            setStoreEdition({ ...storeEdition, products: remainingProducts });
-            navigation.goBack();
-          },
-        },
-      ],
-    );
+      },
+    ]);
   };
 
   return (
@@ -362,8 +354,10 @@ const EditProducts = ({ navigation, route }) => {
       {productData.variants.some(v => v.id || v.tmpId) && (
         <Button
           mode="contained"
-          color={theme.colors.danger}
-          style={styles.removeButton}
+          style={[
+            styles.removeButton,
+            { backgroundColor: theme.colors.danger },
+          ]}
           onPress={removeProduct}>
           Supprimer le produit
         </Button>
