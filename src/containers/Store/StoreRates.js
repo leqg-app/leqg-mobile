@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Divider, Text } from 'react-native-paper';
+import { Divider, Text, useTheme } from 'react-native-paper';
 import StarRating from 'react-native-star-rating-widget';
 import { useAtomValue, useSetAtom } from 'jotai';
 
@@ -12,7 +12,7 @@ function StoreRates({ store }) {
   const setSheetStore = useSetAtom(sheetStoreState);
   const user = useAtomValue(userState);
   const { rate, rateCount, name, rates = [] } = store;
-
+  const { colors } = useTheme();
   const userRate = user && rates.find(rate => rate.user?.id === user.id);
 
   const navigateRatingStore = rate => {
@@ -52,7 +52,11 @@ function StoreRates({ store }) {
             </Text>
             <Text variant="labelSmall">({rateCount})</Text>
           </View>
-          <StarRating rating={Math.round(rate * 2) / 2} onChange={() => {}} />
+          <StarRating
+            color={colors.primary}
+            rating={Math.round(rate * 2) / 2}
+            onChange={() => {}}
+          />
         </View>
       ) : (
         <View style={styles.summary}>
@@ -65,6 +69,7 @@ function StoreRates({ store }) {
           <Text style={styles.giveStars}>Votre avis</Text>
           <View style={styles.stars}>
             <StarRating
+              color={colors.primary}
               rating={(userRate.rate1 + userRate.rate2 + userRate.rate3) / 3}
               onChange={() => {}}
               emptyColor="grey"
@@ -77,6 +82,7 @@ function StoreRates({ store }) {
           <Text>Partagez votre expérience à la communauté</Text>
           <View style={styles.stars}>
             <StarRating
+              color={colors.primary}
               enableHalfStar={false}
               rating={0}
               onChange={navigateRatingStore}

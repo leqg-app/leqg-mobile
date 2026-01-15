@@ -155,6 +155,7 @@ const StoreSheet = () => {
                     starSize={15}
                     starStyle={styles.stars}
                     onChange={() => {}}
+                    color={colors.primary}
                   />
                   {sheetStore?.id && (
                     <ErrorBoundary fallback={<></>}>

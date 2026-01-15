@@ -6,6 +6,7 @@ import {
   Text,
   Divider,
   HelperText,
+  useTheme,
 } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import StarRating from 'react-native-star-rating-widget';
@@ -24,7 +25,7 @@ const ERROR_MESSAGES = {
 
 const RatingStore = ({ navigation, route }) => {
   const { rate } = route.params;
-
+  const { colors } = useTheme();
   const [sheetStore, setSheetStore] = useAtom(sheetStoreState);
   const setStore = useSetAtom(storeState(sheetStore.id));
 
@@ -82,6 +83,7 @@ const RatingStore = ({ navigation, route }) => {
         <Text style={styles.label}>Le rapport qualité/prix:</Text>
         <View style={styles.rateRow}>
           <StarRating
+            color={colors.primary}
             enableHalfStar={false}
             rating={rate1}
             onChange={setValueMoneyRate}
@@ -91,6 +93,7 @@ const RatingStore = ({ navigation, route }) => {
         <Text style={styles.label}>Le lieu:</Text>
         <View style={styles.rateRow}>
           <StarRating
+            color={colors.primary}
             enableHalfStar={false}
             rating={rate2}
             onChange={setPlaceRate}
@@ -100,6 +103,7 @@ const RatingStore = ({ navigation, route }) => {
         <Text style={styles.label}>L&apos;accueil:</Text>
         <View style={styles.rateRow}>
           <StarRating
+            color={colors.primary}
             enableHalfStar={false}
             rating={rate3}
             onChange={setWelcomeRate}
@@ -111,6 +115,7 @@ const RatingStore = ({ navigation, route }) => {
           <Text style={styles.label}>Note finale:</Text>
           <View style={styles.rateRow}>
             <StarRating
+              color={colors.primary}
               rating={Math.round(storeRate * 2) / 2}
               onChange={() => {}}
             />
