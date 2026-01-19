@@ -76,12 +76,31 @@ jobs:
           brew tap wix/brew
           brew install applesimutils
 
-      - name: List available simulators
-        run: xcrun simctl list devices available
+      - name: List available simulators and runtimes
+        run: |
+          echo "Available runtimes:"
+          xcrun simctl list runtimes
+          echo ""
+          echo "Available devices:"
+          xcrun simctl list devices available
 
       - name: Boot iOS Simulator
         run: |
-          SIMULATOR_ID=$(xcrun simctl create "iPhone 15" "iPhone 15" iOS17.2 || xcrun simctl list devices available | grep "iPhone 15" | head -n 1 | grep -oE '\([A-F0-9-]+\)' | tr -d '()')
+          # Get the latest iOS runtime available
+          RUNTIME=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes | sort_by(.version) | last | .identifier')
+          echo "Using runtime: $RUNTIME"
+
+          # Try to find an existing iPhone 15 simulator
+          SIMULATOR_ID=$(xcrun simctl list devices available iPhone -j | jq -r '.devices | to_entries[] | .value[] | select(.name | contains("iPhone 15")) | .udid' | head -n 1)
+
+          # If no existing simulator, create one
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "Creating new iPhone 15 simulator..."
+            SIMULATOR_ID=$(xcrun simctl create "iPhone 15" "com.apple.CoreSimulator.SimDeviceType.iPhone-15" "$RUNTIME")
+          else
+            echo "Using existing simulator: $SIMULATOR_ID"
+          fi
+
           echo "SIMULATOR_ID=$SIMULATOR_ID" >> $GITHUB_ENV
           xcrun simctl boot "$SIMULATOR_ID" || true
           xcrun simctl bootstatus "$SIMULATOR_ID"
