@@ -18,20 +18,30 @@ function sortByName(a, b) {
   return a.name > b.name ? 1 : -1;
 }
 
-const SelectProduct = ({ navigation }) => {
+const SelectProduct = ({ navigation, route }) => {
   const products = useAtomValue(productsState);
   const [search, setSearch] = useState('');
   const searchInput = useRef();
+  const { replacingProduct } = route.params || {};
 
   useEffect(() => {
     searchInput.current?.focus?.();
   }, [searchInput.current]);
 
   const onSelect = productId => {
-    if (productId) {
-      navigation.replace('EditProduct', { productId });
+    if (replacingProduct) {
+      const params = {
+        productId: productId || null,
+        productName: productId ? null : search,
+        replacingProduct: true,
+      };
+      navigation.popTo('EditProduct', params);
     } else {
-      navigation.replace('EditProduct', { productName: search });
+      if (productId) {
+        navigation.replace('EditProduct', { productId });
+      } else {
+        navigation.replace('EditProduct', { productName: search });
+      }
     }
   };
 

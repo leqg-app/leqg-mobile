@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View, ScrollView } from 'react-native';
 import {
   Text,
   TouchableRipple,
@@ -7,8 +7,11 @@ import {
   Portal,
   Snackbar,
   Appbar,
+  FAB,
+  useTheme,
 } from 'react-native-paper';
 import { useAtomValue, useAtom } from 'jotai';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Price from '../../components/Price';
 import { sortByPrices } from '../../utils/price';
@@ -45,6 +48,8 @@ function sortByType(a) {
 
 function StoreProducts({ storeId, initialEditMode, navigation }) {
   const products = useAtomValue(productsState);
+  const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const store = useAtomValue(storeState(storeId));
   const user = useAtomValue(userState);
   const [storeEdition, setStoreEdition] = useAtom(storeEditionState);
@@ -133,14 +138,11 @@ function StoreProducts({ storeId, initialEditMode, navigation }) {
       headerRight: () => (
         <>
           {state.editMode ? (
-            <>
-              <Appbar.Action icon="plus" onPress={navigateToAddProduct} />
-              <Appbar.Action
-                icon="check"
-                onPress={validateChanges}
-                disabled={state.isSaving}
-              />
-            </>
+            <Appbar.Action
+              icon="check"
+              onPress={validateChanges}
+              disabled={state.isSaving}
+            />
           ) : (
             <Appbar.Action icon="pencil" onPress={toggleEditMode} />
           )}
@@ -170,7 +172,7 @@ function StoreProducts({ storeId, initialEditMode, navigation }) {
           </View>
         </View>
       )}
-      <View>
+      <ScrollView>
         <View style={[styles.row, styles.headRow]}>
           <Text style={styles.title}>Bières</Text>
         </View>
@@ -246,6 +248,15 @@ function StoreProducts({ storeId, initialEditMode, navigation }) {
             })}
           </View>
         ))}
+      </ScrollView>
+      <View style={[styles.fabContainer, { marginBottom: insets.bottom }]}>
+        <FAB
+          icon="plus"
+          onPress={navigateToAddProduct}
+          style={styles.fab}
+          variant="surface"
+          color={colors.primary}
+        />
       </View>
       <Portal>
         <Snackbar
@@ -322,6 +333,15 @@ const styles = StyleSheet.create({
   },
   savingText: {
     marginTop: 10,
+  },
+  fabContainer: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    margin: 16,
+  },
+  fab: {
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });
 

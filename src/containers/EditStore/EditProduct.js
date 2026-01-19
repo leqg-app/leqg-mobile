@@ -33,7 +33,24 @@ const EditProducts = ({ navigation, route }) => {
     if (!route.params) {
       return;
     }
-    const { product, productId, productName } = route.params;
+    const { product, productId, productName, replacingProduct } = route.params;
+
+    if (replacingProduct) {
+      if (productId) {
+        setProductData(prev => ({
+          ...prev,
+          productId,
+          productName: '',
+        }));
+      } else if (productName) {
+        setProductData(prev => ({
+          ...prev,
+          productId: null,
+          productName: productName.trim(),
+        }));
+      }
+      return;
+    }
 
     if (product) {
       // Editing product - group all variants of same product
@@ -105,7 +122,7 @@ const EditProducts = ({ navigation, route }) => {
   const addVariant = () => {
     const lastVariant = productData.variants[productData.variants.length - 1];
     let volume = lastVariant.volume,
-      price = lastVariant.price;
+      price = null;
     if (lastVariant.type === 'draft') {
       if (parseInt(volume) === 50) {
         volume = 25;
@@ -130,6 +147,13 @@ const EditProducts = ({ navigation, route }) => {
   const removeVariant = index => {
     if (productData.variants.length === 1) {
       Alert.alert('Erreur', 'Vous devez conserver au moins un produit.');
+      return;
+    }
+
+    const variant = productData.variants[index];
+    if (!variant.price || !variant.specialPrice) {
+      const newVariants = productData.variants.filter((_, i) => i !== index);
+      setProductData({ ...productData, variants: newVariants });
       return;
     }
 
@@ -223,9 +247,45 @@ const EditProducts = ({ navigation, route }) => {
   return (
     <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
       <View style={styles.header}>
-        <Text variant="headlineLarge" style={styles.title}>
-          {selectedProduct?.name || productData.productName}
-        </Text>
+        {selectedProduct ? (
+          <TouchableRipple
+            onPress={() =>
+              navigation.navigate('SelectProduct', {
+                replacingProduct: true,
+              })
+            }
+            borderless
+            style={styles.productButton}>
+            <View style={styles.productButtonContent}>
+              <Text variant="headlineLarge" style={styles.title}>
+                {selectedProduct.name}
+              </Text>
+              <IconButton icon="pencil" size={20} style={styles.editIcon} />
+            </View>
+          </TouchableRipple>
+        ) : (
+          <TextInput
+            style={styles.nameInput}
+            mode="outlined"
+            placeholder="Nom du produit"
+            value={productData.productName}
+            onChangeText={productName =>
+              setProductData({ ...productData, productName })
+            }
+            right={
+              <TextInput.Icon
+                icon="pencil"
+                size={20}
+                style={styles.editIcon}
+                onPress={() =>
+                  navigation.navigate('SelectProduct', {
+                    replacingProduct: true,
+                  })
+                }
+              />
+            }
+          />
+        )}
         <TouchableRipple
           onPress={() => navigation.navigate('SelectCurrency')}
           borderless
@@ -379,7 +439,27 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: 20,
+    fontSize: 17,
+  },
+  productButton: {
+    flex: 1,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  productButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  editIcon: {
+    margin: 0,
+  },
+  nameInput: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
   currencyButton: {
     paddingHorizontal: 12,

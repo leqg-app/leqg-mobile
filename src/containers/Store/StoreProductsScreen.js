@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -13,24 +13,19 @@ const StoreProductsList = ({ navigation }) => {
   const { storeId, editMode: initialEditMode } = route.params;
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.content}>
-        <StoreProducts
-          storeId={storeId}
-          initialEditMode={initialEditMode}
-          navigation={navigation}
-        />
-      </ScrollView>
+    <View style={styles.content}>
+      <StoreProducts
+        storeId={storeId}
+        initialEditMode={initialEditMode}
+        navigation={navigation}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   content: {
-    flex: 1,
+    flexGrow: 1,
   },
 });
 
