@@ -30,14 +30,14 @@ function useEntitiesAction() {
   // -- Load stores
 
   async function loadStores() {
-    const apiVersions = await getVersion;
     const dbStores = await db.getStores();
+    setStores(dbStores);
+    const apiVersions = await getVersion;
     const localVersions = storage.getObject('versions', {});
     const appVersion = storage.getString('appVersion');
 
     // no internet, quit
     if (!apiVersions?.stores) {
-      setStores(dbStores);
       return;
     }
 
@@ -48,7 +48,6 @@ function useEntitiesAction() {
       appVersion !== version;
 
     if (!needReset && localVersions.stores === apiVersions.stores) {
-      setStores(dbStores);
       return;
     }
 
