@@ -3529,29 +3529,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lodev09/react-native-true-sheet@npm:^3.7.3":
-  version: 3.7.3
-  resolution: "@lodev09/react-native-true-sheet@npm:3.7.3"
-  peerDependencies:
-    "@gorhom/bottom-sheet": ">=5"
-    "@react-navigation/native": ">=7"
-    react: "*"
-    react-native: "*"
-    react-native-reanimated: ">=4"
-    react-native-worklets: "*"
-  peerDependenciesMeta:
-    "@gorhom/bottom-sheet":
-      optional: true
-    "@react-navigation/native":
-      optional: true
-    react-native-reanimated:
-      optional: true
-    react-native-worklets:
-      optional: true
-  checksum: 625f10c1f9e7ac92b9eaae6bcedbdd5882ffa7ee04ad556daa7aa55c94521afd0637a00cc7fd49a65e2eeab8c97e401a3df0d0268a5be53ef0097662b5ac2f23
-  languageName: node
-  linkType: hard
-
 "@napi-rs/wasm-runtime@npm:^0.2.11":
   version: 0.2.12
   resolution: "@napi-rs/wasm-runtime@npm:0.2.12"
@@ -11488,7 +11465,6 @@ __metadata:
     "@gorhom/bottom-sheet": ^5.2.8
     "@invertase/react-native-apple-authentication": ^2.5.0
     "@legendapp/list": ^2.0.19
-    "@lodev09/react-native-true-sheet": ^3.7.3
     "@one-am/react-native-rheostat-slider": ^0.1.2
     "@op-engineering/op-sqlite": ^15.1.14
     "@react-native-community/cli": 20.1.0
