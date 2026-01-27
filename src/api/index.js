@@ -1,10 +1,12 @@
 import { api as apiEndpoint } from '../../app.json';
+import { version } from '../../package.json';
 
 function request(method) {
   return function (path, data = {}, headers = {}) {
     return fetch(`${apiEndpoint}${path}`, {
       method,
       headers: {
+        'user-agent': `LeQG/${version}`,
         ...(method === 'GET'
           ? data
           : data instanceof FormData
