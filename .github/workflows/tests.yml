@@ -44,7 +44,7 @@ jobs:
         run: yarn test
 
       - name: Create netrc file
-        uses: extractions/netrc@v2
+        uses: extractions/netrc@v3
         with:
           machine: api.mapbox.com
           username: mapbox
