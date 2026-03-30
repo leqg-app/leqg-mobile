@@ -155,7 +155,7 @@ jobs:
         run: echo "MAPBOX_SECRET_KEY=${{ secrets.MAPBOX_SECRET_KEY }}" >> ./android/gradle.properties
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Build Android app for Detox
         run: yarn e2e:build:android
