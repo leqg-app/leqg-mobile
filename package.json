@@ -38,7 +38,7 @@
     "@turf/destination": "^7.3.2",
     "date-fns": "^4.1.0",
     "deprecated-react-native-prop-types": "^5.0.0",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.2",
     "jotai": "^2.16.2",
     "jotai-family": "^1.0.1",
     "patch-package": "^8.0.1",
