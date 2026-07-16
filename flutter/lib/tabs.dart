@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'containers/account/account.dart';
@@ -18,15 +19,13 @@ final GlobalKey<NavigatorState> accountNavigatorKey =
 
 /// ≙ navigation.navigate('TabNavigator', { screen: 'AccountTab' })
 void navigateToAccountTab(BuildContext context, WidgetRef ref) {
-  Navigator.of(context, rootNavigator: true)
-      .popUntil((route) => route.isFirst);
+  Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
   ref.read(tabIndexProvider.notifier).state = 3;
 }
 
 /// ≙ navigation.navigate('TabNavigator', { screen: 'MapTab' })
 void navigateToMapTab(BuildContext context, WidgetRef ref) {
-  Navigator.of(context, rootNavigator: true)
-      .popUntil((route) => route.isFirst);
+  Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
   ref.read(tabIndexProvider.notifier).state = 0;
 }
 
@@ -39,42 +38,59 @@ class TabNavigator extends ConsumerWidget {
 
     return Stack(
       children: [
-        Scaffold(
-          body: IndexedStack(
-            index: index,
-            children: const [
-              MapScreen(),
-              ProductsScreen(),
-              FavoritesScreen(),
-              AccountTab(),
-            ],
-          ),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: index,
-            onDestinationSelected: (newIndex) =>
-                ref.read(tabIndexProvider.notifier).state = newIndex,
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.map_outlined),
-                selectedIcon: Icon(Icons.map),
-                label: 'Carte',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.sports_bar_outlined),
-                selectedIcon: Icon(Icons.sports_bar),
-                label: 'Bières',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.bookmark_outline),
-                selectedIcon: Icon(Icons.bookmark),
-                label: 'Enregistrés',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.person_outline),
-                selectedIcon: Icon(Icons.person),
-                label: 'Compte',
-              ),
-            ],
+        PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) {
+              return;
+            }
+            // Bouton retour Android : dépiler l'onglet Compte, sinon quitter
+            final accountNavigator = accountNavigatorKey.currentState;
+            if (index == 3 &&
+                accountNavigator != null &&
+                accountNavigator.canPop()) {
+              accountNavigator.pop();
+              return;
+            }
+            SystemNavigator.pop();
+          },
+          child: Scaffold(
+            body: IndexedStack(
+              index: index,
+              children: const [
+                MapScreen(),
+                ProductsScreen(),
+                FavoritesScreen(),
+                AccountTab(),
+              ],
+            ),
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: index,
+              onDestinationSelected: (newIndex) =>
+                  ref.read(tabIndexProvider.notifier).state = newIndex,
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.map_outlined),
+                  selectedIcon: Icon(Icons.map),
+                  label: 'Carte',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.sports_bar_outlined),
+                  selectedIcon: Icon(Icons.sports_bar),
+                  label: 'Bières',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.bookmark_outline),
+                  selectedIcon: Icon(Icons.bookmark),
+                  label: 'Enregistrés',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.person_outline),
+                  selectedIcon: Icon(Icons.person),
+                  label: 'Compte',
+                ),
+              ],
+            ),
           ),
         ),
         // Sheet du bar sélectionné, au-dessus de la barre d'onglets
