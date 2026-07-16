@@ -1,0 +1,43 @@
+name: leqg
+description: "Le QG - Trouvez votre bar"
+publish_to: 'none'
+version: 4.1.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^2.6.1
+  shared_preferences: ^2.3.3
+  sqflite: ^2.4.1
+  path: ^1.9.0
+  http: ^1.2.2
+  mapbox_maps_flutter: ^2.6.0
+  geolocator: ^13.0.2
+  share_plus: ^10.1.2
+  url_launcher: ^6.3.1
+  image_picker: ^1.1.2
+  google_sign_in: ^6.2.2
+  sign_in_with_apple: ^6.1.3
+  sentry_flutter: ^9.6.0
+  flutter_dotenv: ^5.2.1
+  package_info_plus: ^8.1.1
+  flutter_svg: ^2.0.16
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - .env
+    - assets/countries.json
+    - assets/currencies.json
+    - assets/icon-transparent.png
+    - assets/tooltip-50.png
